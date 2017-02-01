@@ -1,22 +1,59 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <context:component-scan base-package="com.bank.*" />
+    <context:component-scan base-package="com.bank.*"/>
 
-    <bean
-            class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix">
-            <value>/WEB-INF/pages/</value>
-        </property>
-        <property name="suffix">
-            <value>.jsp</value>
+    <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="resourceLoaderPath" value="/"/>
+        <property name="velocityPropertiesMap">
+            <props>
+                <prop key="input.encoding">UTF-8</prop>
+            </props>
         </property>
     </bean>
 
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".vm"/>
+        <property name="contentType" value="text/html;charset=UTF-8"/>
+        <property name="exposeRequestAttributes" value="true"/>
+        <property name="exposeSessionAttributes" value="true"/>
+        <property name="allowSessionOverride" value="true"/>
+
+        <property name="attributesMap">
+            <map>
+                <entry key="dateTool">
+                    <bean class="org.apache.velocity.tools.generic.DateTool"/>
+                </entry>
+                <entry key="contextTool">
+                    <bean class="org.apache.velocity.tools.generic.ContextTool"/>
+                </entry>
+                <entry key="authz">
+                    <bean class="org.springframework.security.taglibs.velocity.AuthzImpl"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <mvc:annotation-driven/>
+    <mvc:resources mapping="static-resources/**" location="static-resources/"/>
+
+    <security:global-method-security secured-annotations="enabled"/>
+    <!--
+        <bean
+                class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+            <property name="prefix">
+                <value>/WEB-INF/pages/</value>
+            </property>
+            <property name="suffix">
+                <value>.jsp</value>
+            </property>
+        </bean>
+    -->
 </beans>

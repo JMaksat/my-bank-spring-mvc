@@ -4,15 +4,13 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
 	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-    <display-name>Spring Security Application</display-name>
+    <display-name>MyBank Application</display-name>
 
-    <!-- Spring MVC -->
     <servlet>
         <servlet-name>mvc-dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>mvc-dispatcher</servlet-name>
         <url-pattern>/</url-pattern>
@@ -26,11 +24,11 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             WEB-INF/spring-security.xml,
+            WEB-INF/web-context.xml,
             WEB-INF/spring-database.xml
         </param-value>
     </context-param>
 
-    <!-- Spring Security -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -40,5 +38,28 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <filter>
+        <filter-name>TextFilter</filter-name>
+        <filter-class>com.bank.web.filters.TextFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>TextFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>velocity</servlet-name>
+        <servlet-class>
+            org.apache.velocity.tools.view.VelocityLayoutServlet
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>velocity</servlet-name>
+        <url-pattern>*.vm</url-pattern>
+    </servlet-mapping>
+
+
 
 </web-app>

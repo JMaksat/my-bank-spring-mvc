@@ -4,24 +4,38 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <properties>
-        <jdk.version>1.6</jdk.version>
-        <spring.version>3.2.8.RELEASE</spring.version>
-        <spring.security.version>3.2.3.RELEASE</spring.security.version>
-        <jstl.version>1.2</jstl.version>
-        <mysql.connector.version>5.1.30</mysql.connector.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>4.2.2.RELEASE</spring.version>
+        <spring.jdbc.roma.version>2.0.0.RELEASE</spring.jdbc.roma.version>
+        <spring.security.version>4.0.3.RELEASE</spring.security.version>
+        <jackson.version>2.6.3</jackson.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.bank</groupId>
+    <groupId>com.bank.web</groupId>
     <artifactId>my-bank</artifactId>
+    <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
+    <name>MyBank</name>
+    <url>http://maven.apache.org</url>
 
     <dependencies>
 
-        <!-- Spring 3 dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
         </dependency>
 
@@ -39,11 +53,31 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-framework-bom</artifactId>
+            <version>4.2.2.RELEASE</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>${spring.version}</version>
         </dependency>
 
-        <!-- Spring Security -->
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
@@ -56,21 +90,31 @@
             <version>${spring.security.version}</version>
         </dependency>
 
-        <!-- Spring Security JSP Taglib -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
-            <version>${spring.security.version}</version>
+            <version>3.2.9.RELEASE</version>
         </dependency>
 
-        <!-- jstl for jsp page -->
         <dependency>
-            <groupId>jstl</groupId>
-            <artifactId>jstl</artifactId>
-            <version>${jstl.version}</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- connect to postgresql -->
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-tools</artifactId>
+            <version>2.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -79,4 +123,19 @@
 
     </dependencies>
 
+
+    <build>
+        <finalName>my-bank</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

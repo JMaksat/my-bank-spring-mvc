@@ -2,6 +2,26 @@ create database bankdb;
 create user scott with password 'tiger' superuser;
 create schema bank;
 
+CREATE TABLE bank.users
+(
+  username character varying(45) NOT NULL,
+  password character varying(45) NOT NULL,
+  is_active boolean NOT NULL DEFAULT true,
+  CONSTRAINT users_pk PRIMARY KEY (username)
+);
+
+CREATE TABLE bank.user_roles
+(
+  user_role_id serial NOT NULL,
+  username character varying(45) NOT NULL,
+  role character varying(45) NOT NULL,
+  CONSTRAINT user_roles_pkey PRIMARY KEY (user_role_id),
+  CONSTRAINT fk_username FOREIGN KEY (username)
+      REFERENCES bank.users (username) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT uni_username_role UNIQUE (role, username)
+);
+
 CREATE TABLE bank.customer_info
 (
   customer_id serial NOT NULL,

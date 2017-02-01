@@ -1,0 +1,149 @@
+<div class="row top-menu">
+    <div class="navbar-top-links" role="navigation" style="margin-top:0px;">
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav" id="side-menu">
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-bars"></i> Справочники<span class="fa arrow"></span></a>
+                    <ul class="dropdown-menu">
+                        #if($authz.anyGranted('ROLE_7W, ROLE_7R'))
+                        <li>
+                            <a href="$request.contextPath/UTMList"><i class="fa fa-fw fa-link"></i> Справочник УТМ</a>
+                        </li>
+                        #end
+                        #if($authz.anyGranted('ROLE_6W, ROLE_6R'))
+                        <li>
+                            <a href="$request.contextPath/goodsList"><i class="fa fa-fw fa-shopping-cart"></i> Справочник товаров</a>
+                        </li>
+                        #end
+                        #if($authz.anyGranted('ROLE_11W, ROLE_11R'))
+                        <li>
+                            <a href="$request.contextPath/orgList"><i class="fa fa-fw fa-university"></i> Справочник организаций</a>
+                        </li>
+                        #end
+                        #if($authz.anyGranted('ROLE_20W, ROLE_20R'))
+                            <li>
+                                <a href="$request.contextPath/orgListRequest"><i class="fa fa-fw fa-university"></i> Запрос справочника организаций</a>
+                            </li>
+                        #end
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-files-o"></i> Документы<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level dropdown-menu">
+                        #if($authz.anyGranted('ROLE_9W, ROLE_9R'))
+                        <li>
+                            <a href="$request.contextPath/incomeTTNList"><i class="fa fa-fw fa-file-text-o"></i> Приходные ТТН</a>
+                        </li>
+                        #end
+                        #if($authz.anyGranted('ROLE_10W, ROLE_10R'))
+                        <li>
+                            <a href="$request.contextPath/outcomeTTNList"><i class="fa fa-fw fa-external-link"></i> Расходные ТТН</a>
+                        </li>
+                        #end
+                        #if($authz.anyGranted('ROLE_12W, ROLE_12R'))
+                            <li>
+                                <a href="$request.contextPath/putOnBalance"><i class="fa fa-share"></i> Постановка на баланс</a>
+                            </li>
+                        #end
+                    </ul>
+                </li>
+
+                #if($authz.anyGranted('ROLE_19W, ROLE_19R'))
+                <li>
+                    <a href="$request.contextPath/tbStock"><i class="fa fa-fw fa-bar-chart"></i> Остатки</a>
+                </li>
+                #end
+                #if($authz.anyGranted('ROLE_12W, ROLE_12R'))
+                    <li>
+                        <a href="$request.contextPath/inventoryList"><i class="fa fa-fw fa-calculator"></i> Инвентаризация</a>
+                    </li>
+                #end
+                #if($authz.anyGranted('ROLE_12W, ROLE_12R'))
+                <li>
+                    <a href="$request.contextPath/goodsFlow"><i class="fa fa-fw fa-truck"></i> Движения товаров</a>
+                </li>
+                #end
+
+                #if($authz.anyGranted('ROLE_18W, ROLE_18R'))
+                    <li>
+                        <a href="$request.contextPath/alcord"><i class="fa fa-tasks"></i> Заказы</a>
+                    </li>
+                #end
+
+                #if($authz.anyGranted('ROLE_13W, ROLE_13R'))
+                    <li>
+                        <a href="#"><i class="fa fa-eye fa-fw"></i> Мониторинг<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level dropdown-menu">
+                            #if($authz.anyGranted('ROLE_14R, ROLE_14W'))
+                            <li>
+                                <a href="$request.contextPath/xmlMonitor"><i class="fa fa-file-code-o"></i> XML-монитор</a>
+                            </li>
+                            #end
+                            #if($authz.anyGranted('ROLE_15R, ROLE_15W'))
+                            <li>
+                                <a href="$request.contextPath/tbRequest"><i class="fa fa-share"></i> Исходящие запросы</a>
+                            </li>
+                            #end
+                            #if($authz.anyGranted('ROLE_16R, ROLE_16W'))
+                            <li>
+                                <a href="$request.contextPath/utmLog"><i class="fa fa-file-text"></i> Ошибки УТМ</a>
+                            </li>
+                            #end
+                            #if($authz.anyGranted('ROLE_17R, ROLE_17W'))
+                            <li>
+                                <a href="$request.contextPath/tbTicket"><i class="fa fa-file-o"></i> Тикеты</a>
+                            </li>
+                            #end
+                        </ul>
+                    </li>
+                #end
+
+                #if($authz.anyGranted('ROLE_13W, ROLE_13R'))
+                    <li>
+                        <a href="#"><i class="fa fa-eye fa-fw"></i> Отчеты<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level dropdown-menu">
+                            #if($authz.anyGranted('ROLE_14R, ROLE_14W'))
+                                <li>
+                                    <a href="$request.contextPath/ttnAlcGold"><i class="fa fa-file-code-o"></i>Сверка приходных ТТН ЕГАИС/GOLD</a>
+                                </li>
+                                <li>
+                                    <a href="$request.contextPath/stockBalance"><i class="fa fa-file-code-o"></i>Остатки Голд/AlcDesk/ЕГАИС</a>
+                                </li>
+                            #end
+                        </ul>
+                    </li>
+                #end
+
+                #if($authz.anyGranted('ROLE_19W, ROLE_19R'))
+                <li>
+                    <a href="$request.contextPath/impAlc"><i class="fa fa-star"></i> Импорт алкоголя</a>
+                </li>
+                #end
+
+                <li>
+                    <a href="#"><i class="fa fa-sliders fa-fw"></i> Настройки<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level dropdown-menu">
+                        #if($authz.anyGranted('ROLE_2W, ROLE_2R'))
+                        <li>
+                            <a href="$request.contextPath/groups"><i class="fa fa-cubes"></i> Группы пользователей</a>
+                        </li>
+                        #end
+                        #if($authz.anyGranted('ROLE_3W, ROLE_3R'))
+                        <li>
+                            <a href="$request.contextPath/users"><i class="fa fa-users"></i> Пользователи</a>
+                        </li>
+                        #end
+                        #if($authz.anyGranted('ROLE_8W, ROLE_8R'))
+                        <li>
+                            <a href="$request.contextPath/settings"><i class="fa fa-sliders"></i> Общие настройки</a>
+                        </li>
+                        #end
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- /.sidebar-collapse -->
+    </div>
+    <!-- /.navbar-static-side -->
+</div>

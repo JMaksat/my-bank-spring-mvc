@@ -42,6 +42,10 @@ insert into bank.customer_info values (1,	'Scott',	'Ridley',	'Alien',	'1937-11-3
 alter sequence bank.customer_info_customer_id_seq restart with 2;
 
 
+insert into bank.customer_papers values (1,	'CA#0012345',	'2016-01-02',	null,	true,	'scott',	19,	1);
+alter sequence bank.customer_papers_paper_id_seq restart with 2;
+
+
 insert into bank.customer_address values (1,	'USA, CA, San Andreas, 123',	'2016-01-02',	null,	true,	'scott',	7,	1);
 insert into bank.customer_address values (2,	'USA, NY, New York City, 123',	'2016-01-02',	null,	true,	'scott',	8,	1);
 alter sequence bank.customer_address_address_id_seq restart with 3;
@@ -82,3 +86,16 @@ insert into bank.account_rest values (7,	9,	1000000,	0,	'2016-01-02',	'18:47:29.
 insert into bank.account_rest values (8,   10,	1000000,	0,	'2016-01-02',	'18:47:29.324624');
 insert into bank.account_rest values (9,   11,	1000000,	0,	'2016-01-02',	'18:47:29.324624');
 alter sequence bank.account_rest_rest_id_seq restart with 10;
+
+INSERT INTO bank.users(username, password, is_active)
+VALUES ('john', '123456', true);
+INSERT INTO bank.users(username, password, is_active)
+VALUES ('harry', '123456', true);
+
+INSERT INTO bank.user_roles (user_role_id, username, role)
+VALUES (1, 'john', 'ROLE_USER');
+INSERT INTO bank.user_roles (user_role_id, username, role)
+VALUES (2, 'john', 'ROLE_ADMIN');
+INSERT INTO bank.user_roles (user_role_id, username, role)
+VALUES (3, 'harry', 'ROLE_USER');
+alter sequence bank.user_roles_user_role_id_seq restart with 4;
