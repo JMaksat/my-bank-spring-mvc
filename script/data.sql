@@ -61,7 +61,6 @@ insert into bank.accounts
 values (2,	'0010101201600002015',	0,	'2016-01-01',	null,	'2016-01-02',	null,	'scott',	15,	false, 'This account keeps money transferred from another banks to then transfer them to personal accounts.');
 insert into bank.accounts values (3,	'0010101201600003018',	0,	'2016-01-01',	null,	'2016-01-02',	null,	'scott',	18,	false, null);
 insert into bank.accounts values (4,	'0010101201600004017',	0,	'2016-01-01',	null,	'2016-01-02',	null,	'scott',	17,	false, null);
-insert into bank.accounts values (7,	'TEST12345',			1,	'2015-02-02',	null,	'2016-01-17',	null,	'scott',	16,	false, null);
 insert into bank.accounts values (8,	'TEST11111111111',		1,	'2016-01-13',	null,	'2016-01-17',	null,	'scott',	16,	false, null);
 insert into bank.accounts
 values (9, '0010101201600005015', 0, '2016-01-01', null, '2016-01-02', null, 'scott', 15, false, 'This account keeps money to then transfer them to another banks.');
@@ -80,7 +79,6 @@ insert into bank.account_rest values (1,	1,	2000,		1,	'2016-01-02',	'18:46:51.65
 insert into bank.account_rest values (2,	2,	1000000,	0,	'2016-01-02',	'18:47:29.324624');
 insert into bank.account_rest values (3,	3,	1000000,	0,	'2016-01-02',	'18:47:42.796646');
 insert into bank.account_rest values (4,	4,	1000000,	0,	'2016-01-02',	'18:47:53.576661');
-insert into bank.account_rest values (5,	7,	0,			3,	'2016-01-17',	'14:50:20.239629');
 insert into bank.account_rest values (6,	8,	0,			4,	'2016-01-17',	'17:55:45.573993');
 insert into bank.account_rest values (7,	9,	1000000,	0,	'2016-01-02',	'18:47:29.324624');
 insert into bank.account_rest values (8,   10,	1000000,	0,	'2016-01-02',	'18:47:29.324624');
