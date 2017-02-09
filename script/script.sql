@@ -117,7 +117,7 @@ CREATE TABLE bank.customer_papers
 (
   paper_id serial NOT NULL,
   value character varying(1024),
-  date_crated date,
+  date_created date,
   date_modified date,
   is_active boolean,
   user_id character varying(32),
@@ -133,7 +133,7 @@ CREATE TABLE bank.customer_address
 (
   address_id serial NOT NULL,
   value character varying(1024),
-  date_crated date,
+  date_created date,
   date_modified date,
   is_active boolean,
   user_id character varying(32),

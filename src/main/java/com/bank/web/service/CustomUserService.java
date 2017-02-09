@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Service("customUserService")
+class CustomUserService {}
+
+/*@Service("customUserService")
 public class CustomUserService implements UserDetailsService {
 
     @Autowired
@@ -44,4 +46,4 @@ public class CustomUserService implements UserDetailsService {
         result.add(new SimpleGrantedAuthority("ROLE_USER"));
         return result;
     }
-}
+}*/

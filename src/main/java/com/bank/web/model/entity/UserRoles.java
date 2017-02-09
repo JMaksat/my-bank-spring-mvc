@@ -7,35 +7,44 @@ import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperFie
 public class UserRoles {
 
     @RowMapperField(columnName = "user_role_id")
-    private Integer UserRoleId;
+    private Integer userRoleId;
 
-    @RowMapperField(columnName = "username")
-    private String UserName;
+    @RowMapperField(columnName = "userName")
+    private String userName;
 
     @RowMapperField(columnName = "role")
-    private String Role;
+    private String role;
 
     public Integer getUserRoleId() {
-        return UserRoleId;
+        return userRoleId;
     }
 
     public void setUserRoleId(Integer userRoleId) {
-        UserRoleId = userRoleId;
+        userRoleId = userRoleId;
     }
 
     public String getUserName() {
-        return UserName;
+        return userName;
     }
 
     public void setUserName(String userName) {
-        UserName = userName;
+        userName = userName;
     }
 
     public String getRole() {
-        return Role;
+        return role;
     }
 
     public void setRole(String role) {
-        Role = role;
+        role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "UserRoles{" +
+                "userRoleId=" + userRoleId +
+                ", userName='" + userName + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }

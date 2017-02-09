@@ -6,36 +6,45 @@ import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperFie
 @RowMapperClass
 public class Users {
 
-    @RowMapperField(columnName = "username")
-    private String UserName;
+    @RowMapperField(columnName = "userName")
+    private String userName;
 
     @RowMapperField(columnName = "password")
-    private String Password;
+    private String password;
 
     @RowMapperField(columnName = "is_active")
-    private String IsActive;
+    private Boolean isActive;
 
     public String getUserName() {
-        return UserName;
+        return userName;
     }
 
     public void setUserName(String userName) {
-        UserName = userName;
+        this.userName = userName;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
-    public String getIsActive() {
-        return IsActive;
+    public Boolean getIsActive() {
+        return isActive;
     }
 
-    public void setIsActive(String isActive) {
-        IsActive = isActive;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", isActive=" + isActive +
+                '}';
     }
 }
