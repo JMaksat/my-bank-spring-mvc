@@ -96,23 +96,6 @@ CREATE TABLE bank.account_rest
       ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
-CREATE TABLE bank.bank_parameters
-(
-  parameter_id serial NOT NULL,
-  parent_id integer,
-  parameter_name character varying(64),
-  value character varying(1024),
-  date_created date,
-  date_modified date,
-  active_from date,
-  active_to date,
-  user_id character varying(32),
-  CONSTRAINT bank_parameters_pk PRIMARY KEY (parameter_id),
-  CONSTRAINT bank_parameters_fk FOREIGN KEY (parent_id)
-  REFERENCES bank.bank_parameters (parameter_id) MATCH SIMPLE
-  ON UPDATE NO ACTION ON DELETE NO ACTION
-);
-
 CREATE TABLE bank.customer_papers
 (
   paper_id serial NOT NULL,

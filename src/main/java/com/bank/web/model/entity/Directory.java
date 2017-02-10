@@ -8,6 +8,12 @@ import java.util.Date;
 @RowMapperClass
 public class Directory {
 
+    public static final String ACCOUNTS = "ACCOUNTS";
+    public static final String OPERATIONS = "OPERATIONS";
+    public static final String ADDRESS = "ADDRESS";
+    public static final String CONTACTS = "CONTACTS";
+    public static final String PAPERS = "PAPERS";
+
     @RowMapperField(columnName = "dir_id")
     private Integer dirID;
 
