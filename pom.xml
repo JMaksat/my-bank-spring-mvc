@@ -3,6 +3,22 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.bank.web</groupId>
+    <artifactId>my-bank</artifactId>
+    <packaging>war</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>MyBank</name>
+    <url>no_url</url>
+
+    <developers>
+        <developer>
+            <id>ergeshbaev</id>
+            <name>M.Ergeshbaev</name>
+            <email>ergeshbayev@gmail.com</email>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.2.2.RELEASE</spring.version>
@@ -10,14 +26,6 @@
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <jackson.version>2.6.3</jackson.version>
     </properties>
-
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.bank.web</groupId>
-    <artifactId>my-bank</artifactId>
-    <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>MyBank</name>
-    <url>http://maven.apache.org</url>
 
     <dependencies>
 

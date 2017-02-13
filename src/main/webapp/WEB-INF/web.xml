@@ -60,6 +60,4 @@
         <url-pattern>*.vm</url-pattern>
     </servlet-mapping>
 
-
-
 </web-app>
