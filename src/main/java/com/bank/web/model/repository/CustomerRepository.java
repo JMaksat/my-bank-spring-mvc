@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface CustomerRepository {
 
-    List<CustomerInfo> customersList();
+    List<CustomerInfo> customersList(Boolean isActive);
 
     void changeStatus (CustomerInfo customerInfo, Boolean status);
 

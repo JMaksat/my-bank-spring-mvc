@@ -3,13 +3,16 @@ package com.bank.web.model.repository;
 import com.bank.web.model.entity.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository("customerRepository")
 public class CustomerRepositoryImpl implements CustomerRepository {
@@ -28,8 +31,27 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public List<CustomerInfo> customersList() {
-        return null;
+    public List<CustomerInfo> customersList(Boolean isActive) {
+        Map<String, CustomerInfo> param = new HashMap<>();
+
+        String isActiveClause;
+        if (isActive) {
+            isActiveClause = " is_active = true ";
+        } else {
+            isActiveClause = " is_active = false ";
+        }
+
+        String sql = " select customer_id, first_name, last_name, middle_name, " +
+                " birth_date, date_modified, is_active, user_id, date_created " +
+                " from bank.customer_info " +
+                " where " + isActiveClause +
+                " order by customer_id ";
+
+        ((JdbcTemplate)(namedParameterJdbcTemplate.getJdbcOperations())).setFetchSize(500);
+        List<CustomerInfo> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerInfo.class));
+        logger.info(" Obtain data from bank.customer_info with condition (" + result.size() + ") ");
+
+        return result;
     }
 
     @Override
