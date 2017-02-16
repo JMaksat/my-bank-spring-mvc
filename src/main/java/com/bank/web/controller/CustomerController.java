@@ -4,15 +4,14 @@ import com.bank.web.model.entity.*;
 import com.bank.web.model.repository.CustomerRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class CustomerController {
@@ -61,25 +60,62 @@ public class CustomerController {
         return new ModelAndView("customerDetails");
     }
 
-    @RequestMapping(path = "/customers/new/{customerID}", method = RequestMethod.GET)
+    /*@RequestMapping(path = "/customers/new", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
-    public ModelAndView newCustomer(@PathVariable Integer customerID, ModelMap map) {
+    public ModelAndView newCustomer(ModelMap map) {
 
         map.put("pageName", "New customer");
         map.put("leftMenu", "customers");
         map.put("templateType", "insert");
 
         return new ModelAndView("customerEntry");
-    }
+    }*/
 
-    @RequestMapping(path = "/customers/update/{customerID}", method = RequestMethod.GET)
+    @RequestMapping(path = "/customers/edit/{customerID}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
     public ModelAndView updateCustomer(@PathVariable Integer customerID, ModelMap map) {
 
-        map.put("pageName", "Update customer entry");
+        if (customerID >= 0) {
+            List<CustomerInfo> customer = customerRepository.customerDetails(customerID);
+            CustomerInfo details = (customer != null && customer.size() > 0) ? customer.iterator().next() : null;
+
+            map.put("customer", details);
+            map.put("pageName", "Update customer entry");
+        } else {
+            map.put("pageName", "New customer");
+        }
+
         map.put("leftMenu", "customers");
-        map.put("templateType", "update");
+        map.put("customerID", customerID);
 
         return new ModelAndView("customerEntry");
+    }
+
+    @RequestMapping(path = "/customers/save", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    //@Secured({"ROLE_USER"})
+    public String newCustomer(@RequestParam Map<String, String> params) {
+        CustomerInfo customer = new CustomerInfo();
+
+        customer.setCustomerID(Integer.valueOf(params.get("customerID")));
+        customer.setFirstName(params.get("firstName"));
+        customer.setLastName(params.get("lastName"));
+        customer.setMiddleName(params.get("middleName"));
+        customer.setBirthDate(params.get("birthDate"));
+        customer.setDateModified(new java.util.Date());
+        customer.setIsActive(1);
+        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null)
+                username = authentication.getName(); */
+        customer.setUserID("temp_user");
+        customer.setDateCreated(new java.util.Date());
+
+        if (Integer.valueOf(params.get("customerID")) >= 0) {
+            customerRepository.updateCustomer(customer);
+        } else {
+            customerRepository.addCustomer(customer);
+        }
+
+        return "1";
     }
 }

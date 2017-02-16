@@ -15,7 +15,7 @@
           <h1 class="page-header">$pageName</h1>
 
           <h2 class="sub-header">
-              <a class="btn btn-success" href="$request.contextPath/customers/new/-1" role="button">New customer</a>
+              <a class="btn btn-success" href="$request.contextPath/customers/edit/-1" role="button">New customer</a>
           </h2>
 
           <div class="table-responsive">

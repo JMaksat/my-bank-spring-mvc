@@ -12,10 +12,10 @@ Pages:
   Also, there are few buttons like "Delete", "Edit" (in edit mode changing to "Save") and so on.
   Extra information opens in modal windows as a list. Double clicking on the rows of the list lead to open new page with desired information.
 - papers (CRUD as in customer info)
-- accounts (CRUD as in customer info)
+- accounts (CRUD as in customer info. Accounts can be created only via Customer's card. Therefore, just created account refers to current customer)
 - contacts (CRUD as in customer info)
 - address (CRUD as in customer info)
-- transactions (create and read in same form)
+- transactions (create and read in same form. Transactions can be created only via Account's card. Thus, just created transaction refers to current account)
 - directory (CRUD as in customer info)
 - bank_parameters (CRUD as in customer info)
 

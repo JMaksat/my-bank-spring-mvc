@@ -21,8 +21,9 @@
                     <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalAddresses">Addresses</button>
                     <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalContacts">Contacts</button>
                     <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalPapers">Papers</button>
-                    <a class="btn btn-warning" href="#" role="button">Edit/Save</a>
+                    <a class="btn btn-warning" href="$request.contextPath/customers/edit/$!customerID" role="button">Edit</a>
                     <a class="btn btn-danger" href="#" role="button">Delete</a>
+                    <a class="btn btn-danger" href="#" role="button">Block/Unblock</a>
                 </h3>
 
                 <div class="table-responsive">
@@ -52,7 +53,7 @@
                             </tr>
                             <tr>
                                 <td><strong>Date of birth</strong></td>
-                                <td>$!dateTool.format("d.M.y", $!customer.birthDate)</td>
+                                <td>$!customer.birthDate</td>
                             </tr>
                             <tr>
                                 <td><strong>Last edited date</strong></td>
@@ -122,6 +123,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    add account
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -160,6 +162,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    add address
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -198,6 +201,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    add contact
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -236,6 +240,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    add paper
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
