@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository("customerRepository")
+@Transactional
 public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Autowired
@@ -35,10 +37,13 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         Map<String, CustomerInfo> param = new HashMap<>();
 
         String isActiveClause;
-        if (isActive) {
-            isActiveClause = " is_active = true ";
+
+        if (isActive == null) {
+            isActiveClause = " 1=1 ";
+        } else if (isActive) {
+            isActiveClause = " is_active = 1 ";
         } else {
-            isActiveClause = " is_active = false ";
+            isActiveClause = " is_active = 0 ";
         }
 
         String sql = " select customer_id, first_name, last_name, middle_name, " +
@@ -55,37 +60,164 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public void changeStatus(CustomerInfo customerInfo, Boolean status) {
+    public List<CustomerInfo> customerDetails(Integer customerID) {
+        Map<String, Integer> param = new HashMap<>();
 
+        String sql = " select * from bank.customer_info where customer_id = :customerID ";
+        param.put("customerID", customerID);
+        List<CustomerInfo> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerInfo.class));
+        logger.info(" Obtain customer details using cistomerID = " + customerID);
+
+        return result;
     }
 
     @Override
-    public List<Accounts> getAccounts(CustomerInfo customerInfo) {
-        return null;
+    public void changeStatus(Integer customerID, Boolean status) {
+        Map<String, Object> fields = new HashMap<>();
+        String state = status?"1":"0";
+
+        String sql = " update bank.customer_info set is_active = :state where customer_id = :customerID ";
+
+        fields.put("customerID", customerID);
+        fields.put("state", state);
+
+        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
+
+        if (rowNumbers != 1) {
+            logger.warn("Warning! For bank.customer_info " + customerID + " was update is_active " + rowNumbers + " rows");
+        }
     }
 
     @Override
-    public List<CustomerAddress> getAddresses(CustomerInfo customerInfo) {
-        return null;
+    public List<Accounts> getAccounts(Integer customerID) {
+        Map<String, Integer> param = new HashMap<>();
+
+        String sql = " select account_id " +
+                "     , account_number " +
+                "     , account_owner " +
+                "     , date_opened " +
+                "     , date_closed " +
+                "     , date_created " +
+                "     , date_modified " +
+                "     , user_id " +
+                "     , (select dir_type from bank.directory where dir_id = account_type and is_active = 1) account_type " +
+                "     , is_suspended " +
+                "     , comment  " +
+                "  from bank.accounts  " +
+                " where account_owner = :customerID " +
+                " order by account_id ";
+        param.put("customerID", customerID);
+        List<Accounts> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Accounts.class));
+        logger.info(" Obtain accounts list for cistomerID = " + customerID);
+
+        return result;
     }
 
     @Override
-    public List<CustomerContacts> getContacts(CustomerInfo customerInfo) {
-        return null;
+    public List<CustomerAddress> getAddresses(Integer customerID) {
+        Map<String, Integer> param = new HashMap<>();
+
+        String sql = " select address_id " +
+                "     , value " +
+                "     , date_created " +
+                "     , date_modified " +
+                "     , is_active " +
+                "     , user_id " +
+                "     , (select dir_type from bank.directory where dir_id = address_type and is_active = 1) address_type " +
+                "     , customer_id " +
+                "  from bank.customer_address " +
+                " where customer_id = :customerID " +
+                "   and is_active = 1 ";
+        param.put("customerID", customerID);
+        List<CustomerAddress> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerAddress.class));
+        logger.info(" Obtain addresses list for cistomerID = " + customerID);
+
+        return result;
     }
 
     @Override
-    public List<CustomerPapers> getPapers(CustomerInfo customerInfo) {
-        return null;
+    public List<CustomerContacts> getContacts(Integer customerID) {
+        Map<String, Integer> param = new HashMap<>();
+
+        String sql = " select contact_id " +
+                "     , value " +
+                "     , date_created " +
+                "     , date_modified " +
+                "     , is_active " +
+                "     , user_id " +
+                "     , (select dir_type from bank.directory where dir_id = contact_type and is_active = 1) contact_type " +
+                "     , customer_id " +
+                "  from bank.customer_contacts " +
+                " where customer_id = :customerID " +
+                "   and is_active = 1 ";
+        param.put("customerID", customerID);
+        List<CustomerContacts> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerContacts.class));
+        logger.info(" Obtain contacts list for cistomerID = " + customerID);
+
+        return result;
+    }
+
+    @Override
+    public List<CustomerPapers> getPapers(Integer customerID) {
+        Map<String, Integer> param = new HashMap<>();
+
+        String sql = " select paper_id " +
+                "     , value " +
+                "     , date_created " +
+                "     , date_modified " +
+                "     , is_active " +
+                "     , user_id " +
+                "     , (select dir_type from bank.directory where dir_id = paper_type and is_active = 1) paper_type " +
+                "     , customer_id " +
+                "  from bank.customer_papers " +
+                " where customer_id = :customerID " +
+                "   and is_active = 1 ";
+        param.put("customerID", customerID);
+        List<CustomerPapers> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerPapers.class));
+        logger.info(" Obtain contacts list for cistomerID = " + customerID);
+
+        return result;
     }
 
     @Override
     public void addCustomer(CustomerInfo customerInfo) {
+        Map<String, Object> fields = new HashMap<>();
 
+        fields.put("first_name", customerInfo.getFirstName());
+        fields.put("last_name", customerInfo.getLastName());
+        fields.put("middle_name", customerInfo.getMiddleName());
+        fields.put("birth_date", customerInfo.getBirthDate());
+        fields.put("date_modified", customerInfo.getDateModified());
+        fields.put("is_active", customerInfo.getIsActive());
+        fields.put("user_id", customerInfo.getUserID());
+        fields.put("date_created", customerInfo.getDateCreated());
+
+        int rowNumbers = simpleJdbcInsert.execute(fields);
+
+        if (rowNumbers != 1) {
+            logger.warn("Warning! For bank.customer_info " + customerInfo.getCustomerID() + " was inserted " + rowNumbers + " rows");
+        }
     }
 
     @Override
     public void updateCustomer(CustomerInfo customerInfo) {
+        Map<String, Object> fields = new HashMap<>();
 
+        String sql = " update bank.customer_info set first_name = :first_name, last_name = :last_name, middle_name = :middle_name, " +
+                " birth_date = :birth_date, date_modified = :date_modified, user_id = :user_id where customer_id = :customer_id ";
+
+        fields.put("customer_id", customerInfo.getCustomerID());
+        fields.put("first_name", customerInfo.getFirstName());
+        fields.put("last_name", customerInfo.getLastName());
+        fields.put("middle_name", customerInfo.getMiddleName());
+        fields.put("birth_date", customerInfo.getBirthDate());
+        fields.put("date_modified", customerInfo.getDateModified());
+        fields.put("user_id", customerInfo.getUserID());
+
+        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
+
+        if (rowNumbers != 1) {
+            logger.warn("Warning! For bank.customer_info " + customerInfo.getCustomerID() + " was update " + rowNumbers + " rows");
+        }
     }
 }

@@ -7,11 +7,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.List;
 
 @Repository("directoryRepository")
+@Transactional
 public class DirectoryRepositoryImpl implements DirectoryRepository {
 
     @Autowired
@@ -55,5 +57,10 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
     public List<Directory> getPaperTypes() {
         //Directory.PAPERS
         return null;
+    }
+
+    @Override
+    public void addEntry(Directory directory) {
+
     }
 }

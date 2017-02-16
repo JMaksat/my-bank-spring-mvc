@@ -21,16 +21,16 @@ public class CustomerPapers {
     private java.util.Date dateModified;
 
     @RowMapperField(columnName = "is_active")
-    private Boolean isActive;
+    private Integer isActive;
 
     @RowMapperField(columnName = "user_id")
-    private Integer userID;
+    private String userID;
 
     @RowMapperField(columnName = "paper_type")
-    private Integer paperType;
+    private String paperType;
 
     @RowMapperField(columnName = "customer_id")
-    private Integer customerID;
+    private String customerID;
 
     public Integer getPaperID() {
         return paperID;
@@ -64,35 +64,35 @@ public class CustomerPapers {
         this.dateModified = dateModified;
     }
 
-    public Boolean getIsActive() {
+    public Integer getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setIsActive(Integer isActive) {
         this.isActive = isActive;
     }
 
-    public Integer getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(Integer userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 
-    public Integer getPaperType() {
+    public String getPaperType() {
         return paperType;
     }
 
-    public void setPaperType(Integer paperType) {
+    public void setPaperType(String paperType) {
         this.paperType = paperType;
     }
 
-    public Integer getCustomerID() {
+    public String getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(Integer customerID) {
+    public void setCustomerID(String customerID) {
         this.customerID = customerID;
     }
 
@@ -104,9 +104,9 @@ public class CustomerPapers {
                 ", dateCreated=" + dateCreated +
                 ", dateModified=" + dateModified +
                 ", isActive=" + isActive +
-                ", userID=" + userID +
-                ", paperType=" + paperType +
-                ", customerID=" + customerID +
+                ", userID='" + userID + '\'' +
+                ", paperType='" + paperType + '\'' +
+                ", customerID='" + customerID + '\'' +
                 '}';
     }
 }

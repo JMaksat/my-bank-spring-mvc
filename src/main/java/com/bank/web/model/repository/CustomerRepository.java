@@ -8,15 +8,17 @@ public interface CustomerRepository {
 
     List<CustomerInfo> customersList(Boolean isActive);
 
-    void changeStatus (CustomerInfo customerInfo, Boolean status);
+    List<CustomerInfo> customerDetails(Integer customerID);
 
-    List<Accounts> getAccounts(CustomerInfo customerInfo);
+    void changeStatus (Integer customerID, Boolean status);
 
-    List<CustomerAddress> getAddresses(CustomerInfo customerInfo);
+    List<Accounts> getAccounts(Integer customerID);
 
-    List<CustomerContacts> getContacts(CustomerInfo customerInfo);
+    List<CustomerAddress> getAddresses(Integer customerID);
 
-    List<CustomerPapers> getPapers(CustomerInfo customerInfo);
+    List<CustomerContacts> getContacts(Integer customerID);
+
+    List<CustomerPapers> getPapers(Integer customerID);
 
     void addCustomer(CustomerInfo customerInfo);
 

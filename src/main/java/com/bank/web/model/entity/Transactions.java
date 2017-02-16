@@ -15,7 +15,7 @@ public class Transactions {
     private Integer operationType;
 
     @RowMapperField(columnName = "is_reversed")
-    private Boolean isReversed;
+    private Integer isReversed;
 
     @RowMapperField(columnName = "transaction_sum")
     private Double transactionSum;
@@ -27,7 +27,7 @@ public class Transactions {
     private java.util.Date transactionTime;
 
     @RowMapperField(columnName = "user_id")
-    private Integer userID;
+    private String userID;
 
     @RowMapperField(columnName = "account_debit")
     private Integer accountDebit;
@@ -51,11 +51,11 @@ public class Transactions {
         this.operationType = operationType;
     }
 
-    public Boolean getIsReversed() {
+    public Integer getIsReversed() {
         return isReversed;
     }
 
-    public void setIsReversed(Boolean isReversed) {
+    public void setIsReversed(Integer isReversed) {
         this.isReversed = isReversed;
     }
 
@@ -83,11 +83,11 @@ public class Transactions {
         this.transactionTime = transactionTime;
     }
 
-    public Integer getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(Integer userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 
@@ -116,7 +116,7 @@ public class Transactions {
                 ", transactionSum=" + transactionSum +
                 ", transactionDate=" + transactionDate +
                 ", transactionTime=" + transactionTime +
-                ", userID=" + userID +
+                ", userID='" + userID + '\'' +
                 ", accountDebit=" + accountDebit +
                 ", accountCredit=" + accountCredit +
                 '}';

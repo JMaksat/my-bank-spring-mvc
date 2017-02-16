@@ -13,7 +13,7 @@ public class Users {
     private String password;
 
     @RowMapperField(columnName = "is_active")
-    private Boolean isActive;
+    private Integer isActive;
 
     public String getUserName() {
         return userName;
@@ -31,11 +31,11 @@ public class Users {
         this.password = password;
     }
 
-    public Boolean getIsActive() {
+    public Integer getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setIsActive(Integer isActive) {
         this.isActive = isActive;
     }
 

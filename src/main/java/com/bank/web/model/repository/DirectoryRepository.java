@@ -15,4 +15,6 @@ public interface DirectoryRepository {
     List<Directory> getContactTypes();
 
     List<Directory> getPaperTypes();
+
+    void addEntry(Directory directory);
 }

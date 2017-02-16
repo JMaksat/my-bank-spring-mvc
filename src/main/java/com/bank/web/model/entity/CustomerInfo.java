@@ -27,10 +27,10 @@ public class CustomerInfo {
     private java.util.Date dateModified;
 
     @RowMapperField(columnName = "is_active")
-    private Boolean isActive;
+    private Integer isActive;
 
     @RowMapperField(columnName = "user_id")
-    private Integer userID;
+    private String userID;
 
     @RowMapperField(columnName = "date_created")
     private java.util.Date dateCreated;
@@ -83,19 +83,19 @@ public class CustomerInfo {
         this.dateModified = dateModified;
     }
 
-    public Boolean getIsActive() {
+    public Integer getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setIsActive(Integer isActive) {
         this.isActive = isActive;
     }
 
-    public Integer getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(Integer userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 
@@ -117,7 +117,7 @@ public class CustomerInfo {
                 ", birthDate=" + birthDate +
                 ", dateModified=" + dateModified +
                 ", isActive=" + isActive +
-                ", userID=" + userID +
+                ", userID='" + userID + '\'' +
                 ", dateCreated=" + dateCreated +
                 '}';
     }

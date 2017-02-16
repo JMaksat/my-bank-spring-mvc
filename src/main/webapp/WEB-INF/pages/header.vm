@@ -1,0 +1,30 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="$request.contextPath/static-resources/favicon.ico">
+
+    <title>$pageName</title>
+
+    <link href="$request.contextPath/static-resources/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="$request.contextPath/static-resources/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="$request.contextPath/static-resources/examples/dashboard/dashboard.css" rel="stylesheet">
+
+    <script src="$request.contextPath/static-resources/assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="$request.contextPath/static-resources/assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="$request.contextPath/static-resources/dist/js/bootstrap.min.js"></script>
+    <script src="$request.contextPath/static-resources/assets/js/vendor/holder.min.js"></script>
+    <script src="$request.contextPath/static-resources/assets/js/ie10-viewport-bug-workaround.js"></script>
+
+    <style>
+        .sortable:hover {
+            cursor: pointer;
+            cursor: hand;
+        }
+    </style>
+</head>

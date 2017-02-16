@@ -21,13 +21,13 @@ public class CustomerAddress {
     private java.util.Date dateModified;
 
     @RowMapperField(columnName = "is_active")
-    private Boolean isActive;
+    private Integer isActive;
 
     @RowMapperField(columnName = "user_id")
-    private Integer userID;
+    private String userID;
 
     @RowMapperField(columnName = "address_type")
-    private Integer addressType;
+    private String addressType;
 
     @RowMapperField(columnName = "customer_id")
     private Integer customerID;
@@ -64,27 +64,27 @@ public class CustomerAddress {
         this.dateModified = dateModified;
     }
 
-    public Boolean getIsActive() {
+    public Integer getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setIsActive(Integer isActive) {
         this.isActive = isActive;
     }
 
-    public Integer getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(Integer userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 
-    public Integer getAddressType() {
+    public String getAddressType() {
         return addressType;
     }
 
-    public void setAddressType(Integer addressType) {
+    public void setAddressType(String addressType) {
         this.addressType = addressType;
     }
 
@@ -104,8 +104,8 @@ public class CustomerAddress {
                 ", dateCreated=" + dateCreated +
                 ", dateModified=" + dateModified +
                 ", isActive=" + isActive +
-                ", userID=" + userID +
-                ", addressType=" + addressType +
+                ", userID='" + userID + '\'' +
+                ", addressType='" + addressType + '\'' +
                 ", customerID=" + customerID +
                 '}';
     }

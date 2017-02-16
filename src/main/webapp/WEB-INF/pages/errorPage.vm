@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+    #parse("WEB-INF/pages/header.vm")
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <img src="$request.contextPath/static-resources/error.png">
+    </div>
+</div>
+
+</body>
+</html>

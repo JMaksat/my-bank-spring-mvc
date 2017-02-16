@@ -6,7 +6,7 @@ CREATE TABLE bank.users
 (
   username character varying(45) NOT NULL,
   password character varying(45) NOT NULL,
-  is_active boolean NOT NULL DEFAULT true,
+  is_active integer,
   CONSTRAINT users_pk PRIMARY KEY (username)
 );
 
@@ -30,7 +30,7 @@ CREATE TABLE bank.customer_info
   middle_name character varying(64),
   birth_date date,
   date_modified date,
-  is_active boolean,
+  is_active integer,
   user_id character varying(32),
   date_created date,
   CONSTRAINT customer_info_pk PRIMARY KEY (customer_id)
@@ -48,7 +48,7 @@ CREATE TABLE bank.accounts
   date_modified date,
   user_id character varying(32),
   account_type integer,
-  is_suspended boolean,
+  is_suspended integer,
   comment character varying(4000),
   CONSTRAINT accounts_pk PRIMARY KEY (account_id),
   CONSTRAINT account_owner_fk FOREIGN KEY (account_owner)
@@ -66,7 +66,7 @@ CREATE TABLE bank.transactions
 (
   transaction_id serial NOT NULL,
   operation_type integer,
-  is_reversed boolean,
+  is_reversed integer,
   transaction_sum real,
   transaction_date date,
   transaction_time time without time zone,
@@ -102,7 +102,7 @@ CREATE TABLE bank.customer_papers
   value character varying(1024),
   date_created date,
   date_modified date,
-  is_active boolean,
+  is_active integer,
   user_id character varying(32),
   paper_type integer,
   customer_id integer,
@@ -118,7 +118,7 @@ CREATE TABLE bank.customer_address
   value character varying(1024),
   date_created date,
   date_modified date,
-  is_active boolean,
+  is_active integer,
   user_id character varying(32),
   address_type integer,
   customer_id integer,
@@ -134,7 +134,7 @@ CREATE TABLE bank.customer_contacts
   value character varying(1024),
   date_created date,
   date_modified date,
-  is_active boolean,
+  is_active integer,
   user_id character varying(32),
   contact_type integer,
   customer_id integer,
@@ -152,433 +152,7 @@ CREATE TABLE bank.directory
   description character varying(1024),
   date_created date,
   date_modified date,
-  is_active boolean,
+  is_active integer,
   user_id character varying(32),
   CONSTRAINT directory_pk PRIMARY KEY (dir_id)
 );
-
-CREATE OR REPLACE FUNCTION bank.change_customer_activity(
-    p_customer_id integer,
-    p_is_active boolean)
-  RETURNS boolean AS
-$BODY$
-begin
-   update bank.customer_info
-      set is_active     = p_is_active,
-          date_modified = now(),
-          user_id       = user
-    where customer_id = p_customer_id;
-
-   return true;
-	
-exception when others then 
-   return false;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.decrease_account_rest(
-    p_account integer,
-    p_transaction integer,
-    p_sum real)
-  RETURNS integer AS
-$BODY$
-declare
-   l_rest_id integer;
-   l_sum real;
-begin
-   select t.rest_sum 
-     into l_sum
-     from bank.account_rest t 
-    where t.account_id = p_account
-      and t.rest_id = (select max(z.rest_id)
-                         from bank.account_rest z
-                        where z.account_id = t.account_id);
-						
-   l_sum := l_sum - p_sum;
-						
-   insert into bank.account_rest (account_id, rest_sum, transaction_id, rest_date, rest_time)
-   values (p_account, l_sum, p_transaction, now(), now()) returning rest_id into l_rest_id;
-   
-   return l_rest_id;
-	
-exception when others then 
-   return -1;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.get_account_list(p_customer_id integer)
-  RETURNS refcursor AS
-$BODY$
-declare
-    rcur refcursor;
-begin
-    open rcur for select t.account_id,
-	                 t.account_number
-		    from bank.accounts t
-		   where t.account_owner = p_customer_id
-		     and now() between t.date_opened and coalesce(t.date_closed, now());
-    return rcur;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.get_account_rest(p_account integer)
-  RETURNS real AS
-$BODY$
-declare
-l_retval real := -1;
-begin
-   select t.rest_sum 
-     into l_retval
-     from bank.account_rest t 
-    where t.account_id = p_account
-      and t.rest_id = (select max(z.rest_id)
-                         from bank.account_rest z
-                        where z.account_id = t.account_id);
-   return l_retval;
-	
-exception when others then 
-   return -1;
-end; $BODY$
-  LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION bank.get_account_transactions(p_account_id integer)
-  RETURNS refcursor AS
-$BODY$
-declare
-    rcur refcursor;
-begin
-    open rcur for select transaction_id,
-			 (select z.dir_type
-			    from bank.directory z
-			   where z.is_active = true 
-			     and z.dir_id = t.operation_type) as operation_type,
-			 is_reversed,
-			 transaction_sum,
-			 transaction_date,
-			 to_char(transaction_time, 'hh24:mi:ss') as transaction_time,
-			 (select z.account_number
-			    from bank.accounts z
-			   where z.account_id = t.account_debit) as account_debit,
-			 (select z.account_number
-			    from bank.accounts z
-			   where z.account_id = t.account_credit) as account_credit
-		    from bank.transactions t
-		   where p_account_id in (t.account_debit, t.account_credit);
-    return rcur;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.get_account_types()
-  RETURNS refcursor AS
-$BODY$
-declare
-    rcur refcursor;
-begin
-    open rcur for select t.dir_id
-                       , t.dir_type
-		    from bank.directory t
-		   where t.is_active = true
-		     and t.dir_group = 'ACCOUNTS';
-    return rcur;
-end; $BODY$
-  LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION bank.get_address(p_customer_id integer)
-  RETURNS refcursor AS
-$BODY$
-declare
-    rcur refcursor;
-begin
-    open rcur for select ca.address_id
-		       , (select d.dir_type
-			    from bank.directory d
-			   where d.dir_group = 'ADDRESS'
-			     and d.dir_id = ca.address_type) as address_type
-		       , ca.value
-		    from bank.customer_address ca
-		   where ca.customer_id = p_customer_id
-		     and ca.is_active = true;
-   
-    return rcur;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.get_all_accounts()
-  RETURNS refcursor AS
-$BODY$
-declare
-    rcur refcursor;
-begin
-    open rcur for select t.account_id,
-	                 t.account_number
-		    from bank.accounts t
-		   where now() between t.date_opened and coalesce(t.date_closed, now());
-    return rcur;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.get_contacts(p_customer_id integer)
-  RETURNS refcursor AS
-$BODY$
-declare
-    rcur refcursor;
-begin
-    open rcur for select cc.contact_id
-		       , (select d.dir_type
-			    from bank.directory d
-			   where d.dir_group = 'CONTACTS'
-			     and d.dir_id = cc.contact_type) as contact_type
-		       , cc.value
-		    from bank.customer_contacts cc
-		   where cc.customer_id = p_customer_id
-		     and cc.is_active = true;
-   
-    return rcur;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.get_customer_accounts(p_customer_id integer)
-  RETURNS refcursor AS
-$BODY$
-declare
-    rcur refcursor;
-begin
-    open rcur for select t.account_id,
-                         t.account_number,
-                         t.account_owner,
-                         t.date_opened,
-                         coalesce(t.date_closed, '1901-01-01') as date_closed,
-                         t.date_created,
-                         coalesce(t.date_modified, '1901-01-01') as date_modified,
-                         t.user_id,
-                         (select z.dir_type
-                            from bank.directory z
-                           where z.dir_id = t.account_type) as account_type,
-                         t.is_suspended,
-                         (select z.rest_sum
-                            from bank.account_rest z
-                           where z.rest_id = (select max(r.rest_id)
-                                                from bank.account_rest r
-                                               where r.account_id = z.account_id)
-                             and z.account_id = t.account_id) as rest_sum
-                    from bank.accounts t
-                   where t.account_owner = p_customer_id
-                     and now() between t.date_opened and coalesce(t.date_closed, now());
-    return rcur;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.get_customer_info(p_pattern character varying)
-  RETURNS refcursor AS
-$BODY$
-declare
-    rcur refcursor;
-begin
-    open rcur for select t.customer_id,
-			 t.first_name,
-			 t.last_name,
-			 t.middle_name,
-			 t.birth_date,
-			 t.personal_id,
-			 t.is_resident,
-			 coalesce(t.date_modified, '1901-01-01') as date_modified,
-			 t.is_active,
-			 t.user_id,
-			 t.date_created
-                    from bank.customer_info t
-                   where t.first_name || t.last_name || t.middle_name like p_pattern
-                   order by t.customer_id;
-    return rcur;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.get_transaction_types()
-  RETURNS refcursor AS
-$BODY$
-declare
-    rcur refcursor;
-begin
-    open rcur for select t.dir_id
-                       , t.dir_type
-		    from bank.directory t
-		   where t.is_active = true
-		     and t.dir_group = 'OPERATIONS';
-    return rcur;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.increase_account_rest(
-    p_account integer,
-    p_transaction integer,
-    p_sum real)
-  RETURNS integer AS
-$BODY$
-declare
-   l_rest_id integer;
-   l_sum real;
-begin
-   select t.rest_sum 
-     into l_sum
-     from bank.account_rest t 
-    where t.account_id = p_account
-      and t.rest_id = (select max(z.rest_id)
-                         from bank.account_rest z
-                        where z.account_id = t.account_id);
-						
-   l_sum := l_sum + p_sum;
-						
-   insert into bank.account_rest (account_id, rest_sum, transaction_id, rest_date, rest_time)
-   values (p_account, l_sum, p_transaction, now(), now()) returning rest_id into l_rest_id;
-   
-   return l_rest_id;
-	
-exception when others then 
-   return -1;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.insert_account_info(
-    p_account_number character varying,
-    p_account_owner integer,
-    p_date_opened date,
-    p_account_type integer)
-  RETURNS boolean AS
-$BODY$
-declare
-l_account_id integer;
-l_transaction_id integer;
-begin
-   -- Adding new account
-   insert into bank.accounts (account_number, account_owner, date_opened, date_closed, date_created, date_modified, user_id, account_type, is_suspended)
-   values (p_account_number, p_account_owner, p_date_opened, null, now(), null, user, p_account_type, false) returning account_id into l_account_id;
-
-   -- Adding void transaction
-   insert into bank.transactions (operation_type, is_reversed, transaction_sum, transaction_date, transaction_time, user_id, account_debit, account_credit)
-   values (14, false, 0.0, now(), now(), user, 2, l_account_id) returning transaction_id into l_transaction_id;
-
-   -- Adding very first rest of theaccount and it is equal to 0
-   insert into bank.account_rest (account_id, rest_sum, transaction_id, rest_date, rest_time)
-   values (l_account_id, 0, l_transaction_id, now(), now());
-	
-   return true;
-	
---exception when others then 
-  -- return false;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.insert_customer_info(
-    p_first_name character varying,
-    p_last_name character varying,
-    p_middle_name character varying,
-    p_birth_date date,
-    p_personal_id character varying,
-    p_is_resident boolean)
-  RETURNS boolean AS
-$BODY$
-begin
-   insert into bank.customer_info (first_name, last_name, middle_name, birth_date, personal_id, is_resident, date_created, date_modified, is_active, user_id)
-   values (p_first_name, p_last_name, p_middle_name, p_birth_date, p_personal_id, p_is_resident, now(), null, true, user);
-	
-   return true;
-	
-exception when others then 
-   return false;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.insert_transaction_info(
-    p_operation_type integer,
-    p_is_reversed boolean,
-    p_transaction_sum real,
-    p_account_debit integer,
-    p_account_credit integer)
-  RETURNS integer AS
-$BODY$
-declare
-l_rest_id integer;
-l_transaction_id integer;
-l_suspended boolean := false;
-k record;
-begin
-  
-  for k in (select t.is_suspended
-			  from bank.accounts t
-		     where t.account_id in (p_account_debit, p_account_credit))
-  loop
-    if k.is_suspended = true then
-	  l_suspended := true;
-    end if;
-  end loop;
-  
-  if l_suspended = false then
-  
-    if p_transaction_sum <= bank.get_account_rest(p_account_debit) then
-      insert into bank.transactions (operation_type, is_reversed, transaction_sum, transaction_date, transaction_time, user_id, account_debit, account_credit)
-        values (p_operation_type, p_is_reversed, p_transaction_sum, now(), now(), user, p_account_debit, p_account_credit) returning transaction_id into l_transaction_id;
-		  
-      l_rest_id := bank.decrease_account_rest(p_account_debit, l_transaction_id, p_transaction_sum);
-      if (l_rest_id >= 0) then 
-        l_rest_id := bank.increase_account_rest(p_account_credit, l_transaction_id, p_transaction_sum);
-      end if;
-    else 
-      return -2;
-    end if;
-
-  else
-    return -3;
-  end if;
-
-  return l_rest_id;	
-exception when others then 
-   return -1;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.update_account_info(
-    p_account_id integer,
-    p_is_suspended boolean)
-  RETURNS boolean AS
-$BODY$
-begin
-   update bank.accounts
-      set is_suspended   = p_is_suspended,
-          date_modified  = now(),
-          user_id        = user
-    where account_id     = p_account_id;
-
-   return true;
-	
-exception when others then 
-   return false;
-end; $BODY$
-  LANGUAGE plpgsql;
-  
-CREATE OR REPLACE FUNCTION bank.update_customer_info(
-    p_customer_id integer,
-    p_first_name character varying,
-    p_last_name character varying,
-    p_middle_name character varying,
-    p_birth_date date,
-    p_personal_id character varying,
-    p_is_resident boolean)
-  RETURNS boolean AS
-$BODY$
-begin
-   update bank.customer_info
-      set first_name    = p_first_name,
-          last_name     = p_last_name,
-          middle_name   = p_middle_name,
-          birth_date    = p_birth_date,
-          personal_id   = p_personal_id,
-          is_resident   = p_is_resident,
-          date_modified = now(),
-          user_id       = user
-    where customer_id = p_customer_id;
-
-   return true;
-	
-exception when others then 
-   return false;
-end; $BODY$
-  LANGUAGE plpgsql;

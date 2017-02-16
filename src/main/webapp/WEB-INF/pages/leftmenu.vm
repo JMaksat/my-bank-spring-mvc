@@ -1,0 +1,19 @@
+<div class="col-sm-3 col-md-2 sidebar">
+    <ul class="nav nav-sidebar">
+        #if ($leftMenu=="customers") <li class="active">
+        #else <li>
+        #end <a href="$request.contextPath/customers">Customers</a></li>
+
+        #if ($leftMenu=="accounts") <li class="active">
+        #else <li>
+        #end <a href="$request.contextPath/accounts">Accounts</a></li>
+
+        #if ($leftMenu=="transactions") <li class="active">
+        #else <li>
+        #end <a href="$request.contextPath/transactions">Transactions</a></li>
+
+        #if ($leftMenu=="directory") <li class="active">
+        #else <li>
+        #end <a href="$request.contextPath/directory">Directory</a></li>
+    </ul>
+</div>

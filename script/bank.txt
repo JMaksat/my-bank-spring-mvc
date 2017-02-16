@@ -1,0 +1,23 @@
+Application has:
+- access control, roles 
+  ROLE_ADMIN allowed only to work with users and roles;
+  ROLE_USER allowed to work with any business page except users and user roles;
+- The service only for individuals
+
+Pages:
+- customer general info (CRUD; create, read and update using same form; only prompt for delete ).
+  Initially page has filter and a table displaying a list of first 100 customers. Using filter could help to find specific record or show all of the records.
+  Double click on any row opens that customer info in new page. This page has "Single record view" of current customers data and buttons.
+  Buttons are dedicated to show customers extra information like papers, contacts, addresses and accounts. 
+  Also, there are few buttons like "Delete", "Edit" (in edit mode changing to "Save") and so on.
+  Extra information opens in modal windows as a list. Double clicking on the rows of the list lead to open new page with desired information.
+- papers (CRUD as in customer info)
+- accounts (CRUD as in customer info)
+- contacts (CRUD as in customer info)
+- address (CRUD as in customer info)
+- transactions (create and read in same form)
+- directory (CRUD as in customer info)
+- bank_parameters (CRUD as in customer info)
+
+968 7036365
+

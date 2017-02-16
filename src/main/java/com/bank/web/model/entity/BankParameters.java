@@ -33,7 +33,7 @@ public class BankParameters {
     private java.util.Date activeTo;
 
     @RowMapperField(columnName = "user_id")
-    private Integer userID;
+    private String userID;
 
     public Integer getParameterID() {
         return parameterID;
@@ -99,11 +99,11 @@ public class BankParameters {
         this.activeTo = activeTo;
     }
 
-    public Integer getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(Integer userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 
@@ -118,7 +118,7 @@ public class BankParameters {
                 ", dateModified=" + dateModified +
                 ", activeFrom=" + activeFrom +
                 ", activeTo=" + activeTo +
-                ", userID=" + userID +
+                ", userID='" + userID + '\'' +
                 '}';
     }
 }

@@ -30,13 +30,13 @@ public class Accounts {
     private java.util.Date dateModified;
 
     @RowMapperField(columnName = "user_id")
-    private Integer userID;
+    private String userID;
 
     @RowMapperField(columnName = "account_type")
-    private Integer accountType;
+    private String accountType;
 
     @RowMapperField(columnName = "is_suspended")
-    private Boolean isSuspended;
+    private Integer isSuspended;
 
     @RowMapperField(columnName = "comment")
     private String comment;
@@ -97,27 +97,27 @@ public class Accounts {
         this.dateModified = dateModified;
     }
 
-    public Integer getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(Integer userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 
-    public Integer getAccountType() {
+    public String getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(Integer accountType) {
+    public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
 
-    public Boolean getIsSuspended() {
+    public Integer getIsSuspended() {
         return isSuspended;
     }
 
-    public void setIsSuspended(Boolean isSuspended) {
+    public void setIsSuspended(Integer isSuspended) {
         this.isSuspended = isSuspended;
     }
 
@@ -139,8 +139,8 @@ public class Accounts {
                 ", dateClosed=" + dateClosed +
                 ", dateCreated=" + dateCreated +
                 ", dateModified=" + dateModified +
-                ", userID=" + userID +
-                ", accountType=" + accountType +
+                ", userID='" + userID + '\'' +
+                ", accountType='" + accountType + '\'' +
                 ", isSuspended=" + isSuspended +
                 ", comment='" + comment + '\'' +
                 '}';
