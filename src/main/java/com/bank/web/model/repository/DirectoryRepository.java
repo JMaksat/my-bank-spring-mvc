@@ -17,4 +17,8 @@ public interface DirectoryRepository {
     List<Directory> getPaperTypes();
 
     void addEntry(Directory directory);
+
+    void updateEntry(Directory directory);
+
+    void changeStatus(Integer dirID, Boolean status);
 }

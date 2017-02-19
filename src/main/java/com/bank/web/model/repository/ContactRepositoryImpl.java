@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Repository("contactRepository")
 @Transactional
@@ -29,6 +30,11 @@ public class ContactRepositoryImpl implements ContactRepository {
     }
 
     @Override
+    public List<CustomerContacts> getContact(Integer contactID) {
+        return null;
+    }
+
+    @Override
     public void addContact(CustomerContacts contact) {
 
     }
@@ -39,7 +45,7 @@ public class ContactRepositoryImpl implements ContactRepository {
     }
 
     @Override
-    public void deleteContact(CustomerContacts contact) {
+    public void changeStatus(Integer contactID, Boolean status) {
 
     }
 }

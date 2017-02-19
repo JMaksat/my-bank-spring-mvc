@@ -7,7 +7,7 @@ values (6, 'CONTACTS', 'SKYPE', 'Skype name', '2016-01-01', '2016-01-01', 1, 'sc
 insert into bank.directory (dir_id, dir_group, dir_type, description, date_created, date_modified, is_active, user_id)
 values (7, 'ADDRESS', 'ADDRESS_LINE1', 'First address line', '2016-01-01', '2016-01-01', 1, 'scott');
 insert into bank.directory (dir_id, dir_group, dir_type, description, date_created, date_modified, is_active, user_id)
-values (8, 'CONTACTS', 'ADDRESS_LINE2', 'Second address line', '2016-01-01', '2016-01-01', 1, 'scott');
+values (8, 'ADDRESS', 'ADDRESS_LINE2', 'Second address line', '2016-01-01', '2016-01-01', 1, 'scott');
 insert into bank.directory (dir_id, dir_group, dir_type, description, date_created, date_modified, is_active, user_id)
 values (9, 'OPERATIONS', 'INCOMING_TRANSFER', 'Transfer money from buffer account for incomings to personal account.', '2016-01-01', '2016-01-01', 1, 'scott');
 insert into bank.directory (dir_id, dir_group, dir_type, description, date_created, date_modified, is_active, user_id)

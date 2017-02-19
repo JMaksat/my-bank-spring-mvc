@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+    #parse("WEB-INF/pages/header.vm")
+
+<body>
+<input type="hidden" name="$!{_csrf.parameterName}" value="$!{_csrf.token}">
+    #parse("WEB-INF/pages/topmenu.vm")
+
+<div class="container-fluid">
+    <div class="row">
+        #parse("WEB-INF/pages/leftmenu.vm")
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <h1 class="page-header">$pageName</h1>
+
+            <h3 class="sub-header">
+                <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!address.customerID" role="button">
+                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
+                <a class="btn btn-warning" href="$request.contextPath/address/edit/$!address.customerID/$!address.addressID" role="button">Edit</a>
+                <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
+                    #if ($!address.isActive==1) Block
+                    #elseif ($!address.isActive==0) Unblock
+                    #else Undefined #end
+                </button>
+            </h3>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th width="150">Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ID</strong></td>
+                            <td>$!address.addressID</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Address</strong></td>
+                            <td>$!address.value</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Type</strong></td>
+                            <td>$!address.addressType</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Releated customer</strong></td>
+                            <td>$!address.customerID</td>
+                        </tr>
+                        <tr>
+                            <td><strong>State</strong></td>
+                            <td>#if ($!address.isActive==1)Active
+                            #elseif ($!address.isActive==0) Inactive
+                            #else Undefined #end</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Last edited by</strong></td>
+                            <td>$!address.userID</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Date of creation</strong></td>
+                            <td>$!dateTool.format("dd.MM.yyyy", $!address.dateCreated)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Last edited date</strong></td>
+                            <td>$!dateTool.format("dd.MM.yyyy", $!address.dateModified)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function changeState() {
+        var state = {};
+        var addressID = $!address.addressID;
+        state.addressID = addressID;
+        var status = $!address.isActive;
+        state.status = status;
+
+        $.ajax({
+            type : "GET",
+            url : "$request.contextPath/address/status",
+            contentType : "application/json",
+            dataType : "JSON",
+            data : state,
+            error : function(xhr, status, error) {
+                console.log("ResponseText:" + xhr.responseText);
+                alert("Failure during change status of address!");
+            },
+            success : function(data) {
+                window.location.href='$request.contextPath/address/$!address.addressID'
+                alert("Status of address (addressID=$!address.addressID) changed!");
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

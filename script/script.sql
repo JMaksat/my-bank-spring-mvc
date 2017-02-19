@@ -154,5 +154,6 @@ CREATE TABLE bank.directory
   date_modified date,
   is_active integer,
   user_id character varying(32),
-  CONSTRAINT directory_pk PRIMARY KEY (dir_id)
+  CONSTRAINT directory_pk PRIMARY KEY (dir_id),
+  CONSTRAINT directory_uq UNIQUE (dir_group, dir_type)
 );

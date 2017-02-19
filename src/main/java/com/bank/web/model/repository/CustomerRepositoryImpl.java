@@ -47,7 +47,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         }
 
         String sql = " select customer_id, first_name, last_name, middle_name, " +
-                " to_char(birth_date, 'DD.MM.YYYY') birth_date, date_modified, is_active, user_id, date_created " +
+                " birth_date, date_modified, is_active, user_id, date_created " +
                 " from bank.customer_info " +
                 " where " + isActiveClause +
                 " order by customer_id ";
@@ -64,7 +64,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         Map<String, Integer> param = new HashMap<>();
 
         String sql = " select customer_id, first_name, last_name, middle_name, " +
-                " to_char(birth_date, 'YYYY-MM-DD') birth_date, date_modified, is_active, user_id, date_created " +
+                " birth_date, date_modified, is_active, user_id, date_created " +
                 " from bank.customer_info where customer_id = :customerID ";
         param.put("customerID", customerID);
         List<CustomerInfo> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerInfo.class));
@@ -76,7 +76,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public void changeStatus(Integer customerID, Boolean status) {
         Map<String, Object> fields = new HashMap<>();
-        String state = status?"1":"0";
+        Integer state = status?1:0;
 
         String sql = " update bank.customer_info set is_active = :state where customer_id = :customerID ";
 
@@ -92,7 +92,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public List<Accounts> getAccounts(Integer customerID) {
-        Map<String, Integer> param = new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
 
         String sql = " select account_id " +
                 "     , account_number " +
@@ -102,13 +102,15 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 "     , date_created " +
                 "     , date_modified " +
                 "     , user_id " +
-                "     , (select dir_type from bank.directory where dir_id = account_type and is_active = 1) account_type " +
+                "     , (select dir_type from bank.directory " +
+                "         where dir_id = account_type and dir_group = :dir_group and is_active = 1) account_type " +
                 "     , is_suspended " +
                 "     , comment  " +
                 "  from bank.accounts  " +
                 " where account_owner = :customerID " +
                 " order by account_id ";
         param.put("customerID", customerID);
+        param.put("dir_group", Directory.ACCOUNTS);
         List<Accounts> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Accounts.class));
         logger.info(" Obtain accounts list for cistomerID = " + customerID);
 
@@ -117,7 +119,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public List<CustomerAddress> getAddresses(Integer customerID) {
-        Map<String, Integer> param = new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
 
         String sql = " select address_id " +
                 "     , value " +
@@ -125,12 +127,14 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 "     , date_modified " +
                 "     , is_active " +
                 "     , user_id " +
-                "     , (select dir_type from bank.directory where dir_id = address_type and is_active = 1) address_type " +
+                "     , (select dir_type from bank.directory " +
+                "         where dir_id = address_type and dir_group = :dir_group and is_active = 1) address_type " +
                 "     , customer_id " +
                 "  from bank.customer_address " +
                 " where customer_id = :customerID " +
                 "   and is_active = 1 ";
         param.put("customerID", customerID);
+        param.put("dir_group", Directory.ADDRESS);
         List<CustomerAddress> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerAddress.class));
         logger.info(" Obtain addresses list for cistomerID = " + customerID);
 
@@ -139,7 +143,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public List<CustomerContacts> getContacts(Integer customerID) {
-        Map<String, Integer> param = new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
 
         String sql = " select contact_id " +
                 "     , value " +
@@ -147,12 +151,14 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 "     , date_modified " +
                 "     , is_active " +
                 "     , user_id " +
-                "     , (select dir_type from bank.directory where dir_id = contact_type and is_active = 1) contact_type " +
+                "     , (select dir_type from bank.directory " +
+                "         where dir_id = contact_type and dir_group = :dir_group and is_active = 1) contact_type " +
                 "     , customer_id " +
                 "  from bank.customer_contacts " +
                 " where customer_id = :customerID " +
                 "   and is_active = 1 ";
         param.put("customerID", customerID);
+        param.put("dir_group", Directory.CONTACTS);
         List<CustomerContacts> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerContacts.class));
         logger.info(" Obtain contacts list for cistomerID = " + customerID);
 
@@ -161,7 +167,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public List<CustomerPapers> getPapers(Integer customerID) {
-        Map<String, Integer> param = new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
 
         String sql = " select paper_id " +
                 "     , value " +
@@ -169,12 +175,14 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 "     , date_modified " +
                 "     , is_active " +
                 "     , user_id " +
-                "     , (select dir_type from bank.directory where dir_id = paper_type and is_active = 1) paper_type " +
+                "     , (select dir_type from bank.directory " +
+                "         where dir_id = paper_type and dir_group = :dir_group and is_active = 1) paper_type " +
                 "     , customer_id " +
                 "  from bank.customer_papers " +
                 " where customer_id = :customerID " +
                 "   and is_active = 1 ";
         param.put("customerID", customerID);
+        param.put("dir_group", Directory.PAPERS);
         List<CustomerPapers> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerPapers.class));
         logger.info(" Obtain contacts list for cistomerID = " + customerID);
 
@@ -186,7 +194,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         Map<String, Object> fields = new HashMap<>();
 
         String sql = " insert into bank.customer_info (first_name, last_name, middle_name, birth_date, is_active, user_id, date_created) " +
-                " values (:first_name, :last_name, :middle_name, to_date(:birth_date, 'YYYY-MM-DD'), :is_active, :user_id, :date_created) ";
+                " values (:first_name, :last_name, :middle_name, :birth_date, :is_active, :user_id, :date_created) ";
 
         fields.put("first_name", customerInfo.getFirstName());
         fields.put("last_name", customerInfo.getLastName());
@@ -199,7 +207,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
 
         if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_info " + customerInfo.getCustomerID() + " was inserted " + rowNumbers + " rows");
+            logger.warn("Warning! For bank.customer_info was inserted " + rowNumbers + " rows");
         }
     }
 
@@ -208,7 +216,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         Map<String, Object> fields = new HashMap<>();
 
         String sql = " update bank.customer_info set first_name = :first_name, last_name = :last_name, middle_name = :middle_name, " +
-                " birth_date = to_date(:birth_date, 'YYYY-MM-DD'), date_modified = :date_modified, user_id = :user_id where customer_id = :customer_id ";
+                " birth_date = :birth_date, date_modified = :date_modified, user_id = :user_id where customer_id = :customer_id ";
 
         fields.put("customer_id", customerInfo.getCustomerID());
         fields.put("first_name", customerInfo.getFirstName());

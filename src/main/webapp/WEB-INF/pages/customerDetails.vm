@@ -22,8 +22,11 @@
                     <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalContacts">Contacts</button>
                     <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalPapers">Papers</button>
                     <a class="btn btn-warning" href="$request.contextPath/customers/edit/$!customerID" role="button">Edit</a>
-                    <a class="btn btn-danger" href="#" role="button">Delete</a>
-                    <a class="btn btn-danger" href="#" role="button">Block/Unblock</a>
+                    <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
+                        #if ($!customer.isActive==1) Block
+                        #elseif ($!customer.isActive==0) Unblock
+                        #else Undefined #end
+                    </button>
                 </h3>
 
                 <div class="table-responsive">
@@ -53,11 +56,7 @@
                             </tr>
                             <tr>
                                 <td><strong>Date of birth</strong></td>
-                                <td>$!customer.birthDate</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Last edited date</strong></td>
-                                <td>$!dateTool.format("d.M.y", $!customer.dateModified)</td>
+                                <td>$!dateTool.format("dd.MM.yyyy", $!customer.birthDate)</td>
                             </tr>
                             <tr>
                                 <td><strong>State</strong></td>
@@ -71,7 +70,11 @@
                             </tr>
                             <tr>
                                 <td><strong>Date of creation</strong></td>
-                                <td>$!dateTool.format("d.M.y", $!customer.dateCreated)</td>
+                                <td>$!dateTool.format("dd.MM.yyyy", $!customer.dateCreated)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Last edited date</strong></td>
+                                <td>$!dateTool.format("dd.MM.yyyy", $!customer.dateModified)</td>
                             </tr>
                         </tbody>
                     </table>
@@ -106,7 +109,7 @@
                                 </thead>
                                 <tbody>
                                     #foreach($lines in $accounts)
-                                    <tr class="sortable" onclick="window.location.href='$request.contextPath/accounts/$lines.accountOwner'">
+                                    <tr class="sortable" onclick="window.location.href='$request.contextPath/account/$lines.accountID'">
                                         <td>$!lines.accountID</td>
                                         <td>$!lines.accountNumber</td>
                                         <td>$!lines.accountType</td>
@@ -123,7 +126,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    add account
+                    <a class="btn btn-default" href="$request.contextPath/account/edit/$!customerID/-1" role="button">Add account</a>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -150,7 +153,7 @@
                                 </thead>
                                 <tbody>
                                     #foreach($lines in $addresses)
-                                    <tr class="sortable" onclick="window.location.href='$request.contextPath/addresses/$lines.customerID'">
+                                    <tr class="sortable" onclick="window.location.href='$request.contextPath/address/$lines.addressID'">
                                         <td>$!lines.addressID</td>
                                         <td>$!lines.value</td>
                                         <td>$!lines.addressType</td>
@@ -162,7 +165,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    add address
+                    <a class="btn btn-default" href="$request.contextPath/address/edit/$!customerID/-1" role="button">Add address</a>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -189,7 +192,7 @@
                                 </thead>
                                 <tbody>
                                     #foreach($lines in $contacts)
-                                    <tr class="sortable" onclick="window.location.href='$request.contextPath/contacts/$lines.customerID'">
+                                    <tr class="sortable" onclick="window.location.href='$request.contextPath/contact/$lines.contactID'">
                                         <td>$!lines.contactID</td>
                                         <td>$!lines.value</td>
                                         <td>$!lines.contactType</td>
@@ -201,7 +204,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    add contact
+                    <a class="btn btn-default" href="$request.contextPath/contact/edit/$!customerID/-1" role="button">Add contact</a>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -228,7 +231,7 @@
                                 </thead>
                                 <tbody>
                                     #foreach($lines in $papers)
-                                    <tr class="sortable" onclick="window.location.href='$request.contextPath/papers/$lines.customerID'">
+                                    <tr class="sortable" onclick="window.location.href='$request.contextPath/paper/$lines.paperID'">
                                         <td>$!lines.paperID</td>
                                         <td>$!lines.value</td>
                                         <td>$!lines.paperType</td>
@@ -240,12 +243,40 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    add paper
+                    <a class="btn btn-default" href="$request.contextPath/paper/edit/$!customerID/-1" role="button">Add paper</a>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+
+        function changeState() {
+            var state = {};
+            var customerID = $!customer.customerID;
+            state.customerID = customerID;
+            var status = $!customer.isActive;
+            state.status = status;
+
+            $.ajax({
+                type : "GET",
+                url : "$request.contextPath/customers/status",
+                contentType : "application/json",
+                dataType : "JSON",
+                data : state,
+                error : function(xhr, status, error) {
+                    console.log("ResponseText:" + xhr.responseText);
+                    alert("Failure during change status of customer!");
+                },
+                success : function(data) {
+                    window.location.href='$request.contextPath/customerDetails/$!customer.customerID'
+                    alert("Status of customer (customerID=$!customer.customerID) changed!");
+                }
+            });
+        }
+
+    </script>
 
 </body>
 </html>

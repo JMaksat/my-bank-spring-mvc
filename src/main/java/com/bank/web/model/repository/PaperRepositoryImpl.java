@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Repository("paperRepository")
 @Transactional
@@ -29,6 +30,11 @@ public class PaperRepositoryImpl implements PaperRepository {
     }
 
     @Override
+    public List<CustomerPapers> getPaper(Integer paperID) {
+        return null;
+    }
+
+    @Override
     public void addPaper(CustomerPapers paper) {
 
     }
@@ -39,7 +45,7 @@ public class PaperRepositoryImpl implements PaperRepository {
     }
 
     @Override
-    public void deletePaper(CustomerPapers paper) {
+    public void changeStatus(Integer paperID, Boolean status) {
 
     }
 }

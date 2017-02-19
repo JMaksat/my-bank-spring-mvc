@@ -21,7 +21,7 @@ public class CustomerInfo {
     private String middleName;
 
     @RowMapperField(columnName = "birth_date")
-    private String birthDate;
+    private java.util.Date birthDate;
 
     @RowMapperField(columnName = "date_modified")
     private java.util.Date dateModified;
@@ -67,11 +67,11 @@ public class CustomerInfo {
         this.middleName = middleName;
     }
 
-    public String getBirthDate() {
+    public Date getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -114,7 +114,7 @@ public class CustomerInfo {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", middleName='" + middleName + '\'' +
-                ", birthDate='" + birthDate + '\'' +
+                ", birthDate=" + birthDate +
                 ", dateModified=" + dateModified +
                 ", isActive=" + isActive +
                 ", userID='" + userID + '\'' +

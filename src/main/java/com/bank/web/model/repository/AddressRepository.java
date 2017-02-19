@@ -2,11 +2,15 @@ package com.bank.web.model.repository;
 
 import com.bank.web.model.entity.CustomerAddress;
 
+import java.util.List;
+
 public interface AddressRepository {
+
+    List<CustomerAddress> getAddress(Integer addressID);
 
     void addAddress(CustomerAddress address);
 
     void updateAddress(CustomerAddress address);
 
-    void deleteAddress(CustomerAddress address);
+    void changeStatus(Integer addressID, Boolean status);
 }

@@ -14,8 +14,6 @@
 
                 <h1 class="page-header">$pageName</h1>
 
-                <input type="hidden" id="fieldCustomerID" value="$!customerID">
-
                 <div class="form-group row">
                     <label class="col-2 col-form-label">First name</label>
                     <div class="col-10" style="width: 300px;">
@@ -40,13 +38,17 @@
                 <div class="form-group row">
                     <label class="col-2 col-form-label">Date of birth</label>
                     <div class="col-10" style="width: 200px;">
-                        <input class="form-control" type="date" id="fieldBirthDate" value="$!customer.birthDate">
+                        <input class="form-control" type="date" id="fieldBirthDate" value="$!dateTool.format("yyyy-MM-dd", $!customer.birthDate)">
                     </div>
                 </div>
 
                 <h2 class="sub-header">
                     <button class="btn btn-success" type="button" onclick="saveData()">Save</button>
-                    <a class="btn btn-warning" href="$request.contextPath/customers" role="button">Cancel</a>
+                        #if ($!customerID == -1)
+                            <a class="btn btn-warning" href="$request.contextPath/customers" role="button">Cancel</a>
+                        #else
+                            <a class="btn btn-warning" href="$request.contextPath/customerDetails/$!customerID" role="button">Cancel</a>
+                        #end
                 </h2>
             </div>
         </div>
@@ -56,7 +58,7 @@
 
         function saveData() {
             var state = {};
-            var customerID = $("#fieldCustomerID").val();
+            var customerID = $!customerID;
             state.customerID = customerID;
             var firstName = $("#fieldFirstName").val();
             state.firstName = firstName;
@@ -84,7 +86,11 @@
                 },
                 success : function(data) {
                     alert("Customer successfully added!");
-                    window.location.href='$request.contextPath/customers';
+                    #if ($!customerID == -1)
+                        window.location.href='$request.contextPath/customers';
+                    #else
+                        window.location.href='$request.contextPath/customerDetails/$!customerID';
+                    #end
                 }
             });
         }

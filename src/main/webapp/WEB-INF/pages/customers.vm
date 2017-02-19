@@ -36,7 +36,7 @@
                     <td>$lines.firstName</td>
                     <td>$lines.lastName</td>
                     <td>$lines.middleName</td>
-                    <td>$lines.birthDate</td>
+                    <td>$!dateTool.format("dd.MM.yyyy", $lines.birthDate)</td>
                   </tr>
                 #end
               </tbody>

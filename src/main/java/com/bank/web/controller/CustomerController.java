@@ -11,6 +11,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -18,6 +19,8 @@ public class CustomerController {
     public static final Logger logger = Logger.getLogger(CustomerController.class);
 
     private CustomerRepository customerRepository;
+
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     public CustomerController(CustomerRepository customerRepository) {
@@ -97,25 +100,49 @@ public class CustomerController {
     public String newCustomer(@RequestParam Map<String, String> params) {
         CustomerInfo customer = new CustomerInfo();
 
-        customer.setCustomerID(Integer.valueOf(params.get("customerID")));
-        customer.setFirstName(params.get("firstName"));
-        customer.setLastName(params.get("lastName"));
-        customer.setMiddleName(params.get("middleName"));
-        customer.setBirthDate(params.get("birthDate"));
-        customer.setDateModified(new java.util.Date());
-        customer.setIsActive(1);
+        try {
+            customer.setCustomerID(Integer.valueOf(params.get("customerID")));
+            customer.setFirstName(params.get("firstName"));
+            customer.setLastName(params.get("lastName"));
+            customer.setMiddleName(params.get("middleName"));
+            customer.setBirthDate(formatter.parse(params.get("birthDate")));
+            customer.setDateModified(new java.util.Date());
+            customer.setIsActive(1);
         /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null)
                 username = authentication.getName(); */
-        customer.setUserID("temp_user");
-        customer.setDateCreated(new java.util.Date());
+            customer.setUserID("temp_user");
+            customer.setDateCreated(new java.util.Date());
 
-        if (Integer.valueOf(params.get("customerID")) >= 0) {
-            customerRepository.updateCustomer(customer);
-        } else {
-            customerRepository.addCustomer(customer);
+            if (Integer.valueOf(params.get("customerID")) >= 0) {
+                customerRepository.updateCustomer(customer);
+            } else {
+                customerRepository.addCustomer(customer);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return "1";
     }
+
+    @RequestMapping(path = "/customers/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    //@Secured({"ROLE_USER"})
+    public String changeCustomerState(@RequestParam Map<String, String> params) {
+        try {
+
+            if (params.get("status").equals("1")) {
+                customerRepository.changeStatus(Integer.valueOf(params.get("customerID")), false);
+            } else {
+                customerRepository.changeStatus(Integer.valueOf(params.get("customerID")), true);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "1";
+    }
+
 }
