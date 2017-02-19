@@ -7,21 +7,19 @@ import java.util.List;
 
 public interface AccountRepository {
 
-    List<Accounts> accountsList();
+    List<Accounts> accountsList(Boolean suspended);
 
-    void changeAccountStatus(Accounts account);
+    List<Accounts> getAccount(Integer accountID);
 
-    void suspendAccount(Accounts account);
+    void changeStatus(Integer accountID, Boolean status);
 
-    void releaseAccount(Accounts account);
+    void decreaseRest (Integer accountID, Double amount);
 
-    void decreaseRest (Accounts account);
+    void increaseRest (Integer accountID, Double amount);
 
-    void increaseRest (Accounts account);
+    void getAccountRest (Integer accountID);
 
-    void getAccountRest (Accounts account);
-
-    List<Transactions> getTransactions (Accounts account);
+    List<Transactions> getTransactions (Integer accountID);
 
     void addAccount(Accounts account);
 

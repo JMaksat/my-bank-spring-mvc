@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    #parse("WEB-INF/pages/header.vm")
+
+<body>
+<input type="hidden" name="$!{_csrf.parameterName}" value="$!{_csrf.token}">
+    #parse("WEB-INF/pages/topmenu.vm")
+
+<div class="container-fluid">
+    <div class="row">
+        #parse("WEB-INF/pages/leftmenu.vm")
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <h1 class="page-header">$pageName</h1>
+
+            <h3 class="sub-header">
+                <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!contact.customerID" role="button">
+                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
+                #if ($!contact.isActive==1)
+                    <a class="btn btn-warning" href="$request.contextPath/contact/edit/$!contact.customerID/$!contact.contactID" role="button">Edit</a>
+                #end
+                <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
+                    #if ($!contact.isActive==1) Block
+                    #elseif ($!contact.isActive==0) Unblock
+                    #else Undefined #end
+                </button>
+            </h3>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th width="150">Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><strong>ID</strong></td>
+                        <td>$!contact.contactID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Contact</strong></td>
+                        <td>$!contact.value</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Type</strong></td>
+                        <td>$!contact.contactType</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Releated customer</strong></td>
+                        <td>$!contact.customerID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State</strong></td>
+                        <td>#if ($!contact.isActive==1)Active
+                        #elseif ($!contact.isActive==0) Inactive
+                        #else Undefined #end</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last edited by</strong></td>
+                        <td>$!contact.userID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date of creation</strong></td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!contact.dateCreated)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last edited date</strong></td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!contact.dateModified)</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function changeState() {
+        var state = {};
+        var contactID = $!contact.contactID;
+        state.contactID = contactID;
+        var status = $!contact.isActive;
+        state.status = status;
+
+        $.ajax({
+            type : "GET",
+            url : "$request.contextPath/contact/status",
+            contentType : "application/json",
+            dataType : "JSON",
+            data : state,
+            error : function(xhr, status, error) {
+                console.log("ResponseText:" + xhr.responseText);
+                alert("Failure during change status of contact!");
+            },
+            success : function(data) {
+                window.location.href='$request.contextPath/contact/$!contact.contactID'
+                alert("Status of contact (contactID=$!contact.contactID) changed!");
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

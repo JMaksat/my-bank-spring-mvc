@@ -17,7 +17,9 @@
             <h3 class="sub-header">
                 <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!address.customerID" role="button">
                     <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
-                <a class="btn btn-warning" href="$request.contextPath/address/edit/$!address.customerID/$!address.addressID" role="button">Edit</a>
+                #if ($!address.isActive==1)
+                    <a class="btn btn-warning" href="$request.contextPath/address/edit/$!address.customerID/$!address.addressID" role="button">Edit</a>
+                #end
                 <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
                     #if ($!address.isActive==1) Block
                     #elseif ($!address.isActive==0) Unblock

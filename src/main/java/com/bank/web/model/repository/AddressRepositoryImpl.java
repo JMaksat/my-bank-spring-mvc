@@ -45,7 +45,7 @@ public class AddressRepositoryImpl implements AddressRepository {
                 "     , (select dir_type from bank.directory " +
                 "         where dir_id = address_type and dir_group = :dir_group and is_active = 1) address_type " +
                 "     , customer_id " +
-                "from bank.customer_address where address_id = :address_id ";
+                " from bank.customer_address where address_id = :address_id ";
         param.put("address_id", addressID);
         param.put("dir_group", Directory.ADDRESS);
         List<CustomerAddress> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerAddress.class));
@@ -67,7 +67,6 @@ public class AddressRepositoryImpl implements AddressRepository {
         fields.put("user_id", address.getUserID());
         fields.put("address_type", Integer.valueOf(address.getAddressType()));
         fields.put("customer_id", address.getCustomerID());
-        fields.put("dir_group", Directory.ADDRESS);
 
         int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
 
@@ -91,7 +90,7 @@ public class AddressRepositoryImpl implements AddressRepository {
         int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
 
         if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_info " + address.getCustomerID() + " was update " + rowNumbers + " rows");
+            logger.warn("Warning! For bank.customer_address " + address.getAddressID() + " was update " + rowNumbers + " rows");
         }
     }
 

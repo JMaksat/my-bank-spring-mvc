@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    #parse("WEB-INF/pages/header.vm")
+
+<body>
+<input type="hidden" name="$!{_csrf.parameterName}" value="$!{_csrf.token}">
+    #parse("WEB-INF/pages/topmenu.vm")
+
+<div class="container-fluid">
+    <div class="row">
+        #parse("WEB-INF/pages/leftmenu.vm")
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <h1 class="page-header">$pageName</h1>
+
+            <div class="form-group row">
+                <label class="col-2 col-form-label">Contact</label>
+                <div class="col-10" style="width: 300px;">
+                    <input class="form-control" type="text" id="fieldValue" value="$!contact.value">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-2 col-form-label">Choose contact type</label>
+                <div class="col-10" style="width: 300px;">
+                    <select class="form-control" id="fieldType">
+                        #foreach($line in $types)
+                            #if ($line.dirType==$contact.contactType)
+                                <option value="$line.dirID" selected>$line.dirType</option>
+                            #else
+                                <option value="$line.dirID">$line.dirType</option>
+                            #end
+                        #end
+                    </select>
+                </div>
+            </div>
+
+            <h2 class="sub-header">
+                <button class="btn btn-success" type="button" onclick="saveData()">Save</button>
+                #if ($!contactID == -1)
+                    <a class="btn btn-warning" href="$request.contextPath/customerDetails/$!customerID" role="button">Cancel</a>
+                #else
+                    <a class="btn btn-warning" href="$request.contextPath/contact/$!contactID" role="button">Cancel</a>
+                #end
+            </h2>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function saveData() {
+        var state = {};
+        var id = $!contactID;
+        state.id = id;
+        var value = $("#fieldValue").val();
+        state.value = value;
+        var type = $("#fieldType").val();
+        state.type = type;
+        var customerID = $!customerID;
+        state.customerID = customerID;
+
+        if(!value || !type) {
+            alert("You must fill out all fields!");
+            return;
+        }
+
+        $.ajax({
+            type : "GET",
+            url : "$request.contextPath/contact/save",
+            contentType : "application/json",
+            dataType : "JSON",
+            data : state,
+            error : function(xhr, status, error) {
+                console.log("ResponseText:" + xhr.responseText);
+                alert("Failure during data process on controller!");
+            },
+            success : function(data) {
+                alert("Contact successfully added!");
+                #if ($!contactID == -1)
+                    window.location.href='$request.contextPath/customerDetails/$!customerID';
+                #else
+                    window.location.href='$request.contextPath/contact/$!contactID';
+                #end
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

@@ -21,7 +21,9 @@
                     <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalAddresses">Addresses</button>
                     <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalContacts">Contacts</button>
                     <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalPapers">Papers</button>
-                    <a class="btn btn-warning" href="$request.contextPath/customers/edit/$!customerID" role="button">Edit</a>
+                    #if ($!customer.isActive==1)
+                        <a class="btn btn-warning" href="$request.contextPath/customers/edit/$!customerID" role="button">Edit</a>
+                    #end
                     <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
                         #if ($!customer.isActive==1) Block
                         #elseif ($!customer.isActive==0) Unblock
@@ -104,7 +106,6 @@
                                     <th>Suspended</th>
                                     <th>Opening date</th>
                                     <th>Closing date</th>
-
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -126,7 +127,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a class="btn btn-default" href="$request.contextPath/account/edit/$!customerID/-1" role="button">Add account</a>
+                    #if ($!customer.isActive==1)
+                        <a class="btn btn-default" href="$request.contextPath/account/edit/$!customerID/-1" role="button">Add account</a>
+                    #end
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -149,6 +152,7 @@
                                     <th>ID</th>
                                     <th>Address</th>
                                     <th>Type</th>
+                                    <th>State</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -157,6 +161,11 @@
                                         <td>$!lines.addressID</td>
                                         <td>$!lines.value</td>
                                         <td>$!lines.addressType</td>
+                                        <td>
+                                            #if ($!lines.isActive==1)Active
+                                            #elseif ($!lines.isActive==0) Inactive
+                                            #else Undefined #end
+                                        </td>
                                     </tr>
                                     #end
                                 </tbody>
@@ -165,7 +174,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a class="btn btn-default" href="$request.contextPath/address/edit/$!customerID/-1" role="button">Add address</a>
+                    #if ($!customer.isActive==1)
+                        <a class="btn btn-default" href="$request.contextPath/address/edit/$!customerID/-1" role="button">Add address</a>
+                    #end
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -188,6 +199,7 @@
                                     <th>ID</th>
                                     <th>Contact</th>
                                     <th>Type</th>
+                                    <th>State</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -196,6 +208,11 @@
                                         <td>$!lines.contactID</td>
                                         <td>$!lines.value</td>
                                         <td>$!lines.contactType</td>
+                                        <td>
+                                            #if ($!lines.isActive==1)Active
+                                            #elseif ($!lines.isActive==0) Inactive
+                                            #else Undefined #end
+                                        </td>
                                     </tr>
                                     #end
                                 </tbody>
@@ -204,7 +221,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a class="btn btn-default" href="$request.contextPath/contact/edit/$!customerID/-1" role="button">Add contact</a>
+                    #if ($!customer.isActive==1)
+                        <a class="btn btn-default" href="$request.contextPath/contact/edit/$!customerID/-1" role="button">Add contact</a>
+                    #end
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -227,6 +246,7 @@
                                     <th>ID</th>
                                     <th>Paper</th>
                                     <th>Type</th>
+                                    <th>State</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -235,6 +255,11 @@
                                         <td>$!lines.paperID</td>
                                         <td>$!lines.value</td>
                                         <td>$!lines.paperType</td>
+                                        <td>
+                                            #if ($!lines.isActive==1)Active
+                                            #elseif ($!lines.isActive==0) Inactive
+                                            #else Undefined #end
+                                        </td>
                                     </tr>
                                     #end
                                 </tbody>
@@ -243,7 +268,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a class="btn btn-default" href="$request.contextPath/paper/edit/$!customerID/-1" role="button">Add paper</a>
+                    #if ($!customer.isActive==1)
+                        <a class="btn btn-default" href="$request.contextPath/paper/edit/$!customerID/-1" role="button">Add paper</a>
+                    #end
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>

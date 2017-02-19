@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    #parse("WEB-INF/pages/header.vm")
+
+<body>
+<input type="hidden" name="$!{_csrf.parameterName}" value="$!{_csrf.token}">
+    #parse("WEB-INF/pages/topmenu.vm")
+
+<div class="container-fluid">
+    <div class="row">
+        #parse("WEB-INF/pages/leftmenu.vm")
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <h1 class="page-header">$pageName</h1>
+
+            <h3 class="sub-header">
+                <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!paper.customerID" role="button">
+                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
+                #if ($!paper.isActive==1)
+                    <a class="btn btn-warning" href="$request.contextPath/paper/edit/$!paper.customerID/$!paper.paperID" role="button">Edit</a>
+                #end
+                <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
+                    #if ($!paper.isActive==1) Block
+                    #elseif ($!paper.isActive==0) Unblock
+                    #else Undefined #end
+                </button>
+            </h3>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th width="150">Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><strong>ID</strong></td>
+                        <td>$!paper.paperID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Paper</strong></td>
+                        <td>$!paper.value</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Type</strong></td>
+                        <td>$!paper.paperType</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Releated customer</strong></td>
+                        <td>$!paper.customerID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State</strong></td>
+                        <td>#if ($!paper.isActive==1)Active
+                        #elseif ($!paper.isActive==0) Inactive
+                        #else Undefined #end</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last edited by</strong></td>
+                        <td>$!paper.userID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date of creation</strong></td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!paper.dateCreated)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last edited date</strong></td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!paper.dateModified)</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function changeState() {
+        var state = {};
+        var paperID = $!paper.paperID;
+        state.paperID = paperID;
+        var status = $!paper.isActive;
+        state.status = status;
+
+        $.ajax({
+            type : "GET",
+            url : "$request.contextPath/paper/status",
+            contentType : "application/json",
+            dataType : "JSON",
+            data : state,
+            error : function(xhr, status, error) {
+                console.log("ResponseText:" + xhr.responseText);
+                alert("Failure during change status of paper!");
+            },
+            success : function(data) {
+                window.location.href='$request.contextPath/paper/$!paper.paperID'
+                alert("Status of paper (paperID=$!paper.paperID) changed!");
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

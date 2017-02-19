@@ -3,6 +3,8 @@ Application has:
   ROLE_ADMIN allowed only to work with users and roles;
   ROLE_USER allowed to work with any business page except users and user roles;
 - The service only for individuals
+- make application multilingual
+- make report system using Jasper reports
 
 Pages:
 - customer general info (CRUD; create, read and update using same form; only prompt for delete ).
@@ -19,5 +21,5 @@ Pages:
 - directory (CRUD as in customer info)
 - bank_parameters (CRUD as in customer info)
 
-968 7036365
+
 

@@ -30,7 +30,7 @@ public class CustomerPapers {
     private String paperType;
 
     @RowMapperField(columnName = "customer_id")
-    private String customerID;
+    private Integer customerID;
 
     public Integer getPaperID() {
         return paperID;
@@ -88,11 +88,11 @@ public class CustomerPapers {
         this.paperType = paperType;
     }
 
-    public String getCustomerID() {
+    public Integer getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(String customerID) {
+    public void setCustomerID(Integer customerID) {
         this.customerID = customerID;
     }
 
@@ -106,7 +106,7 @@ public class CustomerPapers {
                 ", isActive=" + isActive +
                 ", userID='" + userID + '\'' +
                 ", paperType='" + paperType + '\'' +
-                ", customerID='" + customerID + '\'' +
+                ", customerID=" + customerID +
                 '}';
     }
 }

@@ -63,17 +63,6 @@ public class CustomerController {
         return new ModelAndView("customerDetails");
     }
 
-    /*@RequestMapping(path = "/customers/new", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
-    public ModelAndView newCustomer(ModelMap map) {
-
-        map.put("pageName", "New customer");
-        map.put("leftMenu", "customers");
-        map.put("templateType", "insert");
-
-        return new ModelAndView("customerEntry");
-    }*/
-
     @RequestMapping(path = "/customers/edit/{customerID}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
     public ModelAndView updateCustomer(@PathVariable Integer customerID, ModelMap map) {

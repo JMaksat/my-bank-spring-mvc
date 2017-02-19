@@ -132,7 +132,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 "     , customer_id " +
                 "  from bank.customer_address " +
                 " where customer_id = :customerID " +
-                "   and is_active = 1 ";
+                " order by address_id ";
         param.put("customerID", customerID);
         param.put("dir_group", Directory.ADDRESS);
         List<CustomerAddress> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerAddress.class));
@@ -156,7 +156,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 "     , customer_id " +
                 "  from bank.customer_contacts " +
                 " where customer_id = :customerID " +
-                "   and is_active = 1 ";
+                " order by contact_id ";
         param.put("customerID", customerID);
         param.put("dir_group", Directory.CONTACTS);
         List<CustomerContacts> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerContacts.class));
@@ -180,7 +180,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 "     , customer_id " +
                 "  from bank.customer_papers " +
                 " where customer_id = :customerID " +
-                "   and is_active = 1 ";
+                " order by paper_id ";
         param.put("customerID", customerID);
         param.put("dir_group", Directory.PAPERS);
         List<CustomerPapers> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerPapers.class));
