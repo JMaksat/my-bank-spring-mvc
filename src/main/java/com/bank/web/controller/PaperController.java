@@ -23,8 +23,6 @@ public class PaperController {
     private PaperRepository paperRepository;
     private DirectoryRepository directoryRepository;
 
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
     @Autowired
     public PaperController(PaperRepository paperRepository, DirectoryRepository directoryRepository) {
         this.paperRepository = paperRepository;
@@ -33,14 +31,13 @@ public class PaperController {
 
     @RequestMapping(path = "/paper/{paperID}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
-    public ModelAndView getCustomerData(@PathVariable Integer paperID, ModelMap map) {
-        List<CustomerPapers> paperes = paperRepository.getPaper(paperID);
+    public ModelAndView getPaperData(@PathVariable Integer paperID, ModelMap map) {
+        List<CustomerPapers> papers = paperRepository.getPaper(paperID);
 
-        CustomerPapers paper = (paperes != null && paperes.size() >0) ? paperes.iterator().next() : null;
+        CustomerPapers paper = (papers != null && papers.size() >0) ? papers.iterator().next() : null;
 
         if (paper != null) {
             map.put("paper", paper);
-            //map.put("paperID", paperID);
             map.put("pageName", "Paper");
             map.put("leftMenu", "customers");
         }
@@ -54,8 +51,8 @@ public class PaperController {
         List<Directory> types = directoryRepository.getPaperTypes();
 
         if (paperID >= 0) {
-            List<CustomerPapers> paperes = paperRepository.getPaper(paperID);
-            CustomerPapers paper = (paperes != null && paperes.size() > 0) ? paperes.iterator().next() : null;
+            List<CustomerPapers> papers = paperRepository.getPaper(paperID);
+            CustomerPapers paper = (papers != null && papers.size() > 0) ? papers.iterator().next() : null;
 
             map.put("paper", paper);
             map.put("pageName", "Update paper entry");
@@ -105,7 +102,7 @@ public class PaperController {
     @RequestMapping(path = "/paper/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     //@Secured({"ROLE_USER"})
-    public String changeCustomerState(@RequestParam Map<String, String> params) {
+    public String changePaperState(@RequestParam Map<String, String> params) {
         try {
 
             if (params.get("status").equals("1")) {

@@ -110,7 +110,7 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
         fields.put("date_created", directory.getDateCreated());
         fields.put("is_active", directory.getIsActive());
         fields.put("user_id", directory.getUserID());
-
+        // Check for DuplicateKeyException
         int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
 
         if (rowNumbers != 1) {
@@ -132,7 +132,7 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
         fields.put("description", directory.getDescription());
         fields.put("date_modified", directory.getDateModified());
         fields.put("user_id", directory.getUserID());
-
+        // Check for DuplicateKeyException
         int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
 
         if (rowNumbers != 1) {

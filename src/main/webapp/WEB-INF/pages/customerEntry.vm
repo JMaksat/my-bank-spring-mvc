@@ -85,11 +85,12 @@
                     alert("Failure during data process on controller!");
                 },
                 success : function(data) {
-                    alert("Customer successfully added!");
                     #if ($!customerID == -1)
                         window.location.href='$request.contextPath/customers';
+                        alert("Customer successfully added!");
                     #else
                         window.location.href='$request.contextPath/customerDetails/$!customerID';
+                        alert("Customer successfully updated!");
                     #end
                 }
             });

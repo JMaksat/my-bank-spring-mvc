@@ -178,4 +178,19 @@ public class AccountRepositoryImpl implements AccountRepository {
             logger.warn("Warning! For bank.accounts " + account.getAccountID() + " was update " + rowNumbers + " rows");
         }
     }
+
+    @Override
+    public void closeAccount(Integer accountID) {
+        Map<String, Object> fields = new HashMap<>();
+
+        String sql = " update bank.accounts set date_closed = now() where account_id = :account_id ";
+
+        fields.put("account_id", accountID);
+
+        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
+
+        if (rowNumbers != 1) {
+            logger.warn("Warning! For bank.accounts " + accountID + " was update date_closed " + rowNumbers + " rows");
+        }
+    }
 }

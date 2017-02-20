@@ -23,8 +23,6 @@ public class ContactController {
     private ContactRepository contactRepository;
     private DirectoryRepository directoryRepository;
 
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
     @Autowired
     public ContactController(ContactRepository contactRepository, DirectoryRepository directoryRepository) {
         this.contactRepository = contactRepository;
@@ -33,14 +31,13 @@ public class ContactController {
 
     @RequestMapping(path = "/contact/{contactID}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
-    public ModelAndView getCustomerData(@PathVariable Integer contactID, ModelMap map) {
-        List<CustomerContacts> contactes = contactRepository.getContact(contactID);
+    public ModelAndView getContactData(@PathVariable Integer contactID, ModelMap map) {
+        List<CustomerContacts> contacts = contactRepository.getContact(contactID);
 
-        CustomerContacts contact = (contactes != null && contactes.size() >0) ? contactes.iterator().next() : null;
+        CustomerContacts contact = (contacts != null && contacts.size() >0) ? contacts.iterator().next() : null;
 
         if (contact != null) {
             map.put("contact", contact);
-            //map.put("contactID", contactID);
             map.put("pageName", "Contact");
             map.put("leftMenu", "customers");
         }
@@ -54,8 +51,8 @@ public class ContactController {
         List<Directory> types = directoryRepository.getContactTypes();
 
         if (contactID >= 0) {
-            List<CustomerContacts> contactes = contactRepository.getContact(contactID);
-            CustomerContacts contact = (contactes != null && contactes.size() > 0) ? contactes.iterator().next() : null;
+            List<CustomerContacts> contacts = contactRepository.getContact(contactID);
+            CustomerContacts contact = (contacts != null && contacts.size() > 0) ? contacts.iterator().next() : null;
 
             map.put("contact", contact);
             map.put("pageName", "Update contact entry");
@@ -105,7 +102,7 @@ public class ContactController {
     @RequestMapping(path = "/contact/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     //@Secured({"ROLE_USER"})
-    public String changeCustomerState(@RequestParam Map<String, String> params) {
+    public String changeContactState(@RequestParam Map<String, String> params) {
         try {
 
             if (params.get("status").equals("1")) {

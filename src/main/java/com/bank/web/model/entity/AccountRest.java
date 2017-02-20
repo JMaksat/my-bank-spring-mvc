@@ -5,7 +5,7 @@ import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperFie
 
 import java.util.Date;
 
-@RowMapperClass
+@RowMapperClass(tableName = "bank.account_rest")
 public class AccountRest {
 
     @RowMapperField(columnName = "rest_id")

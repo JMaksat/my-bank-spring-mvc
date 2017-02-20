@@ -23,8 +23,6 @@ public class AddressController {
     private AddressRepository addressRepository;
     private DirectoryRepository directoryRepository;
 
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
     @Autowired
     public AddressController(AddressRepository addressRepository, DirectoryRepository directoryRepository) {
         this.addressRepository = addressRepository;
@@ -33,14 +31,13 @@ public class AddressController {
 
     @RequestMapping(path = "/address/{addressID}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
-    public ModelAndView getCustomerData(@PathVariable Integer addressID, ModelMap map) {
+    public ModelAndView getAddressData(@PathVariable Integer addressID, ModelMap map) {
         List<CustomerAddress> addresses = addressRepository.getAddress(addressID);
 
         CustomerAddress address = (addresses != null && addresses.size() >0) ? addresses.iterator().next() : null;
 
         if (address != null) {
             map.put("address", address);
-            //map.put("addressID", addressID);
             map.put("pageName", "Address");
             map.put("leftMenu", "customers");
         }
@@ -105,7 +102,7 @@ public class AddressController {
     @RequestMapping(path = "/address/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     //@Secured({"ROLE_USER"})
-    public String changeCustomerState(@RequestParam Map<String, String> params) {
+    public String changeAddressState(@RequestParam Map<String, String> params) {
         try {
 
             if (params.get("status").equals("1")) {

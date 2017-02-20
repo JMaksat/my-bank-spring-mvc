@@ -11,7 +11,7 @@ public interface AccountRepository {
 
     List<Accounts> getAccount(Integer accountID);
 
-    void changeStatus(Integer accountID, Boolean status);
+    void changeStatus (Integer accountID, Boolean status);
 
     void decreaseRest (Integer accountID, Double amount);
 
@@ -21,9 +21,11 @@ public interface AccountRepository {
 
     List<Transactions> getTransactions (Integer accountID);
 
-    void addAccount(Accounts account);
+    void addAccount (Accounts account);
 
     void addTransaction (Transactions transaction);
 
     void updateAccount (Accounts account);
+
+    void closeAccount(Integer accountID);
 }

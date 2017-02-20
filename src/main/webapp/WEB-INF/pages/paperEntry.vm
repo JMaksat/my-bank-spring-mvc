@@ -77,11 +77,12 @@
                 alert("Failure during data process on controller!");
             },
             success : function(data) {
-                alert("Paper successfully added!");
                 #if ($!paperID == -1)
                     window.location.href='$request.contextPath/customerDetails/$!customerID';
+                    alert("Paper successfully added!");
                 #else
                     window.location.href='$request.contextPath/paper/$!paperID';
+                    alert("Paper successfully updated!");
                 #end
             }
         });

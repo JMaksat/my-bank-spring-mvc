@@ -110,7 +110,7 @@
                                 </thead>
                                 <tbody>
                                     #foreach($lines in $accounts)
-                                    <tr class="sortable" onclick="window.location.href='$request.contextPath/account/$lines.accountID'">
+                                    <tr class="sortable" onclick="window.location.href='$request.contextPath/account/$lines.accountID/customer'">
                                         <td>$!lines.accountID</td>
                                         <td>$!lines.accountNumber</td>
                                         <td>$!lines.accountType</td>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+    #parse("WEB-INF/pages/header.vm")
+
+<body>
+<input type="hidden" name="$!{_csrf.parameterName}" value="$!{_csrf.token}">
+    #parse("WEB-INF/pages/topmenu.vm")
+
+<div class="container-fluid">
+    <div class="row">
+        #parse("WEB-INF/pages/leftmenu.vm")
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <h1 class="page-header">$pageName</h1>
+
+            <h3 class="sub-header">
+                #if ($invoker=="customer")
+                    <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!account.customerID" role="button">
+                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
+                #elseif ($invoker=="accounts")
+                    <a class="btn btn-primary" href="$request.contextPath/accounts" role="button">
+                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
+                #end
+                #if ($!account.is_suspended==0)
+                    <a class="btn btn-success" href="" role="button">New transaction</a>
+                    <a class="btn btn-warning" href="$request.contextPath/account/edit/$!account.customerID/$!account.accountID" role="button">Edit</a>
+                    <a class="btn btn-warning" href="$request.contextPath/account/edit/$!account.accountID" role="button">Close</a>
+                #end
+                <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
+                    #if ($!account.is_suspended==1) Release
+                    #elseif ($!account.is_suspended==0) Suspend
+                    #else Undefined #end
+                </button>
+            </h3>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th width="150">Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><strong>ID</strong></td>
+                        <td>$!account.accountID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Account</strong></td>
+                        <td>$!account.accountNumber</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Owner</strong></td>
+                        <td>$!account.accountOwner</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Opening date</strong></td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!account.dateOpened)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Closing date</strong></td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!account.dateClosed)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date of creation</strong></td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!account.dateCreated)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last edited date</strong></td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!account.dateModified)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last edited by</strong></td>
+                        <td>$!account.userID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Type</strong></td>
+                        <td>$!account.accountType</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State</strong></td>
+                        <td>#if ($!account.is_suspended==1) Suspended
+                        #elseif ($!account.is_suspended==0) Not suspended
+                        #else Undefined #end</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Comment</strong></td>
+                        <td>$!account.comment</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function changeState() {
+        var state = {};
+        var accountID = $!account.accountID;
+        state.accountID = accountID;
+        var status = $!account.is_suspended;
+        state.status = status;
+
+        $.ajax({
+            type : "GET",
+            url : "$request.contextPath/account/status",
+            contentType : "application/json",
+            dataType : "JSON",
+            data : state,
+            error : function(xhr, status, error) {
+                console.log("ResponseText:" + xhr.responseText);
+                alert("Failure during change status of account!");
+            },
+            success : function(data) {
+                window.location.href='$request.contextPath/account/$!account.accountID'
+                alert("Status of account (accountID=$!account.accountID) changed!");
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

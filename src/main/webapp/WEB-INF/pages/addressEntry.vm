@@ -77,11 +77,12 @@
                 alert("Failure during data process on controller!");
             },
             success : function(data) {
-                alert("Address successfully added!");
                 #if ($!addressID == -1)
                     window.location.href='$request.contextPath/customerDetails/$!customerID';
+                    alert("Address successfully added!");
                 #else
                     window.location.href='$request.contextPath/address/$!addressID';
+                    alert("Address successfully updated!");
                 #end
             }
         });

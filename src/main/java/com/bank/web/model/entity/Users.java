@@ -3,7 +3,7 @@ package com.bank.web.model.entity;
 import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperClass;
 import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
 
-@RowMapperClass
+@RowMapperClass(tableName = "bank.users")
 public class Users {
 
     @RowMapperField(columnName = "userName")
