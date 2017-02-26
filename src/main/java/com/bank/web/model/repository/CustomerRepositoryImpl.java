@@ -60,14 +60,14 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public List<CustomerInfo> customerDetails(Integer customerID) {
+    public CustomerInfo customerDetails(Integer customerID) {
         Map<String, Integer> param = new HashMap<>();
 
         String sql = " select customer_id, first_name, last_name, middle_name, " +
                 " birth_date, date_modified, is_active, user_id, date_created " +
                 " from bank.customer_info where customer_id = :customerID ";
         param.put("customerID", customerID);
-        List<CustomerInfo> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerInfo.class));
+        CustomerInfo result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(CustomerInfo.class));
         logger.info(" Obtain customer details using cistomerID = " + customerID);
 
         return result;
@@ -106,7 +106,13 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 "         where dir_id = account_type and dir_group = :dir_group and is_active = 1) account_type " +
                 "     , is_suspended " +
                 "     , comment  " +
-                "  from bank.accounts  " +
+                " , (select z.rest_sum " +
+                "      from bank.account_rest z " +
+                "     where z.rest_id = (select max(r.rest_id) " +
+                "                          from bank.account_rest r " +
+                "                         where r.account_id = z.account_id) " +
+                "       and z.account_id = t.account_id) as rest_sum " +
+                "  from bank.accounts t " +
                 " where account_owner = :customerID " +
                 " order by account_id ";
         param.put("customerID", customerID);

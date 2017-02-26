@@ -8,7 +8,7 @@ public interface CustomerRepository {
 
     List<CustomerInfo> customersList(Boolean isActive);
 
-    List<CustomerInfo> customerDetails(Integer customerID);
+    CustomerInfo customerDetails(Integer customerID);
 
     void changeStatus (Integer customerID, Boolean status);
 

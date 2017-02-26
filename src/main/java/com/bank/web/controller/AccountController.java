@@ -2,8 +2,12 @@ package com.bank.web.controller;
 
 import com.bank.web.model.entity.Accounts;
 import com.bank.web.model.entity.Directory;
+import com.bank.web.model.entity.Transactions;
 import com.bank.web.model.repository.AccountRepository;
 import com.bank.web.model.repository.DirectoryRepository;
+import com.bank.web.model.repository.TransactionRepository;
+import com.bank.web.service.TransactionManageService;
+import com.bank.web.service.TransactionManageServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,21 +26,38 @@ public class AccountController {
 
     private AccountRepository accountRepository;
     private DirectoryRepository directoryRepository;
-
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private TransactionRepository transactionRepository;
+    private TransactionManageService transactionManageService;
 
     @Autowired
-    public AccountController(AccountRepository accountRepository, DirectoryRepository directoryRepository) {
+    public AccountController(AccountRepository accountRepository,
+                             DirectoryRepository directoryRepository,
+                             TransactionRepository transactionRepository,
+                             TransactionManageService transactionManageService) {
         this.accountRepository = accountRepository;
         this.directoryRepository = directoryRepository;
+        this.transactionRepository = transactionRepository;
+        this.transactionManageService = transactionManageService;
+    }
+
+    @RequestMapping(path = "/accounts", method = RequestMethod.GET)
+    //@Secured({"ROLE_USER"})
+    public ModelAndView getAccounts(ModelMap map) {
+        List<Accounts> accounts = accountRepository.accountsList(null, null);
+
+        if (accounts != null) {
+            map.put("accounts", accounts);
+            map.put("pageName", "All accounts");
+            map.put("leftMenu", "accounts");
+        }
+
+        return new ModelAndView("accounts");
     }
 
     @RequestMapping(value = "/account/{accountID}/{invoker}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
-    public ModelAndView getAccountData(@PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
-        List<Accounts> accounts = accountRepository.getAccount(accountID);
-
-        Accounts account = (accounts != null && accounts.size() >0) ? accounts.iterator().next() : null;
+    public ModelAndView getAccount(@PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
+        Accounts account = accountRepository.getAccountById(accountID);
 
         if (account != null) {
             map.put("account", account);
@@ -48,14 +69,13 @@ public class AccountController {
         return new ModelAndView("account");
     }
 
-    @RequestMapping(value = "/account/edit/{customerID}/{accountID}", method = RequestMethod.GET)
+    @RequestMapping(value = "/account/edit/{customerID}/{accountID}/{invoker}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
-    public ModelAndView updateAccount(@PathVariable("customerID") Integer customerID, @PathVariable("accountID") Integer accountID, ModelMap map) {
+    public ModelAndView updateAccount(@PathVariable("customerID") Integer customerID, @PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
         List<Directory> types = directoryRepository.getAccountTypes();
 
         if (accountID >= 0) {
-            List<Accounts> accounts = accountRepository.getAccount(accountID);
-            Accounts account = (accounts != null && accounts.size() > 0) ? accounts.iterator().next() : null;
+            Accounts account = accountRepository.getAccountById(accountID);
 
             map.put("account", account);
             map.put("pageName", "Update account entry");
@@ -64,6 +84,7 @@ public class AccountController {
         }
 
         map.put("types", types);
+        map.put("invoker", invoker);
         map.put("leftMenu", "accounts");
         map.put("accountID", accountID);
         map.put("customerID", customerID);
@@ -78,7 +99,6 @@ public class AccountController {
         Accounts account = new Accounts();
 
         try {
-            account.setAccountID(Integer.valueOf(params.get("id")));
             account.setAccountNumber(params.get("account"));
             account.setAccountOwner(Integer.valueOf(params.get("customerID")));
             account.setDateOpened(new java.util.Date());
@@ -94,12 +114,15 @@ public class AccountController {
             account.setComment(params.get("comment"));
 
             if (Integer.valueOf(params.get("id")) >= 0) {
+                account.setAccountID(Integer.valueOf(params.get("id")));
                 accountRepository.updateAccount(account);
             } else {
-                accountRepository.addAccount(account);
+                account.setAccountID(accountRepository.getNewAccountSeq());
+                transactionManageService.createNewAccount(account);
+                //accountRepository.addAccount(account);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";
@@ -118,7 +141,7 @@ public class AccountController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";
@@ -132,9 +155,27 @@ public class AccountController {
         try {
             accountRepository.closeAccount(Integer.valueOf(params.get("accountID")));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";
     }
+
+    @RequestMapping(value = "/transactions/{accountID}/{invoker}", method = RequestMethod.GET)
+    //@Secured({"ROLE_USER"})
+    public ModelAndView getTransactions(@PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
+        List<Transactions> transactions = transactionRepository.getTransactions(accountID);
+        Accounts account = accountRepository.getAccountById(accountID);
+
+        if (transactions != null) {
+            map.put("accountID", accountID);
+            map.put("invoker", invoker);
+            map.put("transactions", transactions);
+            map.put("pageName", "Transactions of account: " + account.getAccountNumber());
+            map.put("leftMenu", "transactions");
+        }
+
+        return new ModelAndView("transactions");
+    }
+
 }

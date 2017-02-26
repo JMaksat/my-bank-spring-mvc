@@ -39,7 +39,7 @@ CREATE TABLE bank.customer_info
 /* - Bank account structure: BBB DDMMYYYY CCCCC TTT (e.g. 0032812201500152056). BBB - branch, DDMMYYYY - open date, CCCCC - counter which start from 0 every business day, TTT - type of the account (buffer, personal, interest, system) */
 CREATE TABLE bank.accounts
 (
-  account_id serial NOT NULL,
+  account_id integer,
   account_number character varying(32),
   account_owner integer,
   date_opened date,
@@ -50,6 +50,7 @@ CREATE TABLE bank.accounts
   account_type integer,
   is_suspended integer,
   comment character varying(4000),
+  CONSTRAINT account_uq UNIQUE (account_number),
   CONSTRAINT accounts_pk PRIMARY KEY (account_id),
   CONSTRAINT account_owner_fk FOREIGN KEY (account_owner)
       REFERENCES bank.customer_info (customer_id) MATCH SIMPLE
@@ -64,7 +65,7 @@ CREATE TABLE bank.accounts
 */
 CREATE TABLE bank.transactions
 (
-  transaction_id serial NOT NULL,
+  transaction_id integer,
   operation_type integer,
   is_reversed integer,
   transaction_sum real,
@@ -81,7 +82,7 @@ CREATE TABLE bank.transactions
 
 CREATE TABLE bank.account_rest
 (
-  rest_id serial NOT NULL,
+  rest_id integer,
   account_id integer,
   rest_sum real,
   transaction_id integer,
@@ -157,3 +158,21 @@ CREATE TABLE bank.directory
   CONSTRAINT directory_pk PRIMARY KEY (dir_id),
   CONSTRAINT directory_uq UNIQUE (dir_group, dir_type)
 );
+
+CREATE TABLE bank.bank_parameters
+(
+  parameter_id serial NOT NULL,
+  parent_id integer,
+  parameter_name character varying(64),
+  value character varying(1024),
+  date_created date,
+  date_modified date,
+  active_from date,
+  active_to date,
+  user_id character varying(32),
+  CONSTRAINT bank_parameters_pkey PRIMARY KEY (parameter_id)
+);
+
+create sequence bank.transactions_seq;
+create sequence bank.account_rest_seq;
+create sequence bank.accounts_seq;

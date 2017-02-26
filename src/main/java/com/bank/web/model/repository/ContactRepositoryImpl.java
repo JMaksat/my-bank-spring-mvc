@@ -33,7 +33,7 @@ public class ContactRepositoryImpl implements ContactRepository {
     }
 
     @Override
-    public List<CustomerContacts> getContact(Integer contactID) {
+    public CustomerContacts getContact(Integer contactID) {
         Map<String, Object> param = new HashMap<>();
 
         String sql = " select contact_id" +
@@ -48,7 +48,7 @@ public class ContactRepositoryImpl implements ContactRepository {
                 " from bank.customer_contacts where contact_id = :contact_id ";
         param.put("contact_id", contactID);
         param.put("dir_group", Directory.CONTACTS);
-        List<CustomerContacts> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerContacts.class));
+        CustomerContacts result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(CustomerContacts.class));
         logger.info(" Obtain contact details using contactID = " + contactID);
 
         return result;

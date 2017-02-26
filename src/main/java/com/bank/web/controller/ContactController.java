@@ -32,9 +32,7 @@ public class ContactController {
     @RequestMapping(path = "/contact/{contactID}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
     public ModelAndView getContactData(@PathVariable Integer contactID, ModelMap map) {
-        List<CustomerContacts> contacts = contactRepository.getContact(contactID);
-
-        CustomerContacts contact = (contacts != null && contacts.size() >0) ? contacts.iterator().next() : null;
+        CustomerContacts contact = contactRepository.getContact(contactID);
 
         if (contact != null) {
             map.put("contact", contact);
@@ -51,8 +49,7 @@ public class ContactController {
         List<Directory> types = directoryRepository.getContactTypes();
 
         if (contactID >= 0) {
-            List<CustomerContacts> contacts = contactRepository.getContact(contactID);
-            CustomerContacts contact = (contacts != null && contacts.size() > 0) ? contacts.iterator().next() : null;
+            CustomerContacts contact = contactRepository.getContact(contactID);
 
             map.put("contact", contact);
             map.put("pageName", "Update contact entry");
@@ -93,7 +90,7 @@ public class ContactController {
                 contactRepository.addContact(contact);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";
@@ -112,7 +109,7 @@ public class ContactController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";

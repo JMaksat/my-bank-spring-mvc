@@ -1,5 +1,6 @@
 package com.bank.web.model.repository;
 
+import com.bank.web.model.entity.AccountRest;
 import com.bank.web.model.entity.Accounts;
 import com.bank.web.model.entity.Directory;
 import com.bank.web.model.entity.Transactions;
@@ -36,25 +37,53 @@ public class AccountRepositoryImpl implements AccountRepository {
 
 
     @Override
-    public List<Accounts> accountsList(Boolean suspended) {
-        Map<String, Accounts> param = new HashMap<>();
+    public List<Accounts> accountsList(Boolean suspended, Boolean closed) {
+        Map<String, Object> param = new HashMap<>();
 
         String suspendedClause;
+        String closedClause;
 
         if (suspended == null) {
-            suspendedClause = " 1=1 ";
+            suspendedClause = "";
         } else if (suspended) {
-            suspendedClause = " is_suspended = 1 ";
+            suspendedClause = " and is_suspended = 1 ";
         } else {
-            suspendedClause = " is_suspended = 0 ";
+            suspendedClause = " and is_suspended = 0 ";
         }
 
-        String sql = " select account_id, account_number, account_owner, date_opened, date_closed, date_created" +
-                " , date_modified, user_id, account_type, is_suspended, comment " +
-                " from bank.accounts " +
-                " where " + suspendedClause +
+        if (closed == null) {
+            closedClause = "";
+        } else if (closed) {
+            closedClause = " and date_closed is not null ";
+        } else {
+            closedClause = " and date_closed is null ";
+        }
+
+        String sql = " select account_id " +
+                " , account_number " +
+                " , account_owner " +
+                " , date_opened " +
+                " , date_closed " +
+                " , date_created " +
+                " , date_modified " +
+                " , user_id " +
+                " , (select dir_type from bank.directory " +
+                "     where dir_id = account_type and dir_group = :dir_group and is_active = 1) account_type " +
+                " , is_suspended " +
+                " , comment " +
+                " , (select z.rest_sum " +
+                "      from bank.account_rest z " +
+                "     where z.rest_id = (select max(r.rest_id) " +
+                "                          from bank.account_rest r " +
+                "                         where r.account_id = z.account_id) " +
+                "       and z.account_id = t.account_id) as rest_sum " +
+                " from bank.accounts t " +
+                " where 1=1 " +
+                suspendedClause +
+                closedClause +
                 " order by account_id ";
 
+        param.put("dir_group", Directory.ACCOUNTS);
         ((JdbcTemplate)(namedParameterJdbcTemplate.getJdbcOperations())).setFetchSize(500);
         List<Accounts> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Accounts.class));
         logger.info(" Obtain data from bank.accounts with condition (" + result.size() + ") ");
@@ -63,81 +92,144 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public List<Accounts> getAccount(Integer accountID) {
+    public Accounts getAccountById(Integer accountID) {
         Map<String, Object> param = new HashMap<>();
 
-        String sql = " select account_id" +
-                " , account_number" +
-                " , account_owner" +
-                " , date_opened" +
-                " , date_closed" +
-                " , date_created" +
-                " , date_modified" +
-                " , user_id" +
+        String sql = " select account_id " +
+                " , account_number " +
+                " , account_owner " +
+                " , date_opened " +
+                " , date_closed " +
+                " , date_created " +
+                " , date_modified " +
+                " , user_id " +
                 " , (select dir_type from bank.directory " +
-                "     where dir_id = account_type and dir_group = :dir_group and is_active = 1) account_type" +
-                " , is_suspended" +
+                "     where dir_id = account_type and dir_group = :dir_group and is_active = 1) account_type " +
+                " , is_suspended " +
                 " , comment " +
-                " from bank.accounts where account_id = :account_id ";
+                " , (select z.rest_sum " +
+                "      from bank.account_rest z " +
+                "     where z.rest_id = (select max(r.rest_id) " +
+                "                          from bank.account_rest r " +
+                "                         where r.account_id = z.account_id) " +
+                "       and z.account_id = t.account_id) as rest_sum " +
+                " from bank.accounts t " +
+                " where account_id = :account_id ";
         param.put("account_id", accountID);
         param.put("dir_group", Directory.ACCOUNTS);
-        List<Accounts> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Accounts.class));
+        Accounts result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(Accounts.class));
         logger.info(" Obtain account details using accountID = " + accountID);
 
         return result;
     }
 
     @Override
-    public void changeStatus(Integer accountID, Boolean status) {
+    public Accounts getAccountByNumber(String accountNumber) {
+        Map<String, Object> param = new HashMap<>();
+
+        String sql = " select account_id " +
+                " , account_number " +
+                " , account_owner " +
+                " , date_opened " +
+                " , date_closed " +
+                " , date_created " +
+                " , date_modified " +
+                " , user_id " +
+                " , (select dir_type from bank.directory " +
+                "     where dir_id = account_type and dir_group = :dir_group and is_active = 1) account_type " +
+                " , is_suspended " +
+                " , comment " +
+                " , (select z.rest_sum " +
+                "      from bank.account_rest z " +
+                "     where z.rest_id = (select max(r.rest_id) " +
+                "                          from bank.account_rest r " +
+                "                         where r.account_id = z.account_id) " +
+                "       and z.account_id = t.account_id) as rest_sum " +
+                " from bank.accounts t " +
+                " where account_number = :account_number ";
+        param.put("account_number", accountNumber);
+        param.put("dir_group", Directory.ACCOUNTS);
+        Accounts result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(Accounts.class));
+        logger.info(" Obtain account details using accountNumber = " + accountNumber);
+
+        return result;
+    }
+
+    @Override
+    public Double getAccountRest(Integer accountID) {
+        Map<String, Object> param = new HashMap<>();
+
+        String sql = " select t.rest_sum " +
+                "  from bank.account_rest t " +
+                " where t.account_id = :account_id " +
+                "   and t.rest_id = (select max(z.rest_id) " +
+                "                      from bank.account_rest z " +
+                "                     where z.account_id = t.account_id) ";
+        param.put("account_id", accountID);
+        Double result = namedParameterJdbcTemplate.queryForObject(sql, param, Double.class);
+        logger.info(" Obtain account rest using accountID = " + accountID);
+
+        return result;
+    }
+
+    @Override
+    public Integer getNewAccountSeq() {
+        Map<String, Object> param = new HashMap<>();
+
+        String sql = " select nextval('bank.accounts_seq') ";
+        Integer result = namedParameterJdbcTemplate.queryForObject(sql, param, Integer.class);
+        logger.info(" Next sequence for bank.accounts generated ");
+
+        return result;
+    }
+
+    @Override
+    public Integer getNewRestSeq() {
+        Map<String, Object> param = new HashMap<>();
+
+        String sql = " select nextval('bank.account_rest_seq') ";
+        Integer result = namedParameterJdbcTemplate.queryForObject(sql, param, Integer.class);
+        logger.info(" Next sequence for bank.account_rest generated ");
+
+        return result;
+    }
+
+    @Override
+    public void newRest(AccountRest accountRest) {
         Map<String, Object> fields = new HashMap<>();
-        Integer state = status?1:0;
 
-        String sql = " update bank.accounts set is_suspended = :state where account_id = :account_id ";
+        String sql = " insert into bank.account_rest (rest_id, account_id, rest_sum, transaction_id, rest_date, rest_time) " +
+                "   values (:rest_id, :account_id, :rest_sum, :transaction_id, :rest_date, now()) ";
 
-        fields.put("account_id", accountID);
-        fields.put("state", state);
+        fields.put("rest_id", accountRest.getRestID());
+        fields.put("account_id", accountRest.getAccountID());
+        fields.put("rest_sum", accountRest.getRestSum());
+        fields.put("transaction_id", accountRest.getTransactionID());
+        fields.put("rest_date", accountRest.getRestDate());
 
         int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
 
         if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.accounts " + accountID + " was update is_active " + rowNumbers + " rows");
+            logger.warn("Warning! For bank.account_rest was inserted " + rowNumbers + " rows");
         }
-    }
-
-    @Override
-    public void decreaseRest(Integer accountID, Double amount) {
-
-    }
-
-    @Override
-    public void increaseRest(Integer accountID, Double amount) {
-
-    }
-
-    @Override
-    public void getAccountRest(Integer accountID) {
-
-    }
-
-    @Override
-    public List<Transactions> getTransactions(Integer accountID) {
-        return null;
     }
 
     @Override
     public void addAccount(Accounts account) {
         Map<String, Object> fields = new HashMap<>();
 
-        String sql = " insert into bank.accounts (account_number, account_owner, date_opened, date_closed, date_created, user_id, account_type, comment) " +
-                " values (:account_number, :account_owner, :date_opened, :date_closed, :date_created, :user_id, :account_type, :comment) ";
+        String sql = " insert into bank.accounts (account_id, account_number, account_owner, date_opened, date_closed, date_created, user_id, account_type, is_suspended, comment) " +
+                " values (:account_id, :account_number, :account_owner, :date_opened, :date_closed, :date_created, :user_id, :account_type, :is_suspended, :comment) ";
 
+        fields.put("account_id", account.getAccountID());
         fields.put("account_number", account.getAccountNumber());
         fields.put("account_owner", account.getAccountOwner());
         fields.put("date_opened", account.getDateOpened());
         fields.put("date_closed", account.getDateClosed());
         fields.put("date_created", account.getDateCreated());
         fields.put("user_id", account.getUserID());
-        fields.put("account_type", account.getAccountType());
+        fields.put("account_type", Integer.valueOf(account.getAccountType()));
+        fields.put("is_suspended", account.getIsSuspended());
         fields.put("comment", account.getComment());
 
         int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
@@ -145,11 +237,6 @@ public class AccountRepositoryImpl implements AccountRepository {
         if (rowNumbers != 1) {
             logger.warn("Warning! For bank.accounts was inserted " + rowNumbers + " rows");
         }
-    }
-
-    @Override
-    public void addTransaction(Transactions transaction) {
-
     }
 
     @Override
@@ -167,7 +254,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         fields.put("date_closed", account.getDateClosed());
         fields.put("date_modified", account.getDateModified());
         fields.put("user_id", account.getUserID());
-        fields.put("account_type", account.getAccountType());
+        fields.put("account_type", Integer.valueOf(account.getAccountType()));
         fields.put("is_suspended", account.getIsSuspended());
         fields.put("comment", account.getComment());
         fields.put("account_id", account.getAccountID());
@@ -176,6 +263,23 @@ public class AccountRepositoryImpl implements AccountRepository {
 
         if (rowNumbers != 1) {
             logger.warn("Warning! For bank.accounts " + account.getAccountID() + " was update " + rowNumbers + " rows");
+        }
+    }
+
+    @Override
+    public void changeStatus(Integer accountID, Boolean status) {
+        Map<String, Object> fields = new HashMap<>();
+        Integer state = status?1:0;
+
+        String sql = " update bank.accounts set is_suspended = :state where account_id = :account_id ";
+
+        fields.put("account_id", accountID);
+        fields.put("state", state);
+
+        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
+
+        if (rowNumbers != 1) {
+            logger.warn("Warning! For bank.accounts " + accountID + " was update is_active " + rowNumbers + " rows");
         }
     }
 

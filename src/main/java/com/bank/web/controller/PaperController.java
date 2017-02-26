@@ -32,9 +32,7 @@ public class PaperController {
     @RequestMapping(path = "/paper/{paperID}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
     public ModelAndView getPaperData(@PathVariable Integer paperID, ModelMap map) {
-        List<CustomerPapers> papers = paperRepository.getPaper(paperID);
-
-        CustomerPapers paper = (papers != null && papers.size() >0) ? papers.iterator().next() : null;
+        CustomerPapers paper = paperRepository.getPaper(paperID);
 
         if (paper != null) {
             map.put("paper", paper);
@@ -51,8 +49,7 @@ public class PaperController {
         List<Directory> types = directoryRepository.getPaperTypes();
 
         if (paperID >= 0) {
-            List<CustomerPapers> papers = paperRepository.getPaper(paperID);
-            CustomerPapers paper = (papers != null && papers.size() > 0) ? papers.iterator().next() : null;
+            CustomerPapers paper = paperRepository.getPaper(paperID);
 
             map.put("paper", paper);
             map.put("pageName", "Update paper entry");
@@ -93,7 +90,7 @@ public class PaperController {
                 paperRepository.addPaper(paper);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";
@@ -112,7 +109,7 @@ public class PaperController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";

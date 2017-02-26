@@ -41,6 +41,9 @@ public class Accounts {
     @RowMapperField(columnName = "comment")
     private String comment;
 
+    @RowMapperField(columnName = "rest_sum")
+    private Double restSum;
+
     public Integer getAccountID() {
         return accountID;
     }
@@ -129,6 +132,14 @@ public class Accounts {
         this.comment = comment;
     }
 
+    public Double getRestSum() {
+        return restSum;
+    }
+
+    public void setRestSum(Double restSum) {
+        this.restSum = restSum;
+    }
+
     @Override
     public String toString() {
         return "Accounts{" +
@@ -143,6 +154,7 @@ public class Accounts {
                 ", accountType='" + accountType + '\'' +
                 ", isSuspended=" + isSuspended +
                 ", comment='" + comment + '\'' +
+                ", restSum=" + restSum +
                 '}';
     }
 }

@@ -102,6 +102,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Account number</th>
+                                    <th>Rest</th>
                                     <th>Type</th>
                                     <th>Suspended</th>
                                     <th>Opening date</th>
@@ -113,6 +114,7 @@
                                     <tr class="sortable" onclick="window.location.href='$request.contextPath/account/$lines.accountID/customer'">
                                         <td>$!lines.accountID</td>
                                         <td>$!lines.accountNumber</td>
+                                        <td>$!lines.restSum</td>
                                         <td>$!lines.accountType</td>
                                         <td>#if ($!lines.isSuspended==1) Yes
                                             #elseif ($!lines.isSuspended==0) No
@@ -128,7 +130,7 @@
                 </div>
                 <div class="modal-footer">
                     #if ($!customer.isActive==1)
-                        <a class="btn btn-default" href="$request.contextPath/account/edit/$!customerID/-1" role="button">Add account</a>
+                        <a class="btn btn-default" href="$request.contextPath/account/edit/$!customerID/-1/customer" role="button">Add account</a>
                     #end
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>

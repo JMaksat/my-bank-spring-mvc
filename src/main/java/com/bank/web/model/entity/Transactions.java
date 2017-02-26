@@ -12,7 +12,7 @@ public class Transactions {
     private Integer transactionID;
 
     @RowMapperField(columnName = "operation_type")
-    private Integer operationType;
+    private String operationType;
 
     @RowMapperField(columnName = "is_reversed")
     private Integer isReversed;
@@ -21,19 +21,19 @@ public class Transactions {
     private Double transactionSum;
 
     @RowMapperField(columnName = "transaction_date")
-    private java.util.Date transactionDate;
+    private Date transactionDate;
 
     @RowMapperField(columnName = "transaction_time")
-    private java.util.Date transactionTime;
+    private String transactionTime;
 
     @RowMapperField(columnName = "user_id")
     private String userID;
 
     @RowMapperField(columnName = "account_debit")
-    private Integer accountDebit;
+    private String accountDebit;
 
     @RowMapperField(columnName = "account_credit")
-    private Integer accountCredit;
+    private String accountCredit;
 
     public Integer getTransactionID() {
         return transactionID;
@@ -43,11 +43,11 @@ public class Transactions {
         this.transactionID = transactionID;
     }
 
-    public Integer getOperationType() {
+    public String getOperationType() {
         return operationType;
     }
 
-    public void setOperationType(Integer operationType) {
+    public void setOperationType(String operationType) {
         this.operationType = operationType;
     }
 
@@ -75,11 +75,11 @@ public class Transactions {
         this.transactionDate = transactionDate;
     }
 
-    public Date getTransactionTime() {
+    public String getTransactionTime() {
         return transactionTime;
     }
 
-    public void setTransactionTime(Date transactionTime) {
+    public void setTransactionTime(String transactionTime) {
         this.transactionTime = transactionTime;
     }
 
@@ -91,19 +91,19 @@ public class Transactions {
         this.userID = userID;
     }
 
-    public Integer getAccountDebit() {
+    public String getAccountDebit() {
         return accountDebit;
     }
 
-    public void setAccountDebit(Integer accountDebit) {
+    public void setAccountDebit(String accountDebit) {
         this.accountDebit = accountDebit;
     }
 
-    public Integer getAccountCredit() {
+    public String getAccountCredit() {
         return accountCredit;
     }
 
-    public void setAccountCredit(Integer accountCredit) {
+    public void setAccountCredit(String accountCredit) {
         this.accountCredit = accountCredit;
     }
 
@@ -111,14 +111,14 @@ public class Transactions {
     public String toString() {
         return "Transactions{" +
                 "transactionID=" + transactionID +
-                ", operationType=" + operationType +
+                ", operationType='" + operationType + '\'' +
                 ", isReversed=" + isReversed +
                 ", transactionSum=" + transactionSum +
                 ", transactionDate=" + transactionDate +
-                ", transactionTime=" + transactionTime +
+                ", transactionTime='" + transactionTime + '\'' +
                 ", userID='" + userID + '\'' +
-                ", accountDebit=" + accountDebit +
-                ", accountCredit=" + accountCredit +
+                ", accountDebit='" + accountDebit + '\'' +
+                ", accountCredit='" + accountCredit + '\'' +
                 '}';
     }
 }

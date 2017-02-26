@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.roma.impl.service.RowMapperService;
@@ -34,6 +35,29 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
     public void setDataSource(DataSource dataSuorce) {
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSuorce);
         this.simpleJdbcInsert = new SimpleJdbcInsert(dataSuorce).withTableName("bank.directory");
+    }
+
+    @Override
+    public List<Directory> directoryList() {
+        Map<String, Object> param = new HashMap<>();
+
+        String sql = " select dir_id " +
+                " , dir_group " +
+                " , dir_type " +
+                " , description " +
+                " , date_created " +
+                " , date_modified " +
+                " , is_active " +
+                " , user_id " +
+                " from bank.directory " +
+                " order by dir_id ";
+
+        param.put("dir_group", Directory.OPERATIONS);
+        ((JdbcTemplate)(namedParameterJdbcTemplate.getJdbcOperations())).setFetchSize(500);
+        List<Directory> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Directory.class));
+        logger.info(" Obtain all data from bank.transactions ");
+
+        return result;
     }
 
     @Override

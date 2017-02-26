@@ -16,22 +16,24 @@
 
             <h3 class="sub-header">
                 #if ($invoker=="customer")
-                    <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!account.customerID" role="button">
+                    <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!account.accountOwner" role="button">
                         <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
                 #elseif ($invoker=="accounts")
                     <a class="btn btn-primary" href="$request.contextPath/accounts" role="button">
                         <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
                 #end
-                #if ($!account.is_suspended==0)
-                    <a class="btn btn-success" href="" role="button">New transaction</a>
-                    <a class="btn btn-warning" href="$request.contextPath/account/edit/$!account.customerID/$!account.accountID" role="button">Edit</a>
-                    <a class="btn btn-warning" href="$request.contextPath/account/edit/$!account.accountID" role="button">Close</a>
+                #if (!$!account.dateClosed)
+                    #if ($!account.isSuspended==0)
+                        <a class="btn btn-success" href="$request.contextPath/transactions/$!account.accountID/$invoker" role="button">Transactions</a>
+                        <a class="btn btn-warning" href="$request.contextPath/account/edit/$!account.accountOwner/$!account.accountID/$invoker" role="button">Edit</a>
+                        <button class="btn btn-warning" onclick="closeAccount()" type="button" id="buttonClose">Close</button>
+                    #end
+                    <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
+                        #if ($!account.isSuspended==1) Release
+                        #elseif ($!account.isSuspended==0) Suspend
+                        #else Undefined #end
+                    </button>
                 #end
-                <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
-                    #if ($!account.is_suspended==1) Release
-                    #elseif ($!account.is_suspended==0) Suspend
-                    #else Undefined #end
-                </button>
             </h3>
 
             <div class="table-responsive">
@@ -50,6 +52,10 @@
                     <tr>
                         <td><strong>Account</strong></td>
                         <td>$!account.accountNumber</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rest</strong></td>
+                        <td>$!account.restSum</td>
                     </tr>
                     <tr>
                         <td><strong>Owner</strong></td>
@@ -81,8 +87,8 @@
                     </tr>
                     <tr>
                         <td><strong>State</strong></td>
-                        <td>#if ($!account.is_suspended==1) Suspended
-                        #elseif ($!account.is_suspended==0) Not suspended
+                        <td>#if ($!account.isSuspended==1) Suspended
+                        #elseif ($!account.isSuspended==0) Not suspended
                         #else Undefined #end</td>
                     </tr>
                     <tr>
@@ -103,24 +109,54 @@
         var state = {};
         var accountID = $!account.accountID;
         state.accountID = accountID;
-        var status = $!account.is_suspended;
+        var status = $!account.isSuspended;
         state.status = status;
 
-        $.ajax({
-            type : "GET",
-            url : "$request.contextPath/account/status",
-            contentType : "application/json",
-            dataType : "JSON",
-            data : state,
-            error : function(xhr, status, error) {
-                console.log("ResponseText:" + xhr.responseText);
-                alert("Failure during change status of account!");
-            },
-            success : function(data) {
-                window.location.href='$request.contextPath/account/$!account.accountID'
-                alert("Status of account (accountID=$!account.accountID) changed!");
-            }
-        });
+        var r = confirm("Are you sure you want to change status of account $!account.accountNumber ?");
+
+        if (r == true) {
+            $.ajax({
+                type: "GET",
+                url: "$request.contextPath/account/status",
+                contentType: "application/json",
+                dataType: "JSON",
+                data: state,
+                error: function (xhr, status, error) {
+                    console.log("ResponseText:" + xhr.responseText);
+                    alert("Failure during change status of account!");
+                },
+                success: function (data) {
+                    window.location.href = '$request.contextPath/account/$!account.accountID/$invoker'
+                    alert("Status of account $!account.accountNumber changed!");
+                }
+            });
+        }
+    }
+
+    function closeAccount() {
+        var state = {};
+        var accountID = $!account.accountID;
+        state.accountID = accountID;
+
+        var r = confirm("Are you sure you want to close account $!account.accountNumber ?");
+
+        if (r == true) {
+            $.ajax({
+                type: "GET",
+                url: "$request.contextPath/account/close",
+                contentType: "application/json",
+                dataType: "JSON",
+                data: state,
+                error: function (xhr, status, error) {
+                    console.log("ResponseText:" + xhr.responseText);
+                    alert("Failure during closing the account!");
+                },
+                success: function (data) {
+                    window.location.href = '$request.contextPath/account/$!account.accountID/$invoker'
+                    alert("Account $!account.accountNumber is closed now!");
+                }
+            });
+        }
     }
 
 </script>

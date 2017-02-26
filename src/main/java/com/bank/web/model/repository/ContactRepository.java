@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ContactRepository {
 
-    List<CustomerContacts> getContact(Integer contactID);
+    CustomerContacts getContact(Integer contactID);
 
     void addContact(CustomerContacts contact);
 

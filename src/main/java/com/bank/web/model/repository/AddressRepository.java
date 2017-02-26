@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AddressRepository {
 
-    List<CustomerAddress> getAddress(Integer addressID);
+    CustomerAddress getAddress(Integer addressID);
 
     void addAddress(CustomerAddress address);
 

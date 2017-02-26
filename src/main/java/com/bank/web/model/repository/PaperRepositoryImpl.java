@@ -33,7 +33,7 @@ public class PaperRepositoryImpl implements PaperRepository {
     }
 
     @Override
-    public List<CustomerPapers> getPaper(Integer paperID) {
+    public CustomerPapers getPaper(Integer paperID) {
         Map<String, Object> param = new HashMap<>();
 
         String sql = " select paper_id" +
@@ -48,7 +48,7 @@ public class PaperRepositoryImpl implements PaperRepository {
                 " from bank.customer_papers where paper_id = :paper_id ";
         param.put("paper_id", paperID);
         param.put("dir_group", Directory.PAPERS);
-        List<CustomerPapers> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerPapers.class));
+        CustomerPapers result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(CustomerPapers.class));
         logger.info(" Obtain paper details using paperID = " + paperID);
 
         return result;

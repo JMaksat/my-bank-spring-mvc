@@ -5,6 +5,7 @@ Application has:
 - The service only for individuals
 - make application multilingual
 - make report system using Jasper reports
+- use JPA Persistence instead of native sql
 
 Pages:
 - customer general info (CRUD; create, read and update using same form; only prompt for delete ).

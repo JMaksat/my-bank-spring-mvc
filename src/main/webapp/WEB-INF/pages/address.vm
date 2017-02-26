@@ -87,21 +87,25 @@
         var status = $!address.isActive;
         state.status = status;
 
-        $.ajax({
-            type : "GET",
-            url : "$request.contextPath/address/status",
-            contentType : "application/json",
-            dataType : "JSON",
-            data : state,
-            error : function(xhr, status, error) {
-                console.log("ResponseText:" + xhr.responseText);
-                alert("Failure during change status of address!");
-            },
-            success : function(data) {
-                window.location.href='$request.contextPath/address/$!address.addressID'
-                alert("Status of address (addressID=$!address.addressID) changed!");
-            }
-        });
+        var r = confirm("Are you sure you want to change status of address (ID=$!address.addressID) ?");
+
+        if (r == true) {
+            $.ajax({
+                type: "GET",
+                url: "$request.contextPath/address/status",
+                contentType: "application/json",
+                dataType: "JSON",
+                data: state,
+                error: function (xhr, status, error) {
+                    console.log("ResponseText:" + xhr.responseText);
+                    alert("Failure during change status of address!");
+                },
+                success: function (data) {
+                    window.location.href = '$request.contextPath/address/$!address.addressID'
+                    alert("Status of address (ID=$!address.addressID) changed!");
+                }
+            });
+        }
     }
 
 </script>

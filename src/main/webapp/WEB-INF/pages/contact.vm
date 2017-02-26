@@ -87,21 +87,25 @@
         var status = $!contact.isActive;
         state.status = status;
 
-        $.ajax({
-            type : "GET",
-            url : "$request.contextPath/contact/status",
-            contentType : "application/json",
-            dataType : "JSON",
-            data : state,
-            error : function(xhr, status, error) {
-                console.log("ResponseText:" + xhr.responseText);
-                alert("Failure during change status of contact!");
-            },
-            success : function(data) {
-                window.location.href='$request.contextPath/contact/$!contact.contactID'
-                alert("Status of contact (contactID=$!contact.contactID) changed!");
-            }
-        });
+        var r = confirm("Are you sure you want to change status of contact (ID=$!contact.contactID) ?");
+
+        if (r == true) {
+            $.ajax({
+                type: "GET",
+                url: "$request.contextPath/contact/status",
+                contentType: "application/json",
+                dataType: "JSON",
+                data: state,
+                error: function (xhr, status, error) {
+                    console.log("ResponseText:" + xhr.responseText);
+                    alert("Failure during change status of contact!");
+                },
+                success: function (data) {
+                    window.location.href = '$request.contextPath/contact/$!contact.contactID'
+                    alert("Status of contact (ID=$!contact.contactID) changed!");
+                }
+            });
+        }
     }
 
 </script>

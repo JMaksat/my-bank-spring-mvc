@@ -1,5 +1,6 @@
 package com.bank.web.model.repository;
 
+import com.bank.web.model.entity.AccountRest;
 import com.bank.web.model.entity.Accounts;
 import com.bank.web.model.entity.Transactions;
 
@@ -7,25 +8,25 @@ import java.util.List;
 
 public interface AccountRepository {
 
-    List<Accounts> accountsList(Boolean suspended);
+    List<Accounts> accountsList(Boolean suspended, Boolean closed);
 
-    List<Accounts> getAccount(Integer accountID);
+    Accounts getAccountById(Integer accountID);
 
-    void changeStatus (Integer accountID, Boolean status);
+    Accounts getAccountByNumber(String accountNumber);
 
-    void decreaseRest (Integer accountID, Double amount);
+    Double getAccountRest (Integer accountID);
 
-    void increaseRest (Integer accountID, Double amount);
+    Integer getNewAccountSeq();
 
-    void getAccountRest (Integer accountID);
+    Integer getNewRestSeq();
 
-    List<Transactions> getTransactions (Integer accountID);
+    void newRest (AccountRest accountRest);
 
     void addAccount (Accounts account);
 
-    void addTransaction (Transactions transaction);
-
     void updateAccount (Accounts account);
+
+    void changeStatus (Integer accountID, Boolean status);
 
     void closeAccount(Integer accountID);
 }

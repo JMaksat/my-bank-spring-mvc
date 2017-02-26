@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface DirectoryRepository {
 
+    List<Directory> directoryList();
+
     List<Directory> getAccountTypes();
 
     List<Directory> getTransactionTypes();

@@ -44,15 +44,14 @@ public class CustomerController {
     @RequestMapping(path = "/customerDetails/{customerID}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
     public ModelAndView getCustomerDetails(@PathVariable Integer customerID, ModelMap map) {
-        List<CustomerInfo> customer = customerRepository.customerDetails(customerID);
         List<Accounts> accounts = customerRepository.getAccounts(customerID);
         List<CustomerAddress> addresses = customerRepository.getAddresses(customerID);
         List<CustomerContacts> contacts = customerRepository.getContacts(customerID);
         List<CustomerPapers> papers = customerRepository.getPapers(customerID);
 
-        CustomerInfo details = (customer != null && customer.size() > 0) ? customer.iterator().next() : null;
+        CustomerInfo customer = customerRepository.customerDetails(customerID);
 
-        map.put("customer", details);
+        map.put("customer", customer);
         map.put("accounts", accounts);
         map.put("addresses", addresses);
         map.put("contacts", contacts);
@@ -68,10 +67,9 @@ public class CustomerController {
     public ModelAndView updateCustomer(@PathVariable Integer customerID, ModelMap map) {
 
         if (customerID >= 0) {
-            List<CustomerInfo> customer = customerRepository.customerDetails(customerID);
-            CustomerInfo details = (customer != null && customer.size() > 0) ? customer.iterator().next() : null;
+            CustomerInfo customer = customerRepository.customerDetails(customerID);
 
-            map.put("customer", details);
+            map.put("customer", customer);
             map.put("pageName", "Update customer entry");
         } else {
             map.put("pageName", "New customer");
@@ -109,7 +107,7 @@ public class CustomerController {
                 customerRepository.addCustomer(customer);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";
@@ -128,7 +126,7 @@ public class CustomerController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";

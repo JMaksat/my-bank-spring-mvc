@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PaperRepository {
 
-    List<CustomerPapers> getPaper(Integer paperID);
+    CustomerPapers getPaper(Integer paperID);
 
     void addPaper(CustomerPapers paper);
 

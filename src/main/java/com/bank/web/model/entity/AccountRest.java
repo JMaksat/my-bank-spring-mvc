@@ -21,10 +21,10 @@ public class AccountRest {
     private Integer transactionID;
 
     @RowMapperField(columnName = "rest_date")
-    private java.util.Date restDate;
+    private Date restDate;
 
     @RowMapperField(columnName = "rest_time")
-    private java.util.Date restTime;
+    private Date restTime;
 
     public Integer getRestID() {
         return restID;

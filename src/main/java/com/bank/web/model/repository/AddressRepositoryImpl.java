@@ -33,7 +33,7 @@ public class AddressRepositoryImpl implements AddressRepository {
     }
 
     @Override
-    public List<CustomerAddress> getAddress(Integer addressID) {
+    public CustomerAddress getAddress(Integer addressID) {
         Map<String, Object> param = new HashMap<>();
 
         String sql = " select address_id" +
@@ -48,7 +48,7 @@ public class AddressRepositoryImpl implements AddressRepository {
                 " from bank.customer_address where address_id = :address_id ";
         param.put("address_id", addressID);
         param.put("dir_group", Directory.ADDRESS);
-        List<CustomerAddress> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(CustomerAddress.class));
+        CustomerAddress result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(CustomerAddress.class));
         logger.info(" Obtain address details using addressID = " + addressID);
 
         return result;

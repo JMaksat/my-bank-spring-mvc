@@ -15,42 +15,53 @@
             <h1 class="page-header">$pageName</h1>
 
             <div class="form-group row">
-                <label class="col-2 col-form-label">Account</label>
+                <label class="col-2 col-form-label">Account debit</label>
                 <div class="col-10" style="width: 300px;">
-                    <input class="form-control" type="text" id="fieldAccount" #if($!accountID!=-1)disabled#end value="$!account.accountNumber">
+                    <input class="form-control" type="text" id="fieldDebit" disabled value="$!account.accountNumber">
                 </div>
             </div>
 
             <div class="form-group row">
-                <label class="col-2 col-form-label">Choose account type</label>
+                <label class="col-2 col-form-label">Account credit</label>
                 <div class="col-10" style="width: 300px;">
-                    <select class="form-control" id="fieldType">
-                        #foreach($line in $types)
-                            #if ($line.dirType==$account.accountType)
-                                <option value="$line.dirID" selected>$line.dirType</option>
-                            #else
-                                <option value="$line.dirID">$line.dirType</option>
-                            #end
+                    <select class="form-control" id="fieldCredit">
+                        <option value="" selected></option>
+                        #foreach($line in $accounts)
+                            <option value="$line.accountID">$line.accountNumber</option>
                         #end
                     </select>
                 </div>
             </div>
 
             <div class="form-group row">
-                <label class="col-2 col-form-label">Comment</label>
+                <label class="col-2 col-form-label">Operation type</label>
                 <div class="col-10" style="width: 300px;">
-                    <textarea class="form-control" rows="3" id="fieldComment">$!account.comment</textarea>
+                    <select class="form-control" id="fieldType">
+                        <option value="" selected></option>
+                        #foreach($line in $operations)
+                            <option value="$line.dirID">$line.dirType</option>
+                        #end
+                    </select>
                 </div>
             </div>
 
+            <div class="form-group row">
+                <label class="col-2 col-form-label">Amount</label>
+                <div class="col-10" style="width: 300px;">
+                    <input class="form-control" type="text" id="fieldAmount" value="">
+                </div>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="fieldReversed">
+                    Reversed
+                </label>
+            </div>
 
             <h2 class="sub-header">
                 <button class="btn btn-success" type="button" onclick="saveData()">Save</button>
-                #if ($!accountID == -1)
-                    <a class="btn btn-warning" href="$request.contextPath/customerDetails/$!customerID" role="button">Cancel</a>
-                #else
-                    <a class="btn btn-warning" href="$request.contextPath/account/$!accountID/$!invoker" role="button">Cancel</a>
-                #end
+                <a class="btn btn-warning" href="$request.contextPath/transactions/new/$!accountID/$invoker" role="button">Cancel</a>
             </h2>
         </div>
     </div>

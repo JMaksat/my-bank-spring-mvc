@@ -32,9 +32,7 @@ public class AddressController {
     @RequestMapping(path = "/address/{addressID}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
     public ModelAndView getAddressData(@PathVariable Integer addressID, ModelMap map) {
-        List<CustomerAddress> addresses = addressRepository.getAddress(addressID);
-
-        CustomerAddress address = (addresses != null && addresses.size() >0) ? addresses.iterator().next() : null;
+        CustomerAddress address = addressRepository.getAddress(addressID);
 
         if (address != null) {
             map.put("address", address);
@@ -51,8 +49,7 @@ public class AddressController {
         List<Directory> types = directoryRepository.getAddressTypes();
 
         if (addressID >= 0) {
-            List<CustomerAddress> addresses = addressRepository.getAddress(addressID);
-            CustomerAddress address = (addresses != null && addresses.size() > 0) ? addresses.iterator().next() : null;
+            CustomerAddress address = addressRepository.getAddress(addressID);
 
             map.put("address", address);
             map.put("pageName", "Update address entry");
@@ -93,7 +90,7 @@ public class AddressController {
                 addressRepository.addAddress(address);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";
@@ -112,7 +109,7 @@ public class AddressController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: ", e);
         }
 
         return "1";
