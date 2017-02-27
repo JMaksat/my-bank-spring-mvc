@@ -12,7 +12,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -71,26 +70,22 @@ public class PaperController {
     public String newPaper(@RequestParam Map<String, String> params) {
         CustomerPapers paper = new CustomerPapers();
 
-        try {
-            paper.setPaperID(Integer.valueOf(params.get("id")));
-            paper.setValue(params.get("value"));
-            paper.setDateCreated(new java.util.Date());
-            paper.setDateModified(new java.util.Date());
-            paper.setIsActive(1);
-        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null)
-                username = authentication.getName(); */
-            paper.setUserID("temp_user");
-            paper.setPaperType(params.get("type"));
-            paper.setCustomerID(Integer.valueOf(params.get("customerID")));
+        paper.setPaperID(Integer.valueOf(params.get("id")));
+        paper.setValue(params.get("value"));
+        paper.setDateCreated(new java.util.Date());
+        paper.setDateModified(new java.util.Date());
+        paper.setIsActive(1);
+    /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null)
+            username = authentication.getName(); */
+        paper.setUserID("temp_user");
+        paper.setPaperType(params.get("type"));
+        paper.setCustomerID(Integer.valueOf(params.get("customerID")));
 
-            if (Integer.valueOf(params.get("id")) >= 0) {
-                paperRepository.updatePaper(paper);
-            } else {
-                paperRepository.addPaper(paper);
-            }
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
+        if (Integer.valueOf(params.get("id")) >= 0) {
+            paperRepository.updatePaper(paper);
+        } else {
+            paperRepository.addPaper(paper);
         }
 
         return "1";
@@ -100,16 +95,11 @@ public class PaperController {
     @ResponseBody
     //@Secured({"ROLE_USER"})
     public String changePaperState(@RequestParam Map<String, String> params) {
-        try {
 
-            if (params.get("status").equals("1")) {
-                paperRepository.changeStatus(Integer.valueOf(params.get("paperID")), false);
-            } else {
-                paperRepository.changeStatus(Integer.valueOf(params.get("paperID")), true);
-            }
-
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
+        if (params.get("status").equals("1")) {
+            paperRepository.changeStatus(Integer.valueOf(params.get("paperID")), false);
+        } else {
+            paperRepository.changeStatus(Integer.valueOf(params.get("paperID")), true);
         }
 
         return "1";

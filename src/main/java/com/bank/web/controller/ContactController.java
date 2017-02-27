@@ -12,7 +12,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -71,26 +70,22 @@ public class ContactController {
     public String newContact(@RequestParam Map<String, String> params) {
         CustomerContacts contact = new CustomerContacts();
 
-        try {
-            contact.setContactID(Integer.valueOf(params.get("id")));
-            contact.setValue(params.get("value"));
-            contact.setDateCreated(new java.util.Date());
-            contact.setDateModified(new java.util.Date());
-            contact.setIsActive(1);
-        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null)
-                username = authentication.getName(); */
-            contact.setUserID("temp_user");
-            contact.setContactType(params.get("type"));
-            contact.setCustomerID(Integer.valueOf(params.get("customerID")));
+        contact.setContactID(Integer.valueOf(params.get("id")));
+        contact.setValue(params.get("value"));
+        contact.setDateCreated(new java.util.Date());
+        contact.setDateModified(new java.util.Date());
+        contact.setIsActive(1);
+    /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null)
+            username = authentication.getName(); */
+        contact.setUserID("temp_user");
+        contact.setContactType(params.get("type"));
+        contact.setCustomerID(Integer.valueOf(params.get("customerID")));
 
-            if (Integer.valueOf(params.get("id")) >= 0) {
-                contactRepository.updateContact(contact);
-            } else {
-                contactRepository.addContact(contact);
-            }
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
+        if (Integer.valueOf(params.get("id")) >= 0) {
+            contactRepository.updateContact(contact);
+        } else {
+            contactRepository.addContact(contact);
         }
 
         return "1";
@@ -100,16 +95,11 @@ public class ContactController {
     @ResponseBody
     //@Secured({"ROLE_USER"})
     public String changeContactState(@RequestParam Map<String, String> params) {
-        try {
 
-            if (params.get("status").equals("1")) {
-                contactRepository.changeStatus(Integer.valueOf(params.get("contactID")), false);
-            } else {
-                contactRepository.changeStatus(Integer.valueOf(params.get("contactID")), true);
-            }
-
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
+        if (params.get("status").equals("1")) {
+            contactRepository.changeStatus(Integer.valueOf(params.get("contactID")), false);
+        } else {
+            contactRepository.changeStatus(Integer.valueOf(params.get("contactID")), true);
         }
 
         return "1";

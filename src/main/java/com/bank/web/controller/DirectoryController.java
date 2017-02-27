@@ -1,7 +1,6 @@
 package com.bank.web.controller;
 
 import com.bank.web.model.entity.Directory;
-import com.bank.web.model.entity.Transactions;
 import com.bank.web.model.repository.DirectoryRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Controller

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AccountRepository {
 
-    List<Accounts> accountsList(Boolean suspended, Boolean closed);
+    List<Accounts> accountsList(Boolean suspended, Boolean closed, Integer accountID);
 
     Accounts getAccountById(Integer accountID);
 

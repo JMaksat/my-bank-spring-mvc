@@ -7,7 +7,6 @@ import com.bank.web.model.repository.AccountRepository;
 import com.bank.web.model.repository.DirectoryRepository;
 import com.bank.web.model.repository.TransactionRepository;
 import com.bank.web.service.TransactionManageService;
-import com.bank.web.service.TransactionManageServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,7 +15,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +41,7 @@ public class AccountController {
     @RequestMapping(path = "/accounts", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
     public ModelAndView getAccounts(ModelMap map) {
-        List<Accounts> accounts = accountRepository.accountsList(null, null);
+        List<Accounts> accounts = accountRepository.accountsList(null, null, null);
 
         if (accounts != null) {
             map.put("accounts", accounts);
@@ -98,31 +96,27 @@ public class AccountController {
     public String newAccount(@RequestParam Map<String, String> params) {
         Accounts account = new Accounts();
 
-        try {
-            account.setAccountNumber(params.get("account"));
-            account.setAccountOwner(Integer.valueOf(params.get("customerID")));
-            account.setDateOpened(new java.util.Date());
-            //account.getDateClosed();
-            account.setDateCreated(new java.util.Date());
-            account.setDateModified(new java.util.Date());
-        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null)
-                username = authentication.getName(); */
-            account.setUserID("temp_user");
-            account.setAccountType(params.get("type"));
-            account.setIsSuspended(0);
-            account.setComment(params.get("comment"));
+        account.setAccountNumber(params.get("account"));
+        account.setAccountOwner(Integer.valueOf(params.get("customerID")));
+        account.setDateOpened(new java.util.Date());
+        //account.getDateClosed();
+        account.setDateCreated(new java.util.Date());
+        account.setDateModified(new java.util.Date());
+    /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null)
+            username = authentication.getName(); */
+        account.setUserID("temp_user");
+        account.setAccountType(params.get("type"));
+        account.setIsSuspended(0);
+        account.setComment(params.get("comment"));
 
-            if (Integer.valueOf(params.get("id")) >= 0) {
-                account.setAccountID(Integer.valueOf(params.get("id")));
-                accountRepository.updateAccount(account);
-            } else {
-                account.setAccountID(accountRepository.getNewAccountSeq());
-                transactionManageService.createNewAccount(account);
-                //accountRepository.addAccount(account);
-            }
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
+        if (Integer.valueOf(params.get("id")) >= 0) {
+            account.setAccountID(Integer.valueOf(params.get("id")));
+            accountRepository.updateAccount(account);
+        } else {
+            account.setAccountID(accountRepository.getNewAccountSeq());
+            transactionManageService.createNewAccount(account);
+            //accountRepository.addAccount(account);
         }
 
         return "1";
@@ -132,16 +126,11 @@ public class AccountController {
     @ResponseBody
     //@Secured({"ROLE_USER"})
     public String changeAccountState(@RequestParam Map<String, String> params) {
-        try {
 
-            if (params.get("status").equals("1")) {
-                accountRepository.changeStatus(Integer.valueOf(params.get("accountID")), false);
-            } else {
-                accountRepository.changeStatus(Integer.valueOf(params.get("accountID")), true);
-            }
-
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
+        if (params.get("status").equals("1")) {
+            accountRepository.changeStatus(Integer.valueOf(params.get("accountID")), false);
+        } else {
+            accountRepository.changeStatus(Integer.valueOf(params.get("accountID")), true);
         }
 
         return "1";
@@ -152,11 +141,7 @@ public class AccountController {
     //@Secured({"ROLE_USER"})
     public String closeAccount(@RequestParam Map<String, String> params) {
 
-        try {
-            accountRepository.closeAccount(Integer.valueOf(params.get("accountID")));
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
-        }
+        accountRepository.closeAccount(Integer.valueOf(params.get("accountID")));
 
         return "1";
     }

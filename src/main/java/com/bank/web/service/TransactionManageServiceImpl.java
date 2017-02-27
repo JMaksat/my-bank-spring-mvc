@@ -111,41 +111,62 @@ public class TransactionManageServiceImpl implements TransactionManageService {
     }
 
     public String createNewTransaction(Integer accountDebit, Integer accountCredit, Double amount, String operationType, Boolean isReversed) {
-        List<Directory> directory = directoryRepository.getAccountTypes();
+        List<Directory> directory = directoryRepository.getTransactionTypes();
         Transactions transaction = new Transactions();
 
         try {
-            if (amount <= accountRepository.getAccountRest(accountDebit)) {
 
-                transaction.setTransactionID(transactionRepository.getNewTransactionSeq());
-                for (Directory dir : directory)
-                    if (dir.getDirType().equals(operationType))
-                        transaction.setOperationType(dir.getDirID().toString());
-                transaction.setIsReversed(isReversed ? 1 : 0);
-                transaction.setTransactionSum(amount);
-                transaction.setTransactionDate(new Date());
+            transaction.setTransactionID(transactionRepository.getNewTransactionSeq());
+            for (Directory dir : directory)
+                if (dir.getDirID().toString().equals(operationType))
+                    transaction.setOperationType(dir.getDirID().toString());
+            transaction.setIsReversed(isReversed ? 1 : 0);
+            transaction.setTransactionSum(amount);
+            transaction.setTransactionDate(new Date());
         /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null)
                 username = authentication.getName(); */
-                transaction.setUserID("temp_user");
-                transaction.setAccountDebit(accountDebit.toString());
-                transaction.setAccountCredit(accountCredit.toString());
-                transactionRepository.addTransaction(transaction);
+            transaction.setUserID("temp_user");
+            transaction.setAccountDebit(accountDebit.toString());
+            transaction.setAccountCredit(accountCredit.toString());
 
-                if (decreaseRest(accountDebit, transaction.getTransactionID(), amount)) {
-                    increaseRest(accountCredit, transaction.getTransactionID(), amount);
+            if (!isReversed) {
+                if (amount <= accountRepository.getAccountRest(accountDebit)) {
+
+                    transactionRepository.addTransaction(transaction);
+
+                    if (decreaseRest(accountDebit, transaction.getTransactionID(), amount)) {
+                        increaseRest(accountCredit, transaction.getTransactionID(), amount);
+                    } else {
+                        return "4";
+                    }
+
                 } else {
-                    return "Can't create transaction!";
+                    return "3";
                 }
-
-            } else {
-                return "Insufficient funds on debit account!";
             }
+
+            if (isReversed) {
+                if (amount <= accountRepository.getAccountRest(accountCredit)) {
+
+                    transactionRepository.addTransaction(transaction);
+
+                    if (decreaseRest(accountCredit, transaction.getTransactionID(), amount)) {
+                        increaseRest(accountDebit, transaction.getTransactionID(), amount);
+                    } else {
+                        return "4";
+                    }
+
+                } else {
+                    return "2";
+                }
+            }
+
         } catch (Exception e) {
             logger.error("Exception: ", e);
             return e.getMessage();
         }
 
-        return "Transaction successfully created.";
+        return "1";
     }
 }

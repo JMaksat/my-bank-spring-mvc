@@ -12,7 +12,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -71,26 +70,22 @@ public class AddressController {
     public String newAddress(@RequestParam Map<String, String> params) {
         CustomerAddress address = new CustomerAddress();
 
-        try {
-            address.setAddressID(Integer.valueOf(params.get("id")));
-            address.setValue(params.get("value"));
-            address.setDateCreated(new java.util.Date());
-            address.setDateModified(new java.util.Date());
-            address.setIsActive(1);
-        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null)
-                username = authentication.getName(); */
-            address.setUserID("temp_user");
-            address.setAddressType(params.get("type"));
-            address.setCustomerID(Integer.valueOf(params.get("customerID")));
+        address.setAddressID(Integer.valueOf(params.get("id")));
+        address.setValue(params.get("value"));
+        address.setDateCreated(new java.util.Date());
+        address.setDateModified(new java.util.Date());
+        address.setIsActive(1);
+    /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null)
+            username = authentication.getName(); */
+        address.setUserID("temp_user");
+        address.setAddressType(params.get("type"));
+        address.setCustomerID(Integer.valueOf(params.get("customerID")));
 
-            if (Integer.valueOf(params.get("id")) >= 0) {
-                addressRepository.updateAddress(address);
-            } else {
-                addressRepository.addAddress(address);
-            }
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
+        if (Integer.valueOf(params.get("id")) >= 0) {
+            addressRepository.updateAddress(address);
+        } else {
+            addressRepository.addAddress(address);
         }
 
         return "1";
@@ -100,16 +95,11 @@ public class AddressController {
     @ResponseBody
     //@Secured({"ROLE_USER"})
     public String changeAddressState(@RequestParam Map<String, String> params) {
-        try {
 
-            if (params.get("status").equals("1")) {
-                addressRepository.changeStatus(Integer.valueOf(params.get("addressID")), false);
-            } else {
-                addressRepository.changeStatus(Integer.valueOf(params.get("addressID")), true);
-            }
-
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
+        if (params.get("status").equals("1")) {
+            addressRepository.changeStatus(Integer.valueOf(params.get("addressID")), false);
+        } else {
+            addressRepository.changeStatus(Integer.valueOf(params.get("addressID")), true);
         }
 
         return "1";

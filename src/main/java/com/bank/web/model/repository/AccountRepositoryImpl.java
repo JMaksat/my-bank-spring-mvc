@@ -37,11 +37,12 @@ public class AccountRepositoryImpl implements AccountRepository {
 
 
     @Override
-    public List<Accounts> accountsList(Boolean suspended, Boolean closed) {
+    public List<Accounts> accountsList(Boolean suspended, Boolean closed, Integer accountID) {
         Map<String, Object> param = new HashMap<>();
 
         String suspendedClause;
         String closedClause;
+        String accountClause;
 
         if (suspended == null) {
             suspendedClause = "";
@@ -57,6 +58,12 @@ public class AccountRepositoryImpl implements AccountRepository {
             closedClause = " and date_closed is not null ";
         } else {
             closedClause = " and date_closed is null ";
+        }
+
+        if (accountID == null) {
+            accountClause = "";
+        } else {
+            accountClause = " and account_id not in (" + accountID + ") ";
         }
 
         String sql = " select account_id " +
@@ -81,6 +88,7 @@ public class AccountRepositoryImpl implements AccountRepository {
                 " where 1=1 " +
                 suspendedClause +
                 closedClause +
+                accountClause +
                 " order by account_id ";
 
         param.put("dir_group", Directory.ACCOUNTS);

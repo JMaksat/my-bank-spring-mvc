@@ -6,17 +6,17 @@ import com.bank.web.model.entity.Transactions;
 import com.bank.web.model.repository.AccountRepository;
 import com.bank.web.model.repository.DirectoryRepository;
 import com.bank.web.model.repository.TransactionRepository;
+import com.bank.web.service.TransactionManageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class TransactionController {
@@ -25,14 +25,17 @@ public class TransactionController {
     private TransactionRepository transactionRepository;
     private DirectoryRepository directoryRepository;
     private AccountRepository accountRepository;
+    private TransactionManageService transactionManageService;
 
     @Autowired
     public TransactionController(TransactionRepository transactionRepository,
                                  DirectoryRepository directoryRepository,
-                                 AccountRepository accountRepository) {
+                                 AccountRepository accountRepository,
+                                 TransactionManageService transactionManageService) {
         this.transactionRepository = transactionRepository;
         this.directoryRepository = directoryRepository;
         this.accountRepository = accountRepository;
+        this.transactionManageService = transactionManageService;
     }
 
     @RequestMapping(path = "/transactions", method = RequestMethod.GET)
@@ -52,7 +55,7 @@ public class TransactionController {
     @RequestMapping(value = "/transactions/new/{accountID}/{invoker}", method = RequestMethod.GET)
     //@Secured({"ROLE_USER"})
     public ModelAndView newTransaction(@PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
-        List<Accounts> accounts = accountRepository.accountsList(false, false);
+        List<Accounts> accounts = accountRepository.accountsList(false, false, accountID);
         List<Directory> operations = directoryRepository.getTransactionTypes();
         Accounts account = accountRepository.getAccountById(accountID);
 
@@ -69,4 +72,19 @@ public class TransactionController {
         return new ModelAndView("transaction");
     }
 
+    @RequestMapping(path = "/transactions/save", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    //@Secured({"ROLE_USER"})
+    public String newTransaction(@RequestParam Map<String, String> params) {
+
+        String result;
+
+        result = transactionManageService.createNewTransaction(Integer.valueOf(params.get("accountDebit")),
+                Integer.valueOf(params.get("accountCredit")),
+                Double.valueOf(params.get("amount")),
+                params.get("type"),
+                params.get("reversed").equals("1")?true:false);
+
+        return result;
+    }
 }

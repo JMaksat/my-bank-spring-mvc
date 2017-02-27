@@ -61,7 +61,7 @@
 
             <h2 class="sub-header">
                 <button class="btn btn-success" type="button" onclick="saveData()">Save</button>
-                <a class="btn btn-warning" href="$request.contextPath/transactions/new/$!accountID/$invoker" role="button">Cancel</a>
+                <a class="btn btn-warning" href="$request.contextPath/transactions/$!accountID/$invoker" role="button">Cancel</a>
             </h2>
         </div>
     </div>
@@ -71,25 +71,28 @@
 
     function saveData() {
         var state = {};
-        var id = $!accountID;
-        state.id = id;
-        var account = $("#fieldAccount").val();
-        state.account = account;
+        var accountDebit = $!accountID;
+        state.accountDebit = accountDebit;
+        var accountCredit = $("#fieldCredit").val();
+        state.accountCredit = accountCredit;
         var type = $("#fieldType").val();
         state.type = type;
-        var comment = $("#fieldComment").val();
-        state.comment = comment;
-        var customerID = $!customerID;
-        state.customerID = customerID;
+        var amount = $("#fieldAmount").val();
+        state.amount = amount;
+        var reversed = 0;
+        if ($('#fieldReversed').is(":checked")) {
+            reversed = 1;
+        }
+        state.reversed = reversed;
 
-        if(!type || !comment) {
+        if(!accountCredit || !type || !amount) {
             alert("You must fill out all fields!");
             return;
         }
 
         $.ajax({
             type : "GET",
-            url : "$request.contextPath/account/save",
+            url : "$request.contextPath/transactions/save",
             contentType : "application/json",
             dataType : "JSON",
             data : state,
@@ -98,13 +101,17 @@
                 alert("Failure during data process on controller!");
             },
             success : function(data) {
-                #if ($!accountID == -1)
-                    window.location.href='$request.contextPath/customerDetails/$!customerID';
-                    alert("Account successfully added!");
-                #else
-                    window.location.href='$request.contextPath/account/$!accountID/$!invoker';
-                    alert("Account successfully updated!");
-                #end
+                window.location.href='$request.contextPath/transactions/$!accountID/$!invoker';
+                if (data=="4") {
+                    alert("Can't create transaction!");
+                } else if (data=="3") {
+                    alert("Insufficient funds on debit account!");
+                } else if (data=="2") {
+                    alert("Insufficient funds on credit account!");
+                } else {
+                    alert("Transaction successfully created.");
+                }
+
             }
         });
     }

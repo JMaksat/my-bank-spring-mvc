@@ -5,7 +5,6 @@ import com.bank.web.model.repository.CustomerRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -100,14 +99,14 @@ public class CustomerController {
                 username = authentication.getName(); */
             customer.setUserID("temp_user");
             customer.setDateCreated(new java.util.Date());
-
-            if (Integer.valueOf(params.get("customerID")) >= 0) {
-                customerRepository.updateCustomer(customer);
-            } else {
-                customerRepository.addCustomer(customer);
-            }
         } catch (Exception e) {
             logger.error("Exception: ", e);
+        }
+
+        if (Integer.valueOf(params.get("customerID")) >= 0) {
+            customerRepository.updateCustomer(customer);
+        } else {
+            customerRepository.addCustomer(customer);
         }
 
         return "1";
@@ -117,16 +116,11 @@ public class CustomerController {
     @ResponseBody
     //@Secured({"ROLE_USER"})
     public String changeCustomerState(@RequestParam Map<String, String> params) {
-        try {
 
-            if (params.get("status").equals("1")) {
-                customerRepository.changeStatus(Integer.valueOf(params.get("customerID")), false);
-            } else {
-                customerRepository.changeStatus(Integer.valueOf(params.get("customerID")), true);
-            }
-
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
+        if (params.get("status").equals("1")) {
+            customerRepository.changeStatus(Integer.valueOf(params.get("customerID")), false);
+        } else {
+            customerRepository.changeStatus(Integer.valueOf(params.get("customerID")), true);
         }
 
         return "1";
