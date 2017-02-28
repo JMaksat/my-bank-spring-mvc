@@ -6,6 +6,7 @@ Application has:
 - make application multilingual
 - make report system using Jasper reports
 - use JPA Persistence instead of native sql
+- use DataTables Table plug-in for jQuery
 
 Pages:
 - customer general info (CRUD; create, read and update using same form; only prompt for delete ).
