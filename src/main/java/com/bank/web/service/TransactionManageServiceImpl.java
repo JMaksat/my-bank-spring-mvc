@@ -19,16 +19,16 @@ import java.util.List;
 public class TransactionManageServiceImpl implements TransactionManageService {
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
-    TransactionRepository transactionRepository;
+    private TransactionRepository transactionRepository;
 
     @Autowired
-    DirectoryRepository directoryRepository;
+    private DirectoryRepository directoryRepository;
 
     @Autowired
-    ParametersRepository parametersRepository;
+    private ParametersRepository parametersRepository;
 
     private static final Logger logger = Logger.getLogger(TransactionManageServiceImpl.class);
 

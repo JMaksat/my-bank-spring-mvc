@@ -19,7 +19,7 @@ public class CustomerController {
 
     private CustomerRepository customerRepository;
 
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     public CustomerController(CustomerRepository customerRepository) {

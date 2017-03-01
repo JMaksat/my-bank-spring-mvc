@@ -2,8 +2,7 @@ package com.bank.web.service;
 
 import com.bank.web.model.entity.UserRoles;
 import com.bank.web.model.entity.Users;
-import com.bank.web.model.repository.UserRolesRepository;
-import com.bank.web.model.repository.UsersRepository;
+import com.bank.web.model.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,11 +19,16 @@ import java.util.List;
 @Service("customUserService")
 public class CustomUserService implements UserDetailsService {
 
-    @Autowired
-    private UsersRepository usersRepository;
+    /*@Autowired
+    private UsersRepository usersRepository;*/
+    private UsersRepository usersRepository = new UsersRepositoryImpl();
+
+    /*@Autowired
+    private UserRolesRepository userRolesRepository;*/
+    private UserRolesRepository userRolesRepository = new UserRolesRepositoryImpl();
 
     @Autowired
-    private UserRolesRepository userRolesRepository;
+    private ParametersRepository parametersRepository;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
