@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Repository("userRolesRepository")
@@ -33,12 +34,12 @@ public class UserRolesRepositoryImpl implements UserRolesRepository {
     }
 
     @Override
-    public UserRoles findByRole(String login) {
+    public List<UserRoles> findByRole(String login) {
         String sql = " select user_role_id, username, role from bank.user_roles where username = :login ";
         Map<String, Object> params = Collections.<String, Object>singletonMap("login", login);
-        UserRoles user = null;
+        List<UserRoles> user = null;
         try {
-            user = namedParameterJdbcTemplate.queryForObject(sql, params, rowMapperService.getRowMapper(UserRoles.class));
+            user = namedParameterJdbcTemplate.query(sql, params, rowMapperService.getRowMapper(UserRoles.class));
             logger.debug("Found UserRoles entity with login '" + login + "'");
         } catch (EmptyResultDataAccessException e) {
             logger.debug("UserRoles entity with login '" + login + "' not found");

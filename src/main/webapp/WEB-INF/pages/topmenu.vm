@@ -11,7 +11,8 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                User: temp_user #* $userInfo.login *#
+                <li>User: temp_user #* $userInfo.login *#</li>
+                <li>Logout</li>
             </ul>
         </div>
     </div>

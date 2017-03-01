@@ -1,5 +1,9 @@
 package com.bank.web.service;
 
+import com.bank.web.model.entity.UserRoles;
+import com.bank.web.model.entity.Users;
+import com.bank.web.model.repository.UserRolesRepository;
+import com.bank.web.model.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,20 +17,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-class CustomUserService {}
-
-/*@Service("customUserService")
+@Service("customUserService")
 public class CustomUserService implements UserDetailsService {
 
     @Autowired
-    private AdmUssecService admUssecService;
+    private UsersRepository usersRepository;
+
     @Autowired
-    private AdmEgrsecService admEgrsecService;
+    private UserRolesRepository userRolesRepository;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        AdmUssec user = admUssecService.findByLogin(s);
-        User usrDetails = new User(user.getAusLogin(), user.getAusPass(),
+        Users user = usersRepository.findByLogin(s);
+        User usrDetails = new User(user.getUserName(), user.getPassword(),
                 true,
                 true,
                 true,
@@ -35,15 +38,14 @@ public class CustomUserService implements UserDetailsService {
         return usrDetails;
     }
 
-    private Collection<GrantedAuthority> getAuthorities(AdmUssec user) {
+    private Collection<GrantedAuthority> getAuthorities(Users user) {
         Collection<GrantedAuthority> result = new ArrayList<>();
-        List<AdmLgrsec> permissions = admEgrsecService.findByIdgr(user.getAusIdgr()).getPermissions();
-        for (AdmLgrsec permission : permissions) {
-            String role = "ROLE_" + permission.getAlgIdmenu() + permission.getAlgAcces();
-            GrantedAuthority perm = new SimpleGrantedAuthority(role);
+        List<UserRoles> permissions = userRolesRepository.findByRole(user.getUserName());
+        for (UserRoles permission : permissions) {
+            GrantedAuthority perm = new SimpleGrantedAuthority(permission.getRole());
             result.add(perm);
         }
-        result.add(new SimpleGrantedAuthority("ROLE_USER"));
+        //result.add(new SimpleGrantedAuthority("ROLE_USER"));
         return result;
     }
-}*/
+}
