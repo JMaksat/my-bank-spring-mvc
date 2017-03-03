@@ -28,9 +28,9 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     private static final Logger logger = Logger.getLogger(TransactionRepositoryImpl.class);
 
     @Autowired
-    public void setDataSource(DataSource dataSuorce) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSuorce);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSuorce).withTableName("bank.transactions");
+    public void setDataSource(DataSource dataSource) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.transactions");
     }
 
 

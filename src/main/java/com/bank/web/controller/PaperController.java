@@ -7,6 +7,9 @@ import com.bank.web.model.repository.PaperRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +32,7 @@ public class PaperController {
     }
 
     @RequestMapping(path = "/paper/{paperID}", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_OPERATOR"})
     public ModelAndView getPaperData(@PathVariable Integer paperID, ModelMap map) {
         CustomerPapers paper = paperRepository.getPaper(paperID);
 
@@ -43,7 +46,7 @@ public class PaperController {
     }
 
     @RequestMapping(value = "/paper/edit/{customerID}/{paperID}", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_OPERATOR"})
     public ModelAndView updatePaper(@PathVariable("customerID") Integer customerID, @PathVariable("paperID") Integer paperID, ModelMap map) {
         List<Directory> types = directoryRepository.getPaperTypes();
 
@@ -66,8 +69,9 @@ public class PaperController {
 
     @RequestMapping(path = "/paper/save", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_OPERATOR"})
     public String newPaper(@RequestParam Map<String, String> params) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerPapers paper = new CustomerPapers();
 
         paper.setPaperID(Integer.valueOf(params.get("id")));
@@ -75,10 +79,7 @@ public class PaperController {
         paper.setDateCreated(new java.util.Date());
         paper.setDateModified(new java.util.Date());
         paper.setIsActive(1);
-    /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null)
-            username = authentication.getName(); */
-        paper.setUserID("temp_user");
+        paper.setUserID(authentication.getName());
         paper.setPaperType(params.get("type"));
         paper.setCustomerID(Integer.valueOf(params.get("customerID")));
 
@@ -93,7 +94,7 @@ public class PaperController {
 
     @RequestMapping(path = "/paper/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_OPERATOR"})
     public String changePaperState(@RequestParam Map<String, String> params) {
 
         if (params.get("status").equals("1")) {

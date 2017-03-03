@@ -27,9 +27,9 @@ public class PaperRepositoryImpl implements PaperRepository {
     private static final Logger logger = Logger.getLogger(PaperRepositoryImpl.class);
 
     @Autowired
-    public void setDataSource(DataSource dataSuorce) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSuorce);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSuorce).withTableName("bank.customer_papers");
+    public void setDataSource(DataSource dataSource) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.customer_papers");
     }
 
     @Override

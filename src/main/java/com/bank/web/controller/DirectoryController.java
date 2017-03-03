@@ -4,6 +4,7 @@ import com.bank.web.model.entity.Directory;
 import com.bank.web.model.repository.DirectoryRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,7 @@ public class DirectoryController {
     }
 
     @RequestMapping(path = "/directory", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ADMIN"})
     public ModelAndView getDirectory(ModelMap map) {
         List<Directory> dictionary = directoryRepository.directoryList();
 

@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.Collections;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 @Repository("userRolesRepository")
-@Transactional
 public class UserRolesRepositoryImpl implements UserRolesRepository {
 
     @Autowired
@@ -28,14 +26,14 @@ public class UserRolesRepositoryImpl implements UserRolesRepository {
     private static final Logger logger = Logger.getLogger(UserRolesRepositoryImpl.class);
 
     @Autowired
-    public void setDataSource(DataSource dataSuorce) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSuorce);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSuorce).withTableName("bank.user_roles");
+    public void setDataSource(DataSource dataSource) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.user_roles");
     }
 
     @Override
     public List<UserRoles> findByRole(String login) {
-        String sql = " select user_role_id, username, role from bank.user_roles where username = :login ";
+        String sql = " select user_role_id, username, user_role from bank.user_roles where username = :login ";
         Map<String, Object> params = Collections.<String, Object>singletonMap("login", login);
         List<UserRoles> user = null;
         try {

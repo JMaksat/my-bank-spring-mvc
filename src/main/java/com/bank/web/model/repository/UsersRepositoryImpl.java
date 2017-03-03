@@ -8,13 +8,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.*;
 
 @Repository("usersRepository")
-@Transactional
 public class UsersRepositoryImpl implements UsersRepository {
 
     @Autowired
@@ -25,14 +23,14 @@ public class UsersRepositoryImpl implements UsersRepository {
     private static final Logger logger = Logger.getLogger(UsersRepositoryImpl.class);
 
     @Autowired
-    public void setDataSource(DataSource dataSuorce) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSuorce);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSuorce).withTableName("bank.users");
+    public void setDataSource(DataSource dataSource) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.users");
     }
 
     @Override
     public Users findByLogin(String login) {
-        String sql = " select username, password, is_active from bank.users where username = :login ";
+        String sql = " select username, password, is_active from bank.users where is_active = 1 and username = :login ";
         Map<String, Object> params = Collections.<String, Object>singletonMap("login", login);
         Users user = null;
         try {
@@ -41,6 +39,14 @@ public class UsersRepositoryImpl implements UsersRepository {
         } catch (EmptyResultDataAccessException e) {
             logger.debug("Users entity with login '" + login + "' not found");
         }
+
         return user;
     }
+
+    /*
+    * New user:
+    * String password = "12345";
+    * BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    * String hashedPassword = passwordEncoder.encode(password);
+    * */
 }

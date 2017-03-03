@@ -5,6 +5,9 @@ import com.bank.web.model.repository.CustomerRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +30,7 @@ public class CustomerController {
     }
 
     @RequestMapping(path = "/customers", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT", "ROLE_OPERATOR"})
     public ModelAndView getCustomerData(ModelMap map) {
         List<CustomerInfo> customers = customerRepository.customersList(null);
 
@@ -41,7 +44,7 @@ public class CustomerController {
     }
 
     @RequestMapping(path = "/customerDetails/{customerID}", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT", "ROLE_OPERATOR"})
     public ModelAndView getCustomerDetails(@PathVariable Integer customerID, ModelMap map) {
         List<Accounts> accounts = customerRepository.getAccounts(customerID);
         List<CustomerAddress> addresses = customerRepository.getAddresses(customerID);
@@ -62,7 +65,7 @@ public class CustomerController {
     }
 
     @RequestMapping(path = "/customers/edit/{customerID}", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT", "ROLE_OPERATOR"})
     public ModelAndView updateCustomer(@PathVariable Integer customerID, ModelMap map) {
 
         if (customerID >= 0) {
@@ -82,8 +85,9 @@ public class CustomerController {
 
     @RequestMapping(path = "/customers/save", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT", "ROLE_OPERATOR"})
     public String newCustomer(@RequestParam Map<String, String> params) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerInfo customer = new CustomerInfo();
 
         try {
@@ -94,10 +98,7 @@ public class CustomerController {
             customer.setBirthDate(formatter.parse(params.get("birthDate")));
             customer.setDateModified(new java.util.Date());
             customer.setIsActive(1);
-        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null)
-                username = authentication.getName(); */
-            customer.setUserID("temp_user");
+            customer.setUserID(authentication.getName());
             customer.setDateCreated(new java.util.Date());
         } catch (Exception e) {
             logger.error("Exception: ", e);
@@ -114,7 +115,7 @@ public class CustomerController {
 
     @RequestMapping(path = "/customers/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT", "ROLE_OPERATOR"})
     public String changeCustomerState(@RequestParam Map<String, String> params) {
 
         if (params.get("status").equals("1")) {

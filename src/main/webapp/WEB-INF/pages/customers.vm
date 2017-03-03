@@ -14,12 +14,14 @@
 
           <h1 class="page-header">$pageName</h1>
 
-          <h2 class="sub-header">
-              <a class="btn btn-success" href="$request.contextPath/customers/edit/-1" role="button">New customer</a>
-          </h2>
+          #if($authz.anyGranted('ROLE_OPERATOR'))
+            <h2 class="sub-header">
+                <a class="btn btn-success" href="$request.contextPath/customers/edit/-1" role="button">New customer</a>
+            </h2>
+          #end
 
           <div class="table-responsive">
-            <table class="table table-striped">
+            <table id="datatab" class="display" cellspacing="0" width="100%">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -30,6 +32,16 @@
                   <th>State</th>
                 </tr>
               </thead>
+              <tfoot>
+                <tr>
+                    <th>ID</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Middle name</th>
+                    <th>DOB</th>
+                    <th>State</th>
+                </tr>
+              </tfoot>
               <tbody>
                 #foreach($lines in $customers)
                   <tr class="sortable" onclick="window.location.href='$request.contextPath/customerDetails/$lines.customerID'">
@@ -52,6 +64,14 @@
         </div>
       </div>
     </div>
+
+    <script type="text/javascript" class="init">
+
+        $(document).ready(function() {
+            $('#datatab').DataTable();
+        } );
+
+    </script>
 
   </body>
 </html>

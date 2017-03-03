@@ -86,17 +86,27 @@ insert into bank.account_rest values (9,   11,	1000000,	0,	'2016-01-02',	'18:47:
 alter sequence bank.account_rest_seq restart with 10;
 
 INSERT INTO bank.users(username, password, is_active)
-VALUES ('john', '123456', 1);
+VALUES ('john', '$2a$10$oLYgFhseqsx8c/YttTFB2uFc6J79po8FukVMf8KST.Y8L1mXSLNli', 1);
 INSERT INTO bank.users(username, password, is_active)
-VALUES ('harry', '123456', 1);
+VALUES ('harry', '$2a$10$S8MubWHS/fbzQ/RCfudGaeQdDMmn6ERHu19byQYFpXMIUUyG13nYS', 1);
+INSERT INTO bank.users(username, password, is_active)
+VALUES ('simon', '$2a$10$aw6Vv911UjceBhkNCCNmgORsRi9LQ/JQ9B/j3NTkm6TC6XlB4SdYC', 1);
+INSERT INTO bank.users(username, password, is_active)
+VALUES ('demo', '$2a$10$k1LiqtAmofNHyEToJz5yCez29bqbX/us8FGap//huecy.w53.QNH2', 1);
 
-INSERT INTO bank.user_roles (user_role_id, username, role)
-VALUES (1, 'john', 'ROLE_USER');
-INSERT INTO bank.user_roles (user_role_id, username, role)
+INSERT INTO bank.user_roles (user_role_id, username, user_role)
+VALUES (1, 'harry', 'ROLE_OPERATOR');
+INSERT INTO bank.user_roles (user_role_id, username, user_role)
 VALUES (2, 'john', 'ROLE_ADMIN');
-INSERT INTO bank.user_roles (user_role_id, username, role)
-VALUES (3, 'harry', 'ROLE_USER');
-alter sequence bank.user_roles_user_role_id_seq restart with 4;
+INSERT INTO bank.user_roles (user_role_id, username, user_role)
+VALUES (3, 'simon', 'ROLE_ACCOUNTANT');
+INSERT INTO bank.user_roles (user_role_id, username, user_role)
+VALUES (4, 'demo', 'ROLE_ACCOUNTANT');
+INSERT INTO bank.user_roles (user_role_id, username, user_role)
+VALUES (5, 'demo', 'ROLE_OPERATOR');
+INSERT INTO bank.user_roles (user_role_id, username, user_role)
+VALUES (6, 'demo', 'ROLE_ADMIN');
+alter sequence bank.user_roles_user_role_id_seq restart with 7;
 
 insert into bank.bank_parameters (parent_id, parameter_name, value, date_created, date_modified, active_from, active_to, user_id)
 values (null, 'TRANSFER_ACCOUNT', '0010101201600002015', now(), now(), '2016-01-01', '2036-01-01', user);

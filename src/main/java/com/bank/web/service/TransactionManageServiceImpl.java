@@ -10,6 +10,8 @@ import com.bank.web.model.repository.ParametersRepository;
 import com.bank.web.model.repository.TransactionRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -31,6 +33,7 @@ public class TransactionManageServiceImpl implements TransactionManageService {
     private ParametersRepository parametersRepository;
 
     private static final Logger logger = Logger.getLogger(TransactionManageServiceImpl.class);
+    private Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     public Boolean createNewAccount(Accounts account) {
         List<Directory> directory = directoryRepository.getTransactionTypes();
@@ -47,10 +50,7 @@ public class TransactionManageServiceImpl implements TransactionManageService {
             transaction.setIsReversed(0);
             transaction.setTransactionSum(0.0);
             transaction.setTransactionDate(new Date());
-        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null)
-                username = authentication.getName(); */
-            transaction.setUserID("temp_user");
+            transaction.setUserID(authentication.getName());
             transaction.setAccountDebit(accountRepository.getAccountByNumber(
                     parametersRepository.getParamTransAccount().getValue()).getAccountID().toString());
             transaction.setAccountCredit(account.getAccountID().toString());
@@ -123,10 +123,7 @@ public class TransactionManageServiceImpl implements TransactionManageService {
             transaction.setIsReversed(isReversed ? 1 : 0);
             transaction.setTransactionSum(amount);
             transaction.setTransactionDate(new Date());
-        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null)
-                username = authentication.getName(); */
-            transaction.setUserID("temp_user");
+            transaction.setUserID(authentication.getName());
             transaction.setAccountDebit(accountDebit.toString());
             transaction.setAccountCredit(accountCredit.toString());
 

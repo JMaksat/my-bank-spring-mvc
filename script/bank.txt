@@ -1,12 +1,9 @@
 Application has:
-- access control, roles 
-  ROLE_ADMIN allowed only to work with users and roles;
-  ROLE_USER allowed to work with any business page except users and user roles;
 - The service only for individuals
 - make application multilingual
 - make report system using Jasper reports
 - use JPA Persistence instead of native sql
-- use DataTables Table plug-in for jQuery
+
 
 Pages:
 - customer general info (CRUD; create, read and update using same form; only prompt for delete ).

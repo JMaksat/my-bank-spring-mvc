@@ -3,53 +3,73 @@
     #parse("WEB-INF/pages/header.vm")
 
 <body>
-<input type="hidden" name="$!{_csrf.parameterName}" value="$!{_csrf.token}">
-    #parse("WEB-INF/pages/topmenu.vm")
+    <input type="hidden" name="$!{_csrf.parameterName}" value="$!{_csrf.token}">
+        #parse("WEB-INF/pages/topmenu.vm")
 
-<div class="container-fluid">
-    <div class="row">
-        #parse("WEB-INF/pages/leftmenu.vm")
+    <div class="container-fluid">
+        <div class="row">
+            #parse("WEB-INF/pages/leftmenu.vm")
 
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-            <h1 class="page-header">$pageName</h1>
+                <h1 class="page-header">$pageName</h1>
 
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Group</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Date of creation</th>
-                        <th>Last edited date</th>
-                        <th>State</th>
-                        <th>Last edited by</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        #foreach($lines in $dictionary)
-                        <tr>
-                            <td>$!lines.dirID</td>
-                            <td>$!lines.dirGroup</td>
-                            <td>$!lines.dirType</td>
-                            <td>$!lines.description</td>
-                            <td>$!dateTool.format("dd.MM.yyyy", $!lines.dateCreated)</td>
-                            <td>$!dateTool.format("dd.MM.yyyy", $!lines.dateModified)</td>
-                            <td>#if ($!lines.isActive==1) Active
-                            #elseif ($!lines.isActive==0) Inactive
-                            #else Undefined #end</td>
-                            <td>$!lines.userID</td>
-                        </tr>
-                        #end
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table id="datatab" class="display" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Group</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Date of creation</th>
+                                <th>Last edited date</th>
+                                <th>State</th>
+                                <th>Last edited by</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>ID</th>
+                                <th>Group</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Date of creation</th>
+                                <th>Last edited date</th>
+                                <th>State</th>
+                                <th>Last edited by</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            #foreach($lines in $dictionary)
+                            <tr>
+                                <td>$!lines.dirID</td>
+                                <td>$!lines.dirGroup</td>
+                                <td>$!lines.dirType</td>
+                                <td>$!lines.description</td>
+                                <td>$!dateTool.format("dd.MM.yyyy", $!lines.dateCreated)</td>
+                                <td>$!dateTool.format("dd.MM.yyyy", $!lines.dateModified)</td>
+                                <td>#if ($!lines.isActive==1) Active
+                                #elseif ($!lines.isActive==0) Inactive
+                                #else Undefined #end</td>
+                                <td>$!lines.userID</td>
+                            </tr>
+                            #end
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
-
         </div>
     </div>
-</div>
+
+    <script type="text/javascript" class="init">
+
+        $(document).ready(function() {
+            $('#datatab').DataTable();
+        } );
+
+    </script>
 
 </body>
 </html>

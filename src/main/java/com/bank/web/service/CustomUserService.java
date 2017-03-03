@@ -19,16 +19,11 @@ import java.util.List;
 @Service("customUserService")
 public class CustomUserService implements UserDetailsService {
 
-    /*@Autowired
-    private UsersRepository usersRepository;*/
-    private UsersRepository usersRepository = new UsersRepositoryImpl();
-
-    /*@Autowired
-    private UserRolesRepository userRolesRepository;*/
-    private UserRolesRepository userRolesRepository = new UserRolesRepositoryImpl();
+    @Autowired
+    private UsersRepository usersRepository;
 
     @Autowired
-    private ParametersRepository parametersRepository;
+    private UserRolesRepository userRolesRepository;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -46,10 +41,9 @@ public class CustomUserService implements UserDetailsService {
         Collection<GrantedAuthority> result = new ArrayList<>();
         List<UserRoles> permissions = userRolesRepository.findByRole(user.getUserName());
         for (UserRoles permission : permissions) {
-            GrantedAuthority perm = new SimpleGrantedAuthority(permission.getRole());
+            GrantedAuthority perm = new SimpleGrantedAuthority(permission.getUserRole());
             result.add(perm);
         }
-        //result.add(new SimpleGrantedAuthority("ROLE_USER"));
         return result;
     }
 }

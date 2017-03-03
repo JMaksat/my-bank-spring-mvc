@@ -5,7 +5,7 @@ create schema bank;
 CREATE TABLE bank.users
 (
   username character varying(45) NOT NULL,
-  password character varying(45) NOT NULL,
+  password character varying(60) NOT NULL,
   is_active integer,
   CONSTRAINT users_pk PRIMARY KEY (username)
 );
@@ -14,12 +14,12 @@ CREATE TABLE bank.user_roles
 (
   user_role_id serial NOT NULL,
   username character varying(45) NOT NULL,
-  role character varying(45) NOT NULL,
+  user_role character varying(45) NOT NULL,
   CONSTRAINT user_roles_pkey PRIMARY KEY (user_role_id),
   CONSTRAINT fk_username FOREIGN KEY (username)
       REFERENCES bank.users (username) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT uni_username_role UNIQUE (role, username)
+  CONSTRAINT uni_username_role UNIQUE (user_role, username)
 );
 
 CREATE TABLE bank.customer_info

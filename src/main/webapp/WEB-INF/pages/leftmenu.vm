@@ -1,33 +1,46 @@
 <div class="col-sm-3 col-md-2 sidebar">
     <ul class="nav nav-sidebar">
-        #* #if($authz.anyGranted('ROLE_USER')) *#
-        #if ($leftMenu=="customers") <li class="active">
-        #else <li>
-        #end <a href="$request.contextPath/customers">Customers</a></li>
+        #if($authz.anyGranted('ROLE_OPERATOR, ROLE_ACCOUNTANT'))
+            #if ($leftMenu=="customers") <li class="active">
+            #else <li>
+            #end <a href="$request.contextPath/customers">Customers</a></li>
+        #end
 
-        #* #if($authz.anyGranted('ROLE_USER')) *#
-        #if ($leftMenu=="accounts") <li class="active">
-        #else <li>
-        #end <a href="$request.contextPath/accounts">Accounts</a></li>
+        #if($authz.anyGranted('ROLE_ACCOUNTANT'))
+            #if ($leftMenu=="accounts") <li class="active">
+            #else <li>
+            #end <a href="$request.contextPath/accounts">Accounts</a></li>
+        #end
 
-        #* #if($authz.anyGranted('ROLE_USER')) *#
-        #if ($leftMenu=="transactions") <li class="active">
-        #else <li>
-        #end <a href="$request.contextPath/transactions">Transactions</a></li>
+        #if($authz.anyGranted('ROLE_ACCOUNTANT'))
+            #if ($leftMenu=="transactions") <li class="active">
+            #else <li>
+            #end <a href="$request.contextPath/transactions">Transactions</a></li>
+        #end
 
-        #* #if($authz.anyGranted('ROLE_USER')) *#
-        #if ($leftMenu=="directory") <li class="active">
-        #else <li>
-        #end <a href="$request.contextPath/directory">Directory</a></li>
+        #if($authz.anyGranted('ROLE_ADMIN'))
+            #if ($leftMenu=="parameters") <li class="active">
+            #else <li>
+            #end <a href="$request.contextPath/users">Users</a></li>
+        #end
 
-        #* #if($authz.anyGranted('ROLE_USER')) *#
-        #if ($leftMenu=="parameters") <li class="active">
-        #else <li>
-        #end <a href="$request.contextPath/parameters">Bank parameters</a></li>
+        #if($authz.anyGranted('ROLE_ADMIN'))
+            #if ($leftMenu=="directory") <li class="active">
+            #else <li>
+            #end <a href="$request.contextPath/directory">Directory</a></li>
+        #end
 
-        #* #if($authz.anyGranted('ROLE_ADMIN')) *#
-        #if ($leftMenu=="parameters") <li class="active">
-        #else <li>
-        #end <a href="$request.contextPath/users">Users</a></li>
+        #if($authz.anyGranted('ROLE_ADMIN'))
+            #if ($leftMenu=="parameters") <li class="active">
+            #else <li>
+            #end <a href="$request.contextPath/parameters">Bank parameters</a></li>
+        #end
+
+        #if($authz.anyGranted('ROLE_OPERATOR, ROLE_ACCOUNTANT'))
+            #if ($leftMenu=="reports") <li class="active">
+            #else <li>
+            #end <a href="$request.contextPath/reports">Reports</a></li>
+        #end
+
     </ul>
 </div>

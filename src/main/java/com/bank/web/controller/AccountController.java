@@ -10,6 +10,9 @@ import com.bank.web.service.TransactionManageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +42,7 @@ public class AccountController {
     }
 
     @RequestMapping(path = "/accounts", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView getAccounts(ModelMap map) {
         List<Accounts> accounts = accountRepository.accountsList(null, null, null);
 
@@ -53,7 +56,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/account/{accountID}/{invoker}", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView getAccount(@PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
         Accounts account = accountRepository.getAccountById(accountID);
 
@@ -68,7 +71,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/account/edit/{customerID}/{accountID}/{invoker}", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView updateAccount(@PathVariable("customerID") Integer customerID, @PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
         List<Directory> types = directoryRepository.getAccountTypes();
 
@@ -92,20 +95,17 @@ public class AccountController {
 
     @RequestMapping(path = "/account/save", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT"})
     public String newAccount(@RequestParam Map<String, String> params) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Accounts account = new Accounts();
 
         account.setAccountNumber(params.get("account"));
         account.setAccountOwner(Integer.valueOf(params.get("customerID")));
         account.setDateOpened(new java.util.Date());
-        //account.getDateClosed();
         account.setDateCreated(new java.util.Date());
         account.setDateModified(new java.util.Date());
-    /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null)
-            username = authentication.getName(); */
-        account.setUserID("temp_user");
+        account.setUserID(authentication.getName());
         account.setAccountType(params.get("type"));
         account.setIsSuspended(0);
         account.setComment(params.get("comment"));
@@ -116,7 +116,6 @@ public class AccountController {
         } else {
             account.setAccountID(accountRepository.getNewAccountSeq());
             transactionManageService.createNewAccount(account);
-            //accountRepository.addAccount(account);
         }
 
         return "1";
@@ -124,7 +123,7 @@ public class AccountController {
 
     @RequestMapping(path = "/account/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT"})
     public String changeAccountState(@RequestParam Map<String, String> params) {
 
         if (params.get("status").equals("1")) {
@@ -138,7 +137,7 @@ public class AccountController {
 
     @RequestMapping(path = "/account/close", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT"})
     public String closeAccount(@RequestParam Map<String, String> params) {
 
         accountRepository.closeAccount(Integer.valueOf(params.get("accountID")));
@@ -147,7 +146,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/transactions/{accountID}/{invoker}", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView getTransactions(@PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
         List<Transactions> transactions = transactionRepository.getTransactions(accountID);
         Accounts account = accountRepository.getAccountById(accountID);

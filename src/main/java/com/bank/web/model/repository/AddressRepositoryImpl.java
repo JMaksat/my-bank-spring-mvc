@@ -27,9 +27,9 @@ public class AddressRepositoryImpl implements AddressRepository {
     private static final Logger logger = Logger.getLogger(AddressRepositoryImpl.class);
 
     @Autowired
-    public void setDataSource(DataSource dataSuorce) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSuorce);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSuorce).withTableName("bank.customer_address");
+    public void setDataSource(DataSource dataSource) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.customer_address");
     }
 
     @Override

@@ -7,6 +7,9 @@ import com.bank.web.model.repository.DirectoryRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +32,7 @@ public class ContactController {
     }
 
     @RequestMapping(path = "/contact/{contactID}", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_OPERATOR"})
     public ModelAndView getContactData(@PathVariable Integer contactID, ModelMap map) {
         CustomerContacts contact = contactRepository.getContact(contactID);
 
@@ -43,7 +46,7 @@ public class ContactController {
     }
 
     @RequestMapping(value = "/contact/edit/{customerID}/{contactID}", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_OPERATOR"})
     public ModelAndView updateContact(@PathVariable("customerID") Integer customerID, @PathVariable("contactID") Integer contactID, ModelMap map) {
         List<Directory> types = directoryRepository.getContactTypes();
 
@@ -66,8 +69,9 @@ public class ContactController {
 
     @RequestMapping(path = "/contact/save", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_OPERATOR"})
     public String newContact(@RequestParam Map<String, String> params) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerContacts contact = new CustomerContacts();
 
         contact.setContactID(Integer.valueOf(params.get("id")));
@@ -75,10 +79,7 @@ public class ContactController {
         contact.setDateCreated(new java.util.Date());
         contact.setDateModified(new java.util.Date());
         contact.setIsActive(1);
-    /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null)
-            username = authentication.getName(); */
-        contact.setUserID("temp_user");
+        contact.setUserID(authentication.getName());
         contact.setContactType(params.get("type"));
         contact.setCustomerID(Integer.valueOf(params.get("customerID")));
 
@@ -93,7 +94,7 @@ public class ContactController {
 
     @RequestMapping(path = "/contact/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_OPERATOR"})
     public String changeContactState(@RequestParam Map<String, String> params) {
 
         if (params.get("status").equals("1")) {

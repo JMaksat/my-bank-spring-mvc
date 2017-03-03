@@ -17,18 +17,22 @@
                 <h3 class="sub-header">
                     <a class="btn btn-primary" href="$request.contextPath/customers" role="button">
                         <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
-                    <button class="btn btn-success" type="button" data-toggle="modal" data-target="#modalAccounts">Accounts</button>
-                    <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalAddresses">Addresses</button>
-                    <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalContacts">Contacts</button>
-                    <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalPapers">Papers</button>
-                    #if ($!customer.isActive==1)
-                        <a class="btn btn-warning" href="$request.contextPath/customers/edit/$!customerID" role="button">Edit</a>
+                    #if($authz.anyGranted('ROLE_ACCOUNTANT'))
+                        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#modalAccounts">Accounts</button>
                     #end
-                    <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
-                        #if ($!customer.isActive==1) Block
-                        #elseif ($!customer.isActive==0) Unblock
-                        #else Undefined #end
-                    </button>
+                    #if($authz.anyGranted('ROLE_OPERATOR'))
+                        <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalAddresses">Addresses</button>
+                        <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalContacts">Contacts</button>
+                        <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalPapers">Papers</button>
+                        #if ($!customer.isActive==1)
+                            <a class="btn btn-warning" href="$request.contextPath/customers/edit/$!customerID" role="button">Edit</a>
+                        #end
+                        <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
+                            #if ($!customer.isActive==1) Block
+                            #elseif ($!customer.isActive==0) Unblock
+                            #else Undefined #end
+                        </button>
+                    #end
                 </h3>
 
                 <div class="table-responsive">

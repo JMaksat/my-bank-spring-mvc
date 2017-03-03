@@ -12,15 +12,15 @@ public class UserRoles {
     @RowMapperField(columnName = "userName")
     private String userName;
 
-    @RowMapperField(columnName = "role")
-    private String role;
+    @RowMapperField(columnName = "user_role")
+    private String userRole;
 
     public Integer getUserRoleId() {
         return userRoleId;
     }
 
     public void setUserRoleId(Integer userRoleId) {
-        userRoleId = userRoleId;
+        this.userRoleId = userRoleId;
     }
 
     public String getUserName() {
@@ -28,15 +28,15 @@ public class UserRoles {
     }
 
     public void setUserName(String userName) {
-        userName = userName;
+        this.userName = userName;
     }
 
-    public String getRole() {
-        return role;
+    public String getUserRole() {
+        return userRole;
     }
 
-    public void setRole(String role) {
-        role = role;
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class UserRoles {
         return "UserRoles{" +
                 "userRoleId=" + userRoleId +
                 ", userName='" + userName + '\'' +
-                ", role='" + role + '\'' +
+                ", userRole='" + userRole + '\'' +
                 '}';
     }
 }

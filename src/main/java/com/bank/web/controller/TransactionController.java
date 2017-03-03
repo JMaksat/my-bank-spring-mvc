@@ -10,6 +10,7 @@ import com.bank.web.service.TransactionManageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class TransactionController {
     }
 
     @RequestMapping(path = "/transactions", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView getTransactions(ModelMap map) {
         List<Transactions> transactions = transactionRepository.transactionsList();
 
@@ -53,7 +54,7 @@ public class TransactionController {
     }
 
     @RequestMapping(value = "/transactions/new/{accountID}/{invoker}", method = RequestMethod.GET)
-    //@Secured({"ROLE_USER"})
+    @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView newTransaction(@PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
         List<Accounts> accounts = accountRepository.accountsList(false, false, accountID);
         List<Directory> operations = directoryRepository.getTransactionTypes();
@@ -74,8 +75,8 @@ public class TransactionController {
 
     @RequestMapping(path = "/transactions/save", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    //@Secured({"ROLE_USER"})
-    public String newTransaction(@RequestParam Map<String, String> params) {
+    @Secured({"ROLE_ACCOUNTANT"})
+    public String saveTransaction(@RequestParam Map<String, String> params) {
 
         String result;
 
