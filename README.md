@@ -1,5 +1,5 @@
 #MyBank Retail Bank System v 0.1
-The goal of this application is to demonstrate knowledge and skills of making Spring.MVC application.
+The goal of this application is to demonstrate knowledge and skills of making complex Spring MVC applications.
 
 #Technology used:
 -	JDK 1.8
