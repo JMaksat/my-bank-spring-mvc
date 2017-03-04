@@ -1,8 +1,10 @@
 package com.bank.web.controller;
 
 import com.bank.web.model.entity.CustomerContacts;
+import com.bank.web.model.entity.CustomerInfo;
 import com.bank.web.model.entity.Directory;
 import com.bank.web.model.repository.ContactRepository;
+import com.bank.web.model.repository.CustomerRepository;
 import com.bank.web.model.repository.DirectoryRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +26,15 @@ public class ContactController {
 
     private ContactRepository contactRepository;
     private DirectoryRepository directoryRepository;
+    private CustomerRepository customerRepository;
 
     @Autowired
-    public ContactController(ContactRepository contactRepository, DirectoryRepository directoryRepository) {
+    public ContactController(ContactRepository contactRepository,
+                             DirectoryRepository directoryRepository,
+                             CustomerRepository customerRepository) {
         this.contactRepository = contactRepository;
         this.directoryRepository = directoryRepository;
+        this.customerRepository = customerRepository;
     }
 
     @RequestMapping(path = "/contact/{contactID}", method = RequestMethod.GET)
@@ -37,7 +43,10 @@ public class ContactController {
         CustomerContacts contact = contactRepository.getContact(contactID);
 
         if (contact != null) {
+            CustomerInfo customer = customerRepository.customerDetails(contact.getCustomerID());
+
             map.put("contact", contact);
+            map.put("customer", customer);
             map.put("pageName", "Contact");
             map.put("leftMenu", "customers");
         }

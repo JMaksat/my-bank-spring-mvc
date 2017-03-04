@@ -1,9 +1,11 @@
 package com.bank.web.controller;
 
 import com.bank.web.model.entity.Accounts;
+import com.bank.web.model.entity.CustomerInfo;
 import com.bank.web.model.entity.Directory;
 import com.bank.web.model.entity.Transactions;
 import com.bank.web.model.repository.AccountRepository;
+import com.bank.web.model.repository.CustomerRepository;
 import com.bank.web.model.repository.DirectoryRepository;
 import com.bank.web.model.repository.TransactionRepository;
 import com.bank.web.service.TransactionManageService;
@@ -29,22 +31,25 @@ public class AccountController {
     private DirectoryRepository directoryRepository;
     private TransactionRepository transactionRepository;
     private TransactionManageService transactionManageService;
+    private CustomerRepository customerRepository;
 
     @Autowired
     public AccountController(AccountRepository accountRepository,
                              DirectoryRepository directoryRepository,
                              TransactionRepository transactionRepository,
-                             TransactionManageService transactionManageService) {
+                             TransactionManageService transactionManageService,
+                             CustomerRepository customerRepository) {
         this.accountRepository = accountRepository;
         this.directoryRepository = directoryRepository;
         this.transactionRepository = transactionRepository;
         this.transactionManageService = transactionManageService;
+        this.customerRepository = customerRepository;
     }
 
     @RequestMapping(path = "/accounts", method = RequestMethod.GET)
     @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView getAccounts(ModelMap map) {
-        List<Accounts> accounts = accountRepository.accountsList(null, null, null);
+        List<Accounts> accounts = accountRepository.accountsList(null, null, null, null);
 
         if (accounts != null) {
             map.put("accounts", accounts);
@@ -61,7 +66,10 @@ public class AccountController {
         Accounts account = accountRepository.getAccountById(accountID);
 
         if (account != null) {
+            CustomerInfo customer = customerRepository.customerDetails(account.getAccountOwner());
+
             map.put("account", account);
+            map.put("customer", customer);
             map.put("invoker", invoker);
             map.put("pageName", "Account");
             map.put("leftMenu", "accounts");

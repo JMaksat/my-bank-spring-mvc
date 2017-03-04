@@ -56,7 +56,7 @@ public class TransactionController {
     @RequestMapping(value = "/transactions/new/{accountID}/{invoker}", method = RequestMethod.GET)
     @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView newTransaction(@PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
-        List<Accounts> accounts = accountRepository.accountsList(false, false, accountID);
+        List<Accounts> accounts = accountRepository.accountsList(false, false, accountID, true);
         List<Directory> operations = directoryRepository.getTransactionTypes();
         Accounts account = accountRepository.getAccountById(accountID);
 

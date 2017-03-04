@@ -23,7 +23,7 @@
                         <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
                 #end
                 #if (!$!account.dateClosed)
-                    #if ($!account.isSuspended==0)
+                    #if ($!account.isSuspended==0  && $!customer.isActive==1)
                         <a class="btn btn-success" href="$request.contextPath/transactions/$!account.accountID/$invoker" role="button">Transactions</a>
                         <a class="btn btn-warning" href="$request.contextPath/account/edit/$!account.accountOwner/$!account.accountID/$invoker" role="button">Edit</a>
                         <button class="btn btn-warning" onclick="closeAccount()" type="button" id="buttonClose">Close</button>

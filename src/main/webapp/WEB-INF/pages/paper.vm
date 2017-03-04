@@ -17,7 +17,7 @@
             <h3 class="sub-header">
                 <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!paper.customerID" role="button">
                     <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
-                #if ($!paper.isActive==1)
+                #if ($!paper.isActive==1 && $!customer.isActive==1)
                     <a class="btn btn-warning" href="$request.contextPath/paper/edit/$!paper.customerID/$!paper.paperID" role="button">Edit</a>
                 #end
                 <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">

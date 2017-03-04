@@ -1,7 +1,9 @@
 package com.bank.web.controller;
 
+import com.bank.web.model.entity.CustomerInfo;
 import com.bank.web.model.entity.CustomerPapers;
 import com.bank.web.model.entity.Directory;
+import com.bank.web.model.repository.CustomerRepository;
 import com.bank.web.model.repository.DirectoryRepository;
 import com.bank.web.model.repository.PaperRepository;
 import org.apache.log4j.Logger;
@@ -24,11 +26,15 @@ public class PaperController {
 
     private PaperRepository paperRepository;
     private DirectoryRepository directoryRepository;
+    private CustomerRepository customerRepository;
 
     @Autowired
-    public PaperController(PaperRepository paperRepository, DirectoryRepository directoryRepository) {
+    public PaperController(PaperRepository paperRepository,
+                           DirectoryRepository directoryRepository,
+                           CustomerRepository customerRepository) {
         this.paperRepository = paperRepository;
         this.directoryRepository = directoryRepository;
+        this.customerRepository = customerRepository;
     }
 
     @RequestMapping(path = "/paper/{paperID}", method = RequestMethod.GET)
@@ -37,7 +43,10 @@ public class PaperController {
         CustomerPapers paper = paperRepository.getPaper(paperID);
 
         if (paper != null) {
+            CustomerInfo customer = customerRepository.customerDetails(paper.getCustomerID());
+
             map.put("paper", paper);
+            map.put("customer", customer);
             map.put("pageName", "Paper");
             map.put("leftMenu", "customers");
         }

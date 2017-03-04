@@ -37,12 +37,13 @@ public class AccountRepositoryImpl implements AccountRepository {
 
 
     @Override
-    public List<Accounts> accountsList(Boolean suspended, Boolean closed, Integer accountID) {
+    public List<Accounts> accountsList(Boolean suspended, Boolean closed, Integer accountID, Boolean isOwnerBlocked) {
         Map<String, Object> param = new HashMap<>();
 
         String suspendedClause;
         String closedClause;
         String accountClause;
+        String ownerBlockedClause;
 
         if (suspended == null) {
             suspendedClause = "";
@@ -64,6 +65,12 @@ public class AccountRepositoryImpl implements AccountRepository {
             accountClause = "";
         } else {
             accountClause = " and account_id not in (" + accountID + ") ";
+        }
+
+        if (isOwnerBlocked == null || !isOwnerBlocked) {
+            ownerBlockedClause = "";
+        } else {
+            ownerBlockedClause = " and not account_owner in (select customer_id from bank.customer_info where is_active = 0) ";
         }
 
         String sql = " select account_id " +
@@ -89,6 +96,7 @@ public class AccountRepositoryImpl implements AccountRepository {
                 suspendedClause +
                 closedClause +
                 accountClause +
+                ownerBlockedClause +
                 " order by account_id ";
 
         param.put("dir_group", Directory.ACCOUNTS);
