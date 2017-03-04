@@ -8,6 +8,9 @@ import java.util.Date;
 @RowMapperClass(tableName = "bank.bank_parameters")
 public class BankParameters {
 
+    @RowMapperField(columnName = "parameter_id")
+    private Integer parameterId;
+
     @RowMapperField(columnName = "parent_id")
     private Integer parentId;
 
@@ -31,6 +34,14 @@ public class BankParameters {
 
     @RowMapperField(columnName = "user_id")
     private String userId;
+
+    public Integer getParameterId() {
+        return parameterId;
+    }
+
+    public void setParameterId(Integer parameterId) {
+        this.parameterId = parameterId;
+    }
 
     public Integer getParentId() {
         return parentId;
@@ -99,7 +110,8 @@ public class BankParameters {
     @Override
     public String toString() {
         return "BankParameters{" +
-                "parentId=" + parentId +
+                "parameterId=" + parameterId +
+                ", parentId=" + parentId +
                 ", parameterName='" + parameterName + '\'' +
                 ", value='" + value + '\'' +
                 ", dateCreated=" + dateCreated +

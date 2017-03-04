@@ -15,6 +15,9 @@ public class Users {
     @RowMapperField(columnName = "is_active")
     private Integer isActive;
 
+    @RowMapperField(columnName = "roles")
+    private String roles;
+
     public String getUserName() {
         return userName;
     }
@@ -39,12 +42,21 @@ public class Users {
         this.isActive = isActive;
     }
 
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
         return "Users{" +
                 "userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", isActive=" + isActive +
+                ", roles='" + roles + '\'' +
                 '}';
     }
 }

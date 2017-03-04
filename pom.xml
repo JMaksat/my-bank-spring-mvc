@@ -24,7 +24,6 @@
         <spring.version>4.2.2.RELEASE</spring.version>
         <spring.jdbc.roma.version>2.0.0.RELEASE</spring.jdbc.roma.version>
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
-        <jackson.version>2.6.3</jackson.version>
     </properties>
 
     <dependencies>

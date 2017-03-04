@@ -19,7 +19,7 @@
         #end
 
         #if($authz.anyGranted('ROLE_ADMIN'))
-            #if ($leftMenu=="parameters") <li class="active">
+            #if ($leftMenu=="users") <li class="active">
             #else <li>
             #end <a href="$request.contextPath/users">Users</a></li>
         #end

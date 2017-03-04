@@ -25,8 +25,8 @@
 
     <form class="form-signin" action="$request.contextPath/login" method="post">
         #if ($auth)
-            <div class="login-fail-msg">
-                Invalid username or password!
+            <div class="alert alert-danger">
+                <strong>Invalid username or password!</strong>
             </div>
         #end
         <h2 class="form-signin-heading">Please sign in</h2>

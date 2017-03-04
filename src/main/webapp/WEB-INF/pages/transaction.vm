@@ -85,7 +85,7 @@
         }
         state.reversed = reversed;
 
-        if(!accountCredit || !type || !amount) {
+        if(!accountCredit || !type || !amount || amount==0 || amount<0) {
             alert("You must fill out all fields!");
             return;
         }

@@ -29,8 +29,23 @@ public class UsersRepositoryImpl implements UsersRepository {
     }
 
     @Override
+    public List<Users> getUsers() {
+
+        String sql = " select us.username " +
+                "     , us.password " +
+                "     , us.is_active " +
+                "     , (select string_agg(ur.user_role, ',') from bank.user_roles ur where ur.username = us.username) as roles " +
+                "  from bank.users us " +
+                " where us.is_active = 1 ";
+        List<Users> result = namedParameterJdbcTemplate.query(sql, rowMapperService.getRowMapper(Users.class));
+        logger.info(" Obtain all active users");
+
+        return result;
+    }
+
+    @Override
     public Users findByLogin(String login) {
-        String sql = " select username, password, is_active from bank.users where is_active = 1 and username = :login ";
+        String sql = " select username, password, is_active, null as roles from bank.users where is_active = 1 and username = :login ";
         Map<String, Object> params = Collections.<String, Object>singletonMap("login", login);
         Users user = null;
         try {

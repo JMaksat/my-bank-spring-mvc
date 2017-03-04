@@ -31,6 +31,26 @@ public class ParametersRepositoryImpl implements ParametersRepository {
     }
 
     @Override
+    public List<BankParameters> getParameters() {
+
+        String sql = " select parameter_id " +
+                " , parent_id " +
+                " , parameter_name " +
+                " , value " +
+                " , date_created " +
+                " , date_modified " +
+                " , active_from " +
+                " , active_to " +
+                " , user_id " +
+                " from bank.bank_parameters " +
+                " where now() between active_from and active_to ";
+        List<BankParameters> result = namedParameterJdbcTemplate.query(sql, rowMapperService.getRowMapper(BankParameters.class));
+        logger.info(" Obtain all active parameters");
+
+        return result;
+    }
+
+    @Override
     public BankParameters getParamTransAccount() {
         Map<String, Object> param = new HashMap<>();
 
@@ -49,5 +69,6 @@ public class ParametersRepositoryImpl implements ParametersRepository {
         BankParameters result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(BankParameters.class));
         logger.info(" Obtain value for parameter TRANSFER_ACCOUNT");
 
-        return result;    }
+        return result;
+    }
 }

@@ -14,6 +14,10 @@
 
                 <h1 class="page-header">$pageName</h1>
 
+                <h2 class="sub-header">
+                    <a class="btn btn-success" href="" role="button">New entry</a>
+                </h2>
+
                 <div class="table-responsive">
                     <table id="datatab" class="display" cellspacing="0" width="100%">
                         <thead>

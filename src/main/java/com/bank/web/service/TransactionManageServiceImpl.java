@@ -33,9 +33,9 @@ public class TransactionManageServiceImpl implements TransactionManageService {
     private ParametersRepository parametersRepository;
 
     private static final Logger logger = Logger.getLogger(TransactionManageServiceImpl.class);
-    private Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     public Boolean createNewAccount(Accounts account) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<Directory> directory = directoryRepository.getTransactionTypes();
         Transactions transaction = new Transactions();
         AccountRest rest = new AccountRest();
@@ -111,6 +111,7 @@ public class TransactionManageServiceImpl implements TransactionManageService {
     }
 
     public String createNewTransaction(Integer accountDebit, Integer accountCredit, Double amount, String operationType, Boolean isReversed) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<Directory> directory = directoryRepository.getTransactionTypes();
         Transactions transaction = new Transactions();
 
