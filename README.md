@@ -48,6 +48,7 @@ System has three roles: ROLE_OPERATOR, ROLE_ACCOUNTANT, ROLE_ADMIN. Each of each
 >- simon (has role ROLE_ACCOUNTANT)
 >- john (has role ROLE_ADMIN)
 >- demo (has all tree roles)
+
 >Password is one for all: 12345
 
 #Service fields.
