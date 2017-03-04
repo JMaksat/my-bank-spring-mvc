@@ -20,7 +20,7 @@ The goal of this application is to demonstrate knowledge and skills of making co
 2.	Create database "bankdb"
 3.	Open PgAdmin (or psql) and execute script.sql, then also execute data.sql
 4.	Install Tomcat
-5.	Copy my-bank.war to directory “webapps” of it (or use localhost:8080/manager to deploy web archive).
+5.	Copy my-bank.war into directory “webapps” of it (or use localhost:8080/manager to deploy web archive).
 6.	Startup Tomcat
 7.	Type in browser: localhost:8080/my-bank
 
@@ -55,7 +55,7 @@ System has three roles: ROLE_OPERATOR, ROLE_ACCOUNTANT, ROLE_ADMIN. Each of each
 >- harry (has role ROLE_OPERATOR)
 >- simon (has role ROLE_ACCOUNTANT)
 >- john (has role ROLE_ADMIN)
->- demo (has all tree roles)
+>- demo (has all three roles)
 
 >Password is one for all: 12345
 
