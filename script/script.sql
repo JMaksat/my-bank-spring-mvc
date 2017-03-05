@@ -57,12 +57,6 @@ CREATE TABLE bank.accounts
       ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
-/*
-- Domestic transactions. Domestic transaction can be fulfilled from one account (dropdown-list) to second.
-- Transactions between banks. If transaction is incoming, then first account should be foreign and second is domestic. If transaction is outgoing, then the first account is domestic and second is foreign.
-- Transactions between banks should use special one buffer account.
-- Transaction contains several types of operations: Money transfer (incoming, outgoing, between domestic accounts...always from right to left), Refill, Withdrawal
-*/
 CREATE TABLE bank.transactions
 (
   transaction_id integer,
