@@ -1,4 +1,4 @@
-#MyBank Retail Bank System v 0.1
+#MyBank Retail Bank System v 0.1 (Release date 4 March 2017.)
 The goal of this application is to demonstrate knowledge and skills of making complex Spring MVC applications.
 
 
