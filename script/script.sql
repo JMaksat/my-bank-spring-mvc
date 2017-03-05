@@ -1,4 +1,4 @@
-create database bankdb;
+/*create database bankdb;*/
 create user scott with password 'tiger' superuser;
 create schema bank;
 
