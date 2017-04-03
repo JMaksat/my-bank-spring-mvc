@@ -76,7 +76,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public void changeStatus(Integer customerID, Boolean status) {
         Map<String, Object> fields = new HashMap<>();
-        Integer state = status?1:0;
+        Integer state = status?0:1;
 
         String sql = " update bank.customer_info set is_active = :state where customer_id = :customerID ";
 

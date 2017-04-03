@@ -83,22 +83,30 @@ public class PaperController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerPapers paper = new CustomerPapers();
 
-        paper.setPaperID(Integer.valueOf(params.get("id")));
-        paper.setValue(params.get("value"));
-        paper.setDateCreated(new java.util.Date());
-        paper.setDateModified(new java.util.Date());
-        paper.setIsActive(1);
-        paper.setUserID(authentication.getName());
-        paper.setPaperType(params.get("type"));
-        paper.setCustomerID(Integer.valueOf(params.get("customerID")));
+        if (params.get("id") != null &&
+                params.get("value") != null &&
+                params.get("type") != null &&
+                params.get("customerID") != null) {
 
-        if (Integer.valueOf(params.get("id")) >= 0) {
-            paperRepository.updatePaper(paper);
-        } else {
-            paperRepository.addPaper(paper);
+            paper.setPaperID(Integer.valueOf(params.get("id")));
+            paper.setValue(params.get("value"));
+            paper.setDateCreated(new java.util.Date());
+            paper.setDateModified(new java.util.Date());
+            paper.setIsActive(1);
+            paper.setUserID(authentication.getName());
+            paper.setPaperType(params.get("type"));
+            paper.setCustomerID(Integer.valueOf(params.get("customerID")));
+
+            if (Integer.valueOf(params.get("id")) >= 0) {
+                paperRepository.updatePaper(paper);
+            } else {
+                paperRepository.addPaper(paper);
+            }
+
+            return "1";
         }
 
-        return "1";
+        return "0";
     }
 
     @RequestMapping(path = "/paper/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -106,10 +114,10 @@ public class PaperController {
     @Secured({"ROLE_OPERATOR"})
     public String changePaperState(@RequestParam Map<String, String> params) {
 
-        if (params.get("status").equals("1")) {
-            paperRepository.changeStatus(Integer.valueOf(params.get("paperID")), false);
-        } else {
-            paperRepository.changeStatus(Integer.valueOf(params.get("paperID")), true);
+        if (params.get("paperID") != null) {
+            paperRepository.changeStatus(Integer.valueOf(params.get("paperID")),
+                    params.get("status").equals("1"));
+            return "1";
         }
 
         return "1";

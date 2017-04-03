@@ -97,7 +97,7 @@ public class PaperRepositoryImpl implements PaperRepository {
     @Override
     public void changeStatus(Integer paperID, Boolean status) {
         Map<String, Object> fields = new HashMap<>();
-        Integer state = status?1:0;
+        Integer state = status?0:1;
 
         String sql = " update bank.customer_papers set is_active = :state where paper_id = :paper_id ";
 

@@ -83,22 +83,30 @@ public class AddressController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerAddress address = new CustomerAddress();
 
-        address.setAddressID(Integer.valueOf(params.get("id")));
-        address.setValue(params.get("value"));
-        address.setDateCreated(new java.util.Date());
-        address.setDateModified(new java.util.Date());
-        address.setIsActive(1);
-        address.setUserID(authentication.getName());
-        address.setAddressType(params.get("type"));
-        address.setCustomerID(Integer.valueOf(params.get("customerID")));
+        if (params.get("id") != null &&
+                params.get("value") != null &&
+                params.get("type") != null &&
+                params.get("customerID") != null) {
 
-        if (Integer.valueOf(params.get("id")) >= 0) {
-            addressRepository.updateAddress(address);
-        } else {
-            addressRepository.addAddress(address);
+            address.setAddressID(Integer.valueOf(params.get("id")));
+            address.setValue(params.get("value"));
+            address.setDateCreated(new java.util.Date());
+            address.setDateModified(new java.util.Date());
+            address.setIsActive(1);
+            address.setUserID(authentication.getName());
+            address.setAddressType(params.get("type"));
+            address.setCustomerID(Integer.valueOf(params.get("customerID")));
+
+            if (Integer.valueOf(params.get("id")) >= 0) {
+                addressRepository.updateAddress(address);
+            } else {
+                addressRepository.addAddress(address);
+            }
+
+            return "1";
         }
 
-        return "1";
+        return "0";
     }
 
     @RequestMapping(path = "/address/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -106,13 +114,13 @@ public class AddressController {
     @Secured({"ROLE_OPERATOR"})
     public String changeAddressState(@RequestParam Map<String, String> params) {
 
-        if (params.get("status").equals("1")) {
-            addressRepository.changeStatus(Integer.valueOf(params.get("addressID")), false);
-        } else {
-            addressRepository.changeStatus(Integer.valueOf(params.get("addressID")), true);
+        if (params.get("addressID") != null) {
+            addressRepository.changeStatus(Integer.valueOf(params.get("addressID")),
+                    params.get("status").equals("1"));
+            return "1";
         }
 
-        return "1";
+        return "0";
     }
 
 }

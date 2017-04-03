@@ -65,11 +65,11 @@ alter sequence bank.customer_address_address_id_seq restart with 6;
 insert into bank.customer_contacts values (1, '+17573453256', '2017-03-04', null, 1, 'scott', 4, 1);
 insert into bank.customer_contacts values (2, 'scott@gmail.com', '2017-03-04', null, 1, 'scott', 5, 1);
 insert into bank.customer_contacts values (3, '+55573453256', '2017-03-04', null, 1, 'scott', 4, 2);
-insert into bank.customer_contacts values (4, 'ted@gmail.com', '2017-03-04', null, 1, 'scott', 6, 2);
+insert into bank.customer_contacts values (4, 'ted@gmail.com', '2017-03-04', null, 1, 'scott', 5, 2);
 insert into bank.customer_contacts values (5, '+44573453256', '2017-03-04', null, 1, 'scott', 4, 3);
-insert into bank.customer_contacts values (6, 'barney@gmail.com', '2017-03-04', null, 1, 'scott', 6, 3);
+insert into bank.customer_contacts values (6, 'barney@gmail.com', '2017-03-04', null, 1, 'scott', 5, 3);
 insert into bank.customer_contacts values (7, '+77573453256', '2017-03-04', null, 1, 'scott', 4, 4);
-insert into bank.customer_contacts values (8, 'marshall@gmail.com', '2017-03-04', null, 1, 'scott', 6, 4);
+insert into bank.customer_contacts values (8, 'marshall@gmail.com', '2017-03-04', null, 1, 'scott', 5, 4);
 alter sequence bank.customer_contacts_contact_id_seq restart with 9;
 
 

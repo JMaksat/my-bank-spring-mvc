@@ -90,27 +90,34 @@ public class CustomerController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerInfo customer = new CustomerInfo();
 
-        try {
-            customer.setCustomerID(Integer.valueOf(params.get("customerID")));
-            customer.setFirstName(params.get("firstName"));
-            customer.setLastName(params.get("lastName"));
-            customer.setMiddleName(params.get("middleName"));
-            customer.setBirthDate(formatter.parse(params.get("birthDate")));
-            customer.setDateModified(new java.util.Date());
-            customer.setIsActive(1);
-            customer.setUserID(authentication.getName());
-            customer.setDateCreated(new java.util.Date());
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
+        if (params.get("customerID") != null &&
+                params.get("firstName") != null &&
+                params.get("firstName") != null &&
+                params.get("birthDate") != null) {
+            try {
+                customer.setCustomerID(Integer.valueOf(params.get("customerID")));
+                customer.setFirstName(params.get("firstName"));
+                customer.setLastName(params.get("lastName"));
+                customer.setMiddleName(params.get("middleName"));
+                customer.setBirthDate(formatter.parse(params.get("birthDate")));
+                customer.setDateModified(new java.util.Date());
+                customer.setIsActive(1);
+                customer.setUserID(authentication.getName());
+                customer.setDateCreated(new java.util.Date());
+            } catch (Exception e) {
+                logger.error("Exception: ", e);
+            }
+
+            if (Integer.valueOf(params.get("customerID")) >= 0) {
+                customerRepository.updateCustomer(customer);
+            } else {
+                customerRepository.addCustomer(customer);
+            }
+
+            return "1";
         }
 
-        if (Integer.valueOf(params.get("customerID")) >= 0) {
-            customerRepository.updateCustomer(customer);
-        } else {
-            customerRepository.addCustomer(customer);
-        }
-
-        return "1";
+        return "0";
     }
 
     @RequestMapping(path = "/customers/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -118,13 +125,13 @@ public class CustomerController {
     @Secured({"ROLE_ACCOUNTANT", "ROLE_OPERATOR"})
     public String changeCustomerState(@RequestParam Map<String, String> params) {
 
-        if (params.get("status").equals("1")) {
-            customerRepository.changeStatus(Integer.valueOf(params.get("customerID")), false);
-        } else {
-            customerRepository.changeStatus(Integer.valueOf(params.get("customerID")), true);
+        if (params.get("customerID") != null) {
+            customerRepository.changeStatus(Integer.valueOf(params.get("customerID")),
+                    params.get("status").equals("1"));
+            return "1";
         }
 
-        return "1";
+        return "0";
     }
 
 }

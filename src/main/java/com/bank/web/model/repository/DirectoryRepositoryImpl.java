@@ -168,7 +168,7 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
     @CacheEvict(value = {"account", "address", "operation", "contact", "paper"}, allEntries = true)
     public void changeStatus(Integer dirID, Boolean status) {
         Map<String, Object> fields = new HashMap<>();
-        Integer state = status?1:0;
+        Integer state = status?0:1;
 
         String sql = " update bank.directory set is_active = :state where dir_id = :dir_id ";
 

@@ -97,7 +97,7 @@ public class ContactRepositoryImpl implements ContactRepository {
     @Override
     public void changeStatus(Integer contactID, Boolean status) {
         Map<String, Object> fields = new HashMap<>();
-        Integer state = status?1:0;
+        Integer state = status?0:1;
 
         String sql = " update bank.customer_contacts set is_active = :state where contact_id = :contact_id ";
 

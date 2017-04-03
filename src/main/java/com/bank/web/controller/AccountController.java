@@ -107,50 +107,64 @@ public class AccountController {
     public String newAccount(@RequestParam Map<String, String> params) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Accounts account = new Accounts();
+        String retVal = "0";
 
-        account.setAccountNumber(params.get("account"));
-        account.setAccountOwner(Integer.valueOf(params.get("customerID")));
-        account.setDateOpened(new java.util.Date());
-        account.setDateCreated(new java.util.Date());
-        account.setDateModified(new java.util.Date());
-        account.setUserID(authentication.getName());
-        account.setAccountType(params.get("type"));
-        account.setIsSuspended(0);
-        account.setComment(params.get("comment"));
+        if (params.get("account") != null &&
+                params.get("customerID") != null &&
+                params.get("type") != null &&
+                params.get("id") != null) {
 
-        if (Integer.valueOf(params.get("id")) >= 0) {
-            account.setAccountID(Integer.valueOf(params.get("id")));
-            accountRepository.updateAccount(account);
-        } else {
-            account.setAccountID(accountRepository.getNewAccountSeq());
-            transactionManageService.createNewAccount(account);
+            account.setAccountNumber(params.get("account"));
+            account.setAccountOwner(Integer.valueOf(params.get("customerID")));
+            account.setDateOpened(new java.util.Date());
+            account.setDateCreated(new java.util.Date());
+            account.setDateModified(new java.util.Date());
+            account.setUserID(authentication.getName());
+            account.setAccountType(params.get("type"));
+            account.setIsSuspended(0);
+            account.setComment(params.get("comment"));
+
+            if (Integer.valueOf(params.get("id")) >= 0) {
+                account.setAccountID(Integer.valueOf(params.get("id")));
+                accountRepository.updateAccount(account);
+            } else {
+                account.setAccountID(accountRepository.getNewAccountSeq());
+                transactionManageService.createNewAccount(account);
+            }
+
+            retVal = "1";
         }
 
-        return "1";
+        return retVal;
     }
 
     @RequestMapping(path = "/account/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured({"ROLE_ACCOUNTANT"})
     public String changeAccountState(@RequestParam Map<String, String> params) {
+        String retVal = "0";
 
-        if (params.get("status").equals("1")) {
-            accountRepository.changeStatus(Integer.valueOf(params.get("accountID")), false);
-        } else {
-            accountRepository.changeStatus(Integer.valueOf(params.get("accountID")), true);
+        if (params.get("accountID") != null) {
+            accountRepository.changeStatus(Integer.valueOf(params.get("accountID")),
+                    params.get("status").equals("1"));
+            retVal = "1";
         }
 
-        return "1";
+        return retVal;
     }
 
     @RequestMapping(path = "/account/close", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured({"ROLE_ACCOUNTANT"})
     public String closeAccount(@RequestParam Map<String, String> params) {
+        String retVal = "0";
 
-        accountRepository.closeAccount(Integer.valueOf(params.get("accountID")));
+        if (params.get("accountID") != null) {
+            accountRepository.closeAccount(Integer.valueOf(params.get("accountID")));
+            retVal = "1";
+        }
 
-        return "1";
+        return retVal;
     }
 
     @RequestMapping(value = "/transactions/{accountID}/{invoker}", method = RequestMethod.GET)

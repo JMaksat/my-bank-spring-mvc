@@ -97,7 +97,7 @@ public class AddressRepositoryImpl implements AddressRepository {
     @Override
     public void changeStatus(Integer addressID, Boolean status) {
         Map<String, Object> fields = new HashMap<>();
-        Integer state = status?1:0;
+        Integer state = status?0:1;
 
         String sql = " update bank.customer_address set is_active = :state where address_id = :address_id ";
 

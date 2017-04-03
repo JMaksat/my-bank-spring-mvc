@@ -83,22 +83,30 @@ public class ContactController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerContacts contact = new CustomerContacts();
 
-        contact.setContactID(Integer.valueOf(params.get("id")));
-        contact.setValue(params.get("value"));
-        contact.setDateCreated(new java.util.Date());
-        contact.setDateModified(new java.util.Date());
-        contact.setIsActive(1);
-        contact.setUserID(authentication.getName());
-        contact.setContactType(params.get("type"));
-        contact.setCustomerID(Integer.valueOf(params.get("customerID")));
+        if (params.get("id") != null &&
+                params.get("value") != null &&
+                params.get("type") != null &&
+                params.get("customerID") != null) {
 
-        if (Integer.valueOf(params.get("id")) >= 0) {
-            contactRepository.updateContact(contact);
-        } else {
-            contactRepository.addContact(contact);
+            contact.setContactID(Integer.valueOf(params.get("id")));
+            contact.setValue(params.get("value"));
+            contact.setDateCreated(new java.util.Date());
+            contact.setDateModified(new java.util.Date());
+            contact.setIsActive(1);
+            contact.setUserID(authentication.getName());
+            contact.setContactType(params.get("type"));
+            contact.setCustomerID(Integer.valueOf(params.get("customerID")));
+
+            if (Integer.valueOf(params.get("id")) >= 0) {
+                contactRepository.updateContact(contact);
+            } else {
+                contactRepository.addContact(contact);
+            }
+
+            return "1";
         }
 
-        return "1";
+        return "0";
     }
 
     @RequestMapping(path = "/contact/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -106,12 +114,13 @@ public class ContactController {
     @Secured({"ROLE_OPERATOR"})
     public String changeContactState(@RequestParam Map<String, String> params) {
 
-        if (params.get("status").equals("1")) {
-            contactRepository.changeStatus(Integer.valueOf(params.get("contactID")), false);
-        } else {
-            contactRepository.changeStatus(Integer.valueOf(params.get("contactID")), true);
+        if (params.get("contactID") != null) {
+            contactRepository.changeStatus(Integer.valueOf(params.get("contactID")),
+                    params.get("status").equals("1"));
+
+            return "1";
         }
 
-        return "1";
+        return "0";
     }
 }

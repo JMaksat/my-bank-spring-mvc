@@ -285,7 +285,7 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Override
     public void changeStatus(Integer accountID, Boolean status) {
         Map<String, Object> fields = new HashMap<>();
-        Integer state = status?1:0;
+        Integer state = status?0:1;
 
         String sql = " update bank.accounts set is_suspended = :state where account_id = :account_id ";
 

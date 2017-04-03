@@ -77,14 +77,19 @@ public class TransactionController {
     @ResponseBody
     @Secured({"ROLE_ACCOUNTANT"})
     public String saveTransaction(@RequestParam Map<String, String> params) {
+        String result = "";
 
-        String result;
+        if (params.get("accountDebit") != null &&
+                params.get("accountCredit") != null &&
+                params.get("amount") != null &&
+                params.get("type") != null) {
 
-        result = transactionManageService.createNewTransaction(Integer.valueOf(params.get("accountDebit")),
-                Integer.valueOf(params.get("accountCredit")),
-                Double.valueOf(params.get("amount")),
-                params.get("type"),
-                params.get("reversed").equals("1")?true:false);
+            result = transactionManageService.createNewTransaction(Integer.valueOf(params.get("accountDebit")),
+                    Integer.valueOf(params.get("accountCredit")),
+                    Double.valueOf(params.get("amount")),
+                    params.get("type"),
+                    params.get("reversed").equals("1") ? true : false);
+        }
 
         return result;
     }
