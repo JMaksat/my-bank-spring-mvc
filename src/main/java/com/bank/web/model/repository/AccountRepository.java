@@ -2,7 +2,6 @@ package com.bank.web.model.repository;
 
 import com.bank.web.model.entity.AccountRest;
 import com.bank.web.model.entity.Accounts;
-import com.bank.web.model.entity.Transactions;
 
 import java.util.List;
 
@@ -14,11 +13,7 @@ public interface AccountRepository {
 
     Accounts getAccountByNumber(String accountNumber);
 
-    Double getAccountRest (Integer accountID);
-
-    Integer getNewAccountSeq();
-
-    Integer getNewRestSeq();
+    Double getAccountRest (Accounts accountID);
 
     void newRest (AccountRest accountRest);
 

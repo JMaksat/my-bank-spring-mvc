@@ -39,7 +39,7 @@ CREATE TABLE bank.customer_info
 /* - Bank account structure: BBB DDMMYYYY CCCCC TTT (e.g. 0032812201500152056). BBB - branch, DDMMYYYY - open date, CCCCC - counter which start from 0 every business day, TTT - type of the account (buffer, personal, interest, system) */
 CREATE TABLE bank.accounts
 (
-  account_id integer,
+  account_id serial NOT NULL,
   account_number character varying(32),
   account_owner integer,
   date_opened date,
@@ -59,7 +59,7 @@ CREATE TABLE bank.accounts
 
 CREATE TABLE bank.transactions
 (
-  transaction_id integer,
+  transaction_id serial NOT NULL,
   operation_type integer,
   is_reversed integer,
   transaction_sum real,
@@ -71,12 +71,15 @@ CREATE TABLE bank.transactions
   CONSTRAINT transactions_pk PRIMARY KEY (transaction_id),
   CONSTRAINT account_debit_fk FOREIGN KEY (account_debit)
       REFERENCES bank.accounts (account_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT account_credit_fk FOREIGN KEY (account_credit)
+      REFERENCES bank.accounts (account_id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 CREATE TABLE bank.account_rest
 (
-  rest_id integer,
+  rest_id serial NOT NULL,
   account_id integer,
   rest_sum real,
   transaction_id integer,
@@ -166,7 +169,3 @@ CREATE TABLE bank.bank_parameters
   user_id character varying(32),
   CONSTRAINT bank_parameters_pkey PRIMARY KEY (parameter_id)
 );
-
-create sequence bank.transactions_seq;
-create sequence bank.account_rest_seq;
-create sequence bank.accounts_seq;

@@ -1,22 +1,40 @@
 package com.bank.web.model.entity;
 
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperClass;
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
-@RowMapperClass(tableName = "bank.users")
-public class Users {
+@Entity
+@Table(name = "bank.users")
+public class Users implements Serializable {
 
-    @RowMapperField(columnName = "userName")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "username")
     private String userName;
 
-    @RowMapperField(columnName = "password")
+    @Column(name = "password")
     private String password;
 
-    @RowMapperField(columnName = "is_active")
+    @Column(name = "is_active")
     private Integer isActive;
 
-    @RowMapperField(columnName = "roles")
+    @Transient
     private String roles;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userName")
+    private Set<UserRoles> userRoles = new HashSet<>(0);
+
+    public Users() {}
+
+    public Users(String userName, String password, Integer isActive, String roles, Set<UserRoles> userRoles) {
+        this.userName = userName;
+        this.password = password;
+        this.isActive = isActive;
+        this.roles = roles;
+        this.userRoles = userRoles;
+    }
 
     public String getUserName() {
         return userName;
@@ -50,6 +68,14 @@ public class Users {
         this.roles = roles;
     }
 
+    public Set<UserRoles> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(Set<UserRoles> userRoles) {
+        this.userRoles = userRoles;
+    }
+
     @Override
     public String toString() {
         return "Users{" +
@@ -57,6 +83,7 @@ public class Users {
                 ", password='" + password + '\'' +
                 ", isActive=" + isActive +
                 ", roles='" + roles + '\'' +
+                ", userRoles=" + userRoles +
                 '}';
     }
 }

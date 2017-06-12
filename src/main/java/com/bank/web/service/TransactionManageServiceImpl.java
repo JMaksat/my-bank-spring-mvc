@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service("transactionManageService")
@@ -43,67 +43,63 @@ public class TransactionManageServiceImpl implements TransactionManageService {
         try {
             accountRepository.addAccount(account);
 
-            transaction.setTransactionID(transactionRepository.getNewTransactionSeq());
             for (Directory dir : directory)
                 if (dir.getDirType().equals("VOID"))
-                    transaction.setOperationType(dir.getDirID().toString());
+                    transaction.setOperationType(dir.getDirID());
             transaction.setIsReversed(0);
             transaction.setTransactionSum(0.0);
-            transaction.setTransactionDate(new Date());
+            transaction.setTransactionDate(LocalDate.now());
             transaction.setUserID(authentication.getName());
             transaction.setAccountDebit(accountRepository.getAccountByNumber(
-                    parametersRepository.getParamTransAccount().getValue()).getAccountID().toString());
-            transaction.setAccountCredit(account.getAccountID().toString());
+                    parametersRepository.getParamTransAccount().getValue()));
+            transaction.setAccountCredit(account);
             transactionRepository.addTransaction(transaction);
 
-            rest.setRestID(accountRepository.getNewRestSeq());
-            rest.setAccountID(account.getAccountID());
+            rest.setAccount(account);
             rest.setRestSum(0.0);
             rest.setTransactionID(transaction.getTransactionID());
-            rest.setRestDate(new Date());
+            rest.setRestDate(LocalDate.now());
             accountRepository.newRest(rest);
         } catch (Exception e) {
-            logger.error("Exception: ", e);
+            logger.error(e.getMessage(), e);
             return false;
         }
 
         return true;
     }
 
-    public Boolean decreaseRest(Integer accountID, Integer transactionID, Double amount) {
+    public Boolean decreaseRest(Accounts account, Integer transactionID, Double amount) {
         AccountRest rest = new AccountRest();
 
         try {
-            Double sum = accountRepository.getAccountRest(accountID) - amount;
+            Double sum = accountRepository.getAccountRest(account) - amount;
 
-            rest.setRestID(accountRepository.getNewRestSeq());
-            rest.setAccountID(accountID);
+            rest.setAccount(account);
             rest.setRestSum(sum);
             rest.setTransactionID(transactionID);
-            rest.setRestDate(new Date());
+            rest.setRestDate(LocalDate.now());
             accountRepository.newRest(rest);
         } catch (Exception e) {
-            logger.error("Exception: ", e);
+            logger.error(e.getMessage(), e);
             return false;
         }
 
         return true;
     }
 
-    public Boolean increaseRest(Integer accountID, Integer transactionID, Double amount) {
+    public Boolean increaseRest(Accounts account, Integer transactionID, Double amount) {
         AccountRest rest = new AccountRest();
 
         try {
-            Double sum = accountRepository.getAccountRest(accountID) + amount;
+            Double sum = accountRepository.getAccountRest(account) + amount;
 
-            rest.setRestID(accountRepository.getNewRestSeq());
-            rest.setAccountID(accountID);
+            rest.setAccount(account);
             rest.setRestSum(sum);
             rest.setTransactionID(transactionID);
-            rest.setRestDate(new Date());
+            rest.setRestDate(LocalDate.now());
             accountRepository.newRest(rest);
         } catch (Exception e) {
-            logger.error("Exception: ", e);
+            logger.error(e.getMessage(), e);
             return false;
         }
 
@@ -113,28 +109,28 @@ public class TransactionManageServiceImpl implements TransactionManageService {
     public String createNewTransaction(Integer accountDebit, Integer accountCredit, Double amount, String operationType, Boolean isReversed) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<Directory> directory = directoryRepository.getTransactionTypes();
+        Accounts debit = accountRepository.getAccountById(accountDebit);
+        Accounts credit = accountRepository.getAccountById(accountCredit);
         Transactions transaction = new Transactions();
 
         try {
-
-            transaction.setTransactionID(transactionRepository.getNewTransactionSeq());
             for (Directory dir : directory)
                 if (dir.getDirID().toString().equals(operationType))
-                    transaction.setOperationType(dir.getDirID().toString());
+                    transaction.setOperationType(dir.getDirID());
             transaction.setIsReversed(isReversed ? 1 : 0);
             transaction.setTransactionSum(amount);
-            transaction.setTransactionDate(new Date());
+            transaction.setTransactionDate(LocalDate.now());
             transaction.setUserID(authentication.getName());
-            transaction.setAccountDebit(accountDebit.toString());
-            transaction.setAccountCredit(accountCredit.toString());
+            transaction.setAccountDebit(debit);
+            transaction.setAccountCredit(credit);
 
             if (!isReversed) {
-                if (amount <= accountRepository.getAccountRest(accountDebit)) {
+                if (amount <= accountRepository.getAccountRest(debit)) {
 
                     transactionRepository.addTransaction(transaction);
 
-                    if (decreaseRest(accountDebit, transaction.getTransactionID(), amount)) {
-                        increaseRest(accountCredit, transaction.getTransactionID(), amount);
+                    if (decreaseRest(debit, transaction.getTransactionID(), amount)) {
+                        increaseRest(credit, transaction.getTransactionID(), amount);
                     } else {
                         return "4";
                     }
@@ -145,12 +141,12 @@ public class TransactionManageServiceImpl implements TransactionManageService {
             }
 
             if (isReversed) {
-                if (amount <= accountRepository.getAccountRest(accountCredit)) {
+                if (amount <= accountRepository.getAccountRest(credit)) {
 
                     transactionRepository.addTransaction(transaction);
 
-                    if (decreaseRest(accountCredit, transaction.getTransactionID(), amount)) {
-                        increaseRest(accountDebit, transaction.getTransactionID(), amount);
+                    if (decreaseRest(credit, transaction.getTransactionID(), amount)) {
+                        increaseRest(debit, transaction.getTransactionID(), amount);
                     } else {
                         return "4";
                     }
@@ -161,7 +157,7 @@ public class TransactionManageServiceImpl implements TransactionManageService {
             }
 
         } catch (Exception e) {
-            logger.error("Exception: ", e);
+            logger.error(e.getMessage(), e);
             return e.getMessage();
         }
 

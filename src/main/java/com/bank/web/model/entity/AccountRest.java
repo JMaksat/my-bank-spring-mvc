@@ -1,30 +1,43 @@
 package com.bank.web.model.entity;
 
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperClass;
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDate;
 
-import java.util.Date;
+@Entity
+@Table(name = "bank.account_rest")
+public class AccountRest implements Serializable {
 
-@RowMapperClass(tableName = "bank.account_rest")
-public class AccountRest {
-
-    @RowMapperField(columnName = "rest_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "rest_id")
     private Integer restID;
 
-    @RowMapperField(columnName = "account_id")
-    private Integer accountID;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Accounts account;
 
-    @RowMapperField(columnName = "rest_sum")
+    @Column(name = "rest_sum")
     private Double restSum;
 
-    @RowMapperField(columnName = "transaction_id")
+    @Column(name = "transaction_id")
     private Integer transactionID;
 
-    @RowMapperField(columnName = "rest_date")
-    private Date restDate;
+    @Column(name = "rest_date")
+    private LocalDate restDate;
 
-    @RowMapperField(columnName = "rest_time")
-    private Date restTime;
+    @Column(name = "rest_time")
+    private LocalDate restTime;
+
+    public AccountRest() {}
+
+    public AccountRest(Accounts account, Double restSum, Integer transactionID, LocalDate restDate, LocalDate restTime) {
+        this.account = account;
+        this.restSum = restSum;
+        this.transactionID = transactionID;
+        this.restDate = restDate;
+        this.restTime = restTime;
+    }
 
     public Integer getRestID() {
         return restID;
@@ -34,12 +47,12 @@ public class AccountRest {
         this.restID = restID;
     }
 
-    public Integer getAccountID() {
-        return accountID;
+    public Accounts getAccount() {
+        return account;
     }
 
-    public void setAccountID(Integer accountID) {
-        this.accountID = accountID;
+    public void setAccount(Accounts account) {
+        this.account = account;
     }
 
     public Double getRestSum() {
@@ -58,19 +71,19 @@ public class AccountRest {
         this.transactionID = transactionID;
     }
 
-    public Date getRestDate() {
+    public LocalDate getRestDate() {
         return restDate;
     }
 
-    public void setRestDate(Date restDate) {
+    public void setRestDate(LocalDate restDate) {
         this.restDate = restDate;
     }
 
-    public Date getRestTime() {
+    public LocalDate getRestTime() {
         return restTime;
     }
 
-    public void setRestTime(Date restTime) {
+    public void setRestTime(LocalDate restTime) {
         this.restTime = restTime;
     }
 
@@ -78,7 +91,7 @@ public class AccountRest {
     public String toString() {
         return "AccountRest{" +
                 "restID=" + restID +
-                ", accountID=" + accountID +
+                ", account=" + account +
                 ", restSum=" + restSum +
                 ", transactionID=" + transactionID +
                 ", restDate=" + restDate +

@@ -1,5 +1,6 @@
 package com.bank.web.controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @Controller
 public class AuthentificationController {
+    public static final Logger logger = Logger.getLogger(AuthentificationController.class);
 
 
     @RequestMapping(path = "/main", method = RequestMethod.GET)

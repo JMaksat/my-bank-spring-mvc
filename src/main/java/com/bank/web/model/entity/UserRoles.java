@@ -1,19 +1,30 @@
 package com.bank.web.model.entity;
 
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperClass;
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
+import javax.persistence.*;
+import java.io.Serializable;
 
-@RowMapperClass(tableName = "bank.user_roles")
-public class UserRoles {
+@Entity
+@Table(name = "bank.user_roles")
+public class UserRoles implements Serializable {
 
-    @RowMapperField(columnName = "user_role_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_role_id")
     private Integer userRoleId;
 
-    @RowMapperField(columnName = "userName")
-    private String userName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "username")
+    private Users userName;
 
-    @RowMapperField(columnName = "user_role")
+    @Column(name = "user_role")
     private String userRole;
+
+    public UserRoles() {}
+
+    public UserRoles(Users userName, String userRole) {
+        this.userName = userName;
+        this.userRole = userRole;
+    }
 
     public Integer getUserRoleId() {
         return userRoleId;
@@ -23,11 +34,11 @@ public class UserRoles {
         this.userRoleId = userRoleId;
     }
 
-    public String getUserName() {
+    public Users getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    public void setUserName(Users userName) {
         this.userName = userName;
     }
 
@@ -43,7 +54,7 @@ public class UserRoles {
     public String toString() {
         return "UserRoles{" +
                 "userRoleId=" + userRoleId +
-                ", userName='" + userName + '\'' +
+                ", userName=" + userName +
                 ", userRole='" + userRole + '\'' +
                 '}';
     }

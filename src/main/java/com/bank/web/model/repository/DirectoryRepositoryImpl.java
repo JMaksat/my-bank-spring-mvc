@@ -2,60 +2,39 @@ package com.bank.web.model.repository;
 
 import com.bank.web.model.entity.Directory;
 import org.apache.log4j.Logger;
+import org.hibernate.*;
+import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.query.criteria.internal.predicate.BooleanAssertionPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository("directoryRepository")
 @Transactional
 public class DirectoryRepositoryImpl implements DirectoryRepository {
 
     @Autowired
-    private RowMapperService rowMapperService;
+    private SessionFactory sessionFactory;
 
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private SimpleJdbcInsert simpleJdbcInsert;
     private static final Logger logger = Logger.getLogger(DirectoryRepositoryImpl.class);
 
-    private String sql = " select dir_id, dir_group, dir_type, description, date_created, date_modified, is_active, user_id " +
-            " from bank.directory where dir_group = :dir_group and is_active = 1 ";
+    public DirectoryRepositoryImpl() {}
 
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.directory");
+    public DirectoryRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public List<Directory> directoryList() {
-        Map<String, Object> param = new HashMap<>();
+        List<Directory> result;
 
-        String sql = " select dir_id " +
-                " , dir_group " +
-                " , dir_type " +
-                " , description " +
-                " , date_created " +
-                " , date_modified " +
-                " , is_active " +
-                " , user_id " +
-                " from bank.directory " +
-                " order by dir_id ";
+        result = sessionFactory.getCurrentSession().createQuery(" from Directory order by dirID ").list();
 
-        param.put("dir_group", Directory.OPERATIONS);
-        ((JdbcTemplate)(namedParameterJdbcTemplate.getJdbcOperations())).setFetchSize(500);
-        List<Directory> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Directory.class));
-        logger.info(" Obtain all data from bank.transactions ");
+        logger.info("directoryList() records found = " + result.size());
 
         return result;
     }
@@ -63,11 +42,13 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
     @Override
     @Cacheable("account")
     public List<Directory> getAccountTypes() {
-        Map<String, Object> param = new HashMap<>();
+        List<Directory> result;
 
-        param.put("dir_group", Directory.ACCOUNTS);
-        List<Directory> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Directory.class));
-        logger.info(" Obtain directory data of type = " + Directory.ACCOUNTS);
+        result = sessionFactory.getCurrentSession()
+                .createQuery(" from Directory where dirGroup = :dir_group and isActive = 1 ")
+                .setParameter("dir_group", Directory.ACCOUNTS).list();
+
+        logger.info("getAccountTypes() records found = " + result.size());
 
         return result;
     }
@@ -75,11 +56,13 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
     @Override
     @Cacheable("operation")
     public List<Directory> getTransactionTypes() {
-        Map<String, Object> param = new HashMap<>();
+        List<Directory> result;
 
-        param.put("dir_group", Directory.OPERATIONS);
-        List<Directory> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Directory.class));
-        logger.info(" Obtain directory data of type = " + Directory.OPERATIONS);
+        result = sessionFactory.getCurrentSession()
+                .createQuery(" from Directory where dirGroup = :dir_group and isActive = 1 ")
+                .setParameter("dir_group", Directory.OPERATIONS).list();
+
+        logger.info("getTransactionTypes() records found = " + result.size());
 
         return result;
     }
@@ -87,11 +70,13 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
     @Override
     @Cacheable("address")
     public List<Directory> getAddressTypes() {
-        Map<String, Object> param = new HashMap<>();
+        List<Directory> result;
 
-        param.put("dir_group", Directory.ADDRESS);
-        List<Directory> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Directory.class));
-        logger.info(" Obtain directory data of type = " + Directory.ADDRESS);
+        result = sessionFactory.getCurrentSession()
+                .createQuery(" from Directory where dirGroup = :dir_group and isActive = 1 ")
+                .setParameter("dir_group", Directory.ADDRESS).list();
+
+        logger.info("getAddressTypes() records found = " + result.size());
 
         return result;
     }
@@ -99,11 +84,13 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
     @Override
     @Cacheable("contact")
     public List<Directory> getContactTypes() {
-        Map<String, Object> param = new HashMap<>();
+        List<Directory> result;
 
-        param.put("dir_group", Directory.CONTACTS);
-        List<Directory> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Directory.class));
-        logger.info(" Obtain directory data of type = " + Directory.CONTACTS);
+        result = sessionFactory.getCurrentSession()
+                .createQuery(" from Directory where dirGroup = :dir_group and isActive = 1 ")
+                .setParameter("dir_group", Directory.CONTACTS).list();
+
+        logger.info("getContactTypes() records found = " + result.size());
 
         return result;
     }
@@ -111,74 +98,110 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
     @Override
     @Cacheable("paper")
     public List<Directory> getPaperTypes() {
-        Map<String, Object> param = new HashMap<>();
+        List<Directory> result;
 
-        param.put("dir_group", Directory.PAPERS);
-        List<Directory> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Directory.class));
-        logger.info(" Obtain directory data of type = " + Directory.PAPERS);
+        result = sessionFactory.getCurrentSession()
+                .createQuery(" from Directory where dirGroup = :dir_group and isActive = 1 ")
+                .setParameter("dir_group", Directory.PAPERS).list();
+
+        logger.info("getPaperTypes() records found = " + result.size());
+
+        return result;
+    }
+
+    @Override
+    public Boolean checkUnique(Integer dirID) {
+        Boolean result;
+
+        List<Directory> dirList = sessionFactory.getCurrentSession()
+                .createQuery(" from Directory where dirID = :dir_id ")
+                .setParameter("dir_id", dirID).list();
+
+        result = dirList.size() > 0 ? false : true;
+        logger.info("checkUnique(" + dirID + ") result = " + result);
 
         return result;
     }
 
     @Override
     @CacheEvict(value = {"account", "address", "operation", "contact", "paper"}, allEntries = true)
-    public void addEntry(Directory directory) {
-        Map<String, Object> fields = new HashMap<>();
+    public Boolean addEntry(Directory directory) {
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
+        Boolean result = true;
+        Integer dirID = null;
 
-        String sql = " insert into bank.directory (dir_group, dir_type, description, date_created, is_active, user_id) " +
-                " values (:dir_group, :dir_type, :description, :date_created, :is_active, :user_id) ";
+        try {
+            transaction.begin();
 
-        fields.put("dir_group", directory.getDirGroup());
-        fields.put("dir_type", directory.getDirType());
-        fields.put("description", directory.getDescription());
-        fields.put("date_created", directory.getDateCreated());
-        fields.put("is_active", directory.getIsActive());
-        fields.put("user_id", directory.getUserID());
-        // Check for DuplicateKeyException
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
+            dirID = (Integer) session.save(directory);
 
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.directory was inserted " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("addEntry(Directory) successfully added dir_id=" + dirID);
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
+            result = false;
         }
+
+        return result;
     }
 
     @Override
     @CacheEvict(value = {"account", "address", "operation", "contact", "paper"}, allEntries = true)
-    public void updateEntry(Directory directory) {
-        Map<String, Object> fields = new HashMap<>();
+    public Boolean updateEntry(Directory directory) {
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
+        Boolean result = true;
 
-        String sql = " update bank.directory set dir_group = :dir_group, dir_type = :dir_type, description = :description " +
-                " , date_modified = :date_modified, user_id = :user_id where dir_id = :dir_id ";
+        try {
+            transaction.begin();
 
-        fields.put("dir_id", directory.getDirID());
-        fields.put("dir_group", directory.getDirGroup());
-        fields.put("dir_type", directory.getDirType());
-        fields.put("description", directory.getDescription());
-        fields.put("date_modified", directory.getDateModified());
-        fields.put("user_id", directory.getUserID());
-        // Check for DuplicateKeyException
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
+            Directory dir = session.get(Directory.class, directory.getDirID());
+            dir.setDirGroup(directory.getDirGroup());
+            dir.setDirType(directory.getDirType());
+            dir.setDescription(directory.getDescription());
+            dir.setDateModified(directory.getDateModified());
+            dir.setUserID(directory.getUserID());
+            session.update(dir);
 
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.directory was inserted " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("updateEntry(Directory) successfully updated dir_id=" + directory.getDirID());
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
+            result = false;
         }
+
+        return result;
     }
 
     @Override
     @CacheEvict(value = {"account", "address", "operation", "contact", "paper"}, allEntries = true)
-    public void changeStatus(Integer dirID, Boolean status) {
-        Map<String, Object> fields = new HashMap<>();
+    public Boolean changeStatus(Integer dirID, Boolean status) {
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
+        Boolean result = true;
         Integer state = status?0:1;
 
-        String sql = " update bank.directory set is_active = :state where dir_id = :dir_id ";
+        try {
+            transaction.begin();
 
-        fields.put("dir_id", dirID);
-        fields.put("state", state);
+            Directory dir = session.get(Directory.class, dirID);
+            dir.setIsActive(state);
+            session.update(dir);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.directory " + dirID + " was update is_active " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("changeStatus(" + dirID + ", " + status + ") successfully updated dir_id=" + dirID);
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
+            result = false;
         }
+
+        return result;
     }
 }

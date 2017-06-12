@@ -8,9 +8,9 @@ public interface TransactionManageService {
 
     Boolean createNewAccount(Accounts account);
 
-    Boolean decreaseRest(Integer accountID, Integer transactionID, Double amount);
+    Boolean decreaseRest(Accounts account, Integer transactionID, Double amount);
 
-    Boolean increaseRest(Integer accountID, Integer transactionID, Double amount);
+    Boolean increaseRest(Accounts account, Integer transactionID, Double amount);
 
     String createNewTransaction(Integer accountDebit, Integer accountCredit, Double amount, String operationType, Boolean isReversed);
 }

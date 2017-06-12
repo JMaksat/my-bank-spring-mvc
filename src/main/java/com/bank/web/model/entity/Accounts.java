@@ -1,48 +1,88 @@
 package com.bank.web.model.entity;
 
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperClass;
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
+import javax.persistence.*;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-@RowMapperClass(tableName = "bank.accounts")
-public class Accounts {
+@Entity
+@Table(name = "bank.accounts")
+public class Accounts implements Serializable {
 
-    @RowMapperField(columnName = "account_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_id")
     private Integer accountID;
 
-    @RowMapperField(columnName = "account_number")
+    @Column(name = "account_number")
     private String accountNumber;
 
-    @RowMapperField(columnName = "account_owner")
-    private Integer accountOwner;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_owner")
+    private CustomerInfo accountOwner;
 
-    @RowMapperField(columnName = "date_opened")
-    private java.util.Date dateOpened;
+    @Column(name = "date_opened")
+    private LocalDate dateOpened;
 
-    @RowMapperField(columnName = "date_closed")
-    private java.util.Date dateClosed;
+    @Column(name = "date_closed")
+    private LocalDate dateClosed;
 
-    @RowMapperField(columnName = "date_created")
-    private java.util.Date dateCreated;
+    @Column(name = "date_created")
+    private LocalDate dateCreated;
 
-    @RowMapperField(columnName = "date_modified")
-    private java.util.Date dateModified;
+    @Column(name = "date_modified")
+    private LocalDate dateModified;
 
-    @RowMapperField(columnName = "user_id")
+    @Column(name = "user_id")
     private String userID;
 
-    @RowMapperField(columnName = "account_type")
-    private String accountType;
+    @Column(name = "account_type")
+    private Integer accountType;
 
-    @RowMapperField(columnName = "is_suspended")
+    @Column(name = "is_suspended")
     private Integer isSuspended;
 
-    @RowMapperField(columnName = "comment")
+    @Column(name = "comment")
     private String comment;
 
-    @RowMapperField(columnName = "rest_sum")
+    @Transient
     private Double restSum;
+
+    @Transient
+    private String accountTypeLabel;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "accountDebit")
+    private Set<Transactions> transactionsByDebit = new HashSet<>(0);
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "accountCredit")
+    private Set<Transactions> transactionsByCredit = new HashSet<>(0);
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
+    private Set<AccountRest> accountRests = new HashSet<>(0);
+
+    public Accounts(){}
+
+    public Accounts(String accountNumber, CustomerInfo accountOwner, LocalDate dateOpened, LocalDate dateClosed, LocalDate dateCreated, LocalDate dateModified, String userID, Integer accountType, Integer isSuspended, String comment, Double restSum, String accountTypeLabel, Set<Transactions> transactionsByDebit, Set<Transactions> transactionsByCredit, Set<AccountRest> accountRests) {
+        this.accountNumber = accountNumber;
+        this.accountOwner = accountOwner;
+        this.dateOpened = dateOpened;
+        this.dateClosed = dateClosed;
+        this.dateCreated = dateCreated;
+        this.dateModified = dateModified;
+        this.userID = userID;
+        this.accountType = accountType;
+        this.isSuspended = isSuspended;
+        this.comment = comment;
+        this.restSum = restSum;
+        this.accountTypeLabel = accountTypeLabel;
+        this.transactionsByDebit = transactionsByDebit;
+        this.transactionsByCredit = transactionsByCredit;
+        this.accountRests = accountRests;
+    }
 
     public Integer getAccountID() {
         return accountID;
@@ -60,43 +100,43 @@ public class Accounts {
         this.accountNumber = accountNumber;
     }
 
-    public Integer getAccountOwner() {
+    public CustomerInfo getAccountOwner() {
         return accountOwner;
     }
 
-    public void setAccountOwner(Integer accountOwner) {
+    public void setAccountOwner(CustomerInfo accountOwner) {
         this.accountOwner = accountOwner;
     }
 
-    public Date getDateOpened() {
+    public LocalDate getDateOpened() {
         return dateOpened;
     }
 
-    public void setDateOpened(Date dateOpened) {
+    public void setDateOpened(LocalDate dateOpened) {
         this.dateOpened = dateOpened;
     }
 
-    public Date getDateClosed() {
+    public LocalDate getDateClosed() {
         return dateClosed;
     }
 
-    public void setDateClosed(Date dateClosed) {
+    public void setDateClosed(LocalDate dateClosed) {
         this.dateClosed = dateClosed;
     }
 
-    public Date getDateCreated() {
+    public LocalDate getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(LocalDate dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public Date getDateModified() {
+    public LocalDate getDateModified() {
         return dateModified;
     }
 
-    public void setDateModified(Date dateModified) {
+    public void setDateModified(LocalDate dateModified) {
         this.dateModified = dateModified;
     }
 
@@ -108,11 +148,11 @@ public class Accounts {
         this.userID = userID;
     }
 
-    public String getAccountType() {
+    public Integer getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(String accountType) {
+    public void setAccountType(Integer accountType) {
         this.accountType = accountType;
     }
 
@@ -140,6 +180,46 @@ public class Accounts {
         this.restSum = restSum;
     }
 
+    public String getAccountTypeLabel() {
+        return accountTypeLabel;
+    }
+
+    public void setAccountTypeLabel(String accountTypeLabel) {
+        this.accountTypeLabel = accountTypeLabel;
+    }
+
+    public Set<Transactions> getTransactionsByDebit() {
+        return transactionsByDebit;
+    }
+
+    public void setTransactionsByDebit(Set<Transactions> transactionsByDebit) {
+        this.transactionsByDebit = transactionsByDebit;
+    }
+
+    public Set<Transactions> getTransactionsByCredit() {
+        return transactionsByCredit;
+    }
+
+    public void setTransactionsByCredit(Set<Transactions> transactionsByCredit) {
+        this.transactionsByCredit = transactionsByCredit;
+    }
+
+    public Set<AccountRest> getAccountRests() {
+        return accountRests;
+    }
+
+    public void setAccountRests(Set<AccountRest> accountRests) {
+        this.accountRests = accountRests;
+    }
+
+    public Date getConvertedDate(LocalDate localDate) {
+
+        if (localDate != null)
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        return null;
+    }
+
     @Override
     public String toString() {
         return "Accounts{" +
@@ -151,10 +231,14 @@ public class Accounts {
                 ", dateCreated=" + dateCreated +
                 ", dateModified=" + dateModified +
                 ", userID='" + userID + '\'' +
-                ", accountType='" + accountType + '\'' +
+                ", accountType=" + accountType +
                 ", isSuspended=" + isSuspended +
                 ", comment='" + comment + '\'' +
                 ", restSum=" + restSum +
+                ", accountTypeLabel='" + accountTypeLabel + '\'' +
+                ", transactionsByDebit=" + transactionsByDebit +
+                ", transactionsByCredit=" + transactionsByCredit +
+                ", accountRests=" + accountRests +
                 '}';
     }
 }

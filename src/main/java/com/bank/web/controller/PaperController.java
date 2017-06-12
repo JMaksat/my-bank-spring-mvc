@@ -17,6 +17,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class PaperController {
         CustomerPapers paper = paperRepository.getPaper(paperID);
 
         if (paper != null) {
-            CustomerInfo customer = customerRepository.customerDetails(paper.getCustomerID());
+            CustomerInfo customer = customerRepository.customerDetails(paper.getCustomer().getCustomerID());
 
             map.put("paper", paper);
             map.put("customer", customer);
@@ -90,12 +91,12 @@ public class PaperController {
 
             paper.setPaperID(Integer.valueOf(params.get("id")));
             paper.setValue(params.get("value"));
-            paper.setDateCreated(new java.util.Date());
-            paper.setDateModified(new java.util.Date());
+            paper.setDateCreated(LocalDate.now());
+            paper.setDateModified(LocalDate.now());
             paper.setIsActive(1);
             paper.setUserID(authentication.getName());
-            paper.setPaperType(params.get("type"));
-            paper.setCustomerID(Integer.valueOf(params.get("customerID")));
+            paper.setPaperType(Integer.valueOf(params.get("type")));
+            paper.setCustomer(customerRepository.customerDetails(Integer.valueOf(params.get("customerID"))));
 
             if (Integer.valueOf(params.get("id")) >= 0) {
                 paperRepository.updatePaper(paper);

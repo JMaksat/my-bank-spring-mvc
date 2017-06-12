@@ -1,36 +1,58 @@
 package com.bank.web.model.entity;
 
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperClass;
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
+import javax.persistence.*;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
-@RowMapperClass(tableName = "bank.customer_address")
-public class CustomerAddress {
+@Entity
+@Table(name = "bank.customer_address")
+public class CustomerAddress implements Serializable {
 
-    @RowMapperField(columnName = "address_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "address_id")
     private Integer addressID;
 
-    @RowMapperField(columnName = "value")
+    @Column(name = "value")
     private String value;
 
-    @RowMapperField(columnName = "date_created")
-    private java.util.Date dateCreated;
+    @Column(name = "date_created")
+    private LocalDate dateCreated;
 
-    @RowMapperField(columnName = "date_modified")
-    private java.util.Date dateModified;
+    @Column(name = "date_modified")
+    private LocalDate dateModified;
 
-    @RowMapperField(columnName = "is_active")
+    @Column(name = "is_active")
     private Integer isActive;
 
-    @RowMapperField(columnName = "user_id")
+    @Column(name = "user_id")
     private String userID;
 
-    @RowMapperField(columnName = "address_type")
-    private String addressType;
+    @Column(name = "address_type")
+    private Integer addressType;
 
-    @RowMapperField(columnName = "customer_id")
-    private Integer customerID;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id")
+    private CustomerInfo customer;
+
+    @Transient
+    private String addressTypeLabel;
+
+    public CustomerAddress() {}
+
+    public CustomerAddress(String value, LocalDate dateCreated, LocalDate dateModified, Integer isActive, String userID, Integer addressType, CustomerInfo customer, String addressTypeLabel) {
+        this.value = value;
+        this.dateCreated = dateCreated;
+        this.dateModified = dateModified;
+        this.isActive = isActive;
+        this.userID = userID;
+        this.addressType = addressType;
+        this.customer = customer;
+        this.addressTypeLabel = addressTypeLabel;
+    }
 
     public Integer getAddressID() {
         return addressID;
@@ -48,19 +70,19 @@ public class CustomerAddress {
         this.value = value;
     }
 
-    public Date getDateCreated() {
+    public LocalDate getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(LocalDate dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public Date getDateModified() {
+    public LocalDate getDateModified() {
         return dateModified;
     }
 
-    public void setDateModified(Date dateModified) {
+    public void setDateModified(LocalDate dateModified) {
         this.dateModified = dateModified;
     }
 
@@ -80,20 +102,36 @@ public class CustomerAddress {
         this.userID = userID;
     }
 
-    public String getAddressType() {
+    public Integer getAddressType() {
         return addressType;
     }
 
-    public void setAddressType(String addressType) {
+    public void setAddressType(Integer addressType) {
         this.addressType = addressType;
     }
 
-    public Integer getCustomerID() {
-        return customerID;
+    public CustomerInfo getCustomer() {
+        return customer;
     }
 
-    public void setCustomerID(Integer customerID) {
-        this.customerID = customerID;
+    public void setCustomer(CustomerInfo customer) {
+        this.customer = customer;
+    }
+
+    public String getAddressTypeLabel() {
+        return addressTypeLabel;
+    }
+
+    public void setAddressTypeLabel(String addressTypeLabel) {
+        this.addressTypeLabel = addressTypeLabel;
+    }
+
+    public Date getConvertedDate(LocalDate localDate) {
+
+        if (localDate != null)
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        return null;
     }
 
     @Override
@@ -105,8 +143,9 @@ public class CustomerAddress {
                 ", dateModified=" + dateModified +
                 ", isActive=" + isActive +
                 ", userID='" + userID + '\'' +
-                ", addressType='" + addressType + '\'' +
-                ", customerID=" + customerID +
+                ", addressType=" + addressType +
+                ", customer=" + customer +
+                ", addressTypeLabel='" + addressTypeLabel + '\'' +
                 '}';
     }
 }

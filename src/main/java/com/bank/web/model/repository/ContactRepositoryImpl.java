@@ -3,111 +3,115 @@ package com.bank.web.model.repository;
 import com.bank.web.model.entity.CustomerContacts;
 import com.bank.web.model.entity.Directory;
 import org.apache.log4j.Logger;
+import org.hibernate.*;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository("contactRepository")
 @Transactional
 public class ContactRepositoryImpl implements ContactRepository {
 
     @Autowired
-    private RowMapperService rowMapperService;
+    private SessionFactory sessionFactory;
 
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private SimpleJdbcInsert simpleJdbcInsert;
     private static final Logger logger = Logger.getLogger(ContactRepositoryImpl.class);
 
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.customer_contacts");
+    public ContactRepositoryImpl(){}
+
+    public ContactRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public CustomerContacts getContact(Integer contactID) {
-        Map<String, Object> param = new HashMap<>();
+        CustomerContacts result;
+        String hql;
 
-        String sql = " select contact_id" +
-                "     , value " +
-                "     , date_created " +
-                "     , date_modified " +
-                "     , is_active " +
-                "     , user_id " +
-                "     , (select dir_type from bank.directory " +
-                "         where dir_id = contact_type and dir_group = :dir_group and is_active = 1) contact_type " +
-                "     , customer_id " +
-                " from bank.customer_contacts where contact_id = :contact_id ";
-        param.put("contact_id", contactID);
-        param.put("dir_group", Directory.CONTACTS);
-        CustomerContacts result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(CustomerContacts.class));
-        logger.info(" Obtain contact details using contactID = " + contactID);
+        hql = " from CustomerContacts where contactID = :contact_id ";
+        List<CustomerContacts> cntList = sessionFactory.getCurrentSession().createQuery(hql)
+                .setParameter("contact_id", contactID).list();
+        result = cntList.get(0);
+
+        hql = " from Directory where dirID = :contact_type and dirGroup = :dir_group and isActive = 1 ";
+        Query qry = sessionFactory.getCurrentSession().createQuery(hql);
+        qry.setParameter("contact_type", result.getContactType());
+        qry.setParameter("dir_group", Directory.CONTACTS);
+        List<Directory> dirList = qry.list();
+        Directory dir = dirList.get(0);
+
+        result.setContactTypeLabel(dir.getDirType());
+        logger.info("getContact(" + contactID + ") records found = " + cntList.size());
 
         return result;
     }
 
     @Override
     public void addContact(CustomerContacts contact) {
-        Map<String, Object> fields = new HashMap<>();
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
+        Integer contactID = null;
 
-        String sql = " insert into bank.customer_contacts (value, date_created, is_active, user_id, contact_type, customer_id) " +
-                " values (:value, :date_created, :is_active, :user_id, :contact_type, :customer_id) ";
+        try {
+            transaction.begin();
 
-        fields.put("value", contact.getValue());
-        fields.put("date_created", contact.getDateCreated());
-        fields.put("is_active", contact.getIsActive());
-        fields.put("user_id", contact.getUserID());
-        fields.put("contact_type", Integer.valueOf(contact.getContactType()));
-        fields.put("customer_id", contact.getCustomerID());
+            contactID = (Integer) session.save(contact);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_contacts was inserted " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("addContact(CustomerContact) successfully added contact_id=" + contactID);
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void updateContact(CustomerContacts contact) {
-        Map<String, Object> fields = new HashMap<>();
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
 
-        String sql = " update bank.customer_contacts set value = :value, contact_type = :contact_type, date_modified = :date_modified, user_id = :user_id where contact_id = :contact_id ";
+        try {
+            transaction.begin();
 
-        fields.put("contact_id", contact.getContactID());
-        fields.put("value", contact.getValue());
-        fields.put("contact_type", Integer.valueOf(contact.getContactType()));
-        fields.put("date_modified", contact.getDateModified());
-        fields.put("user_id", contact.getUserID());
+            CustomerContacts cc = session.get(CustomerContacts.class, contact.getContactID());
+            cc.setValue(contact.getValue());
+            cc.setDateModified(contact.getDateModified());
+            cc.setUserID(contact.getUserID());
+            cc.setContactType(contact.getContactType());
+            session.update(cc);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_contacts " + contact.getContactID() + " was update " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("updateContact(CustomerContact) successfully updated contact_id=" + contact.getContactID());
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void changeStatus(Integer contactID, Boolean status) {
-        Map<String, Object> fields = new HashMap<>();
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
         Integer state = status?0:1;
 
-        String sql = " update bank.customer_contacts set is_active = :state where contact_id = :contact_id ";
+        try {
+            transaction.begin();
 
-        fields.put("contact_id", contactID);
-        fields.put("state", state);
+            CustomerContacts cc = session.get(CustomerContacts.class, contactID);
+            cc.setIsActive(state);
+            session.update(cc);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_contacts " + contactID + " was update is_active " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("changeStatus(" + contactID + ", " + status + " ) successfully updated contact_id=" + contactID);
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
         }
     }
 }

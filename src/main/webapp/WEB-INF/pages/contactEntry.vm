@@ -26,7 +26,7 @@
                 <div class="col-10" style="width: 300px;">
                     <select class="form-control" id="fieldType">
                         #foreach($line in $types)
-                            #if ($line.dirType==$contact.contactType)
+                            #if ($line.dirType==$contact.contactTypeLabel)
                                 <option value="$line.dirID" selected>$line.dirType</option>
                             #else
                                 <option value="$line.dirID">$line.dirType</option>

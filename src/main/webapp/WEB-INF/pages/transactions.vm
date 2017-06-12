@@ -52,16 +52,16 @@
                             #foreach($lines in $transactions)
                             <tr>
                                 <td>$!lines.transactionID</td>
-                                <td>$!lines.operationType</td>
+                                <td>$!lines.operationTypeLabel</td>
                                 <td>#if ($!lines.isReversed==1) Yes
                                 #elseif ($!lines.isReversed==0) No
                                 #else Undefined #end </td>
                                 <td>$!lines.transactionSum</td>
-                                <td>$!dateTool.format("dd.MM.yyyy", $!lines.transactionDate)</td>
+                                <td>$!dateTool.format("dd.MM.yyyy", $!lines.getConvertedDate($!lines.transactionDate))</td>
                                 #*$!dateTool.format("kk.mm.ss", $!lines.transactionTime)*#
                                 <td>$!lines.transactionTime</td>
-                                <td>$!lines.accountDebit</td>
-                                <td>$!lines.accountCredit</td>
+                                <td>$!lines.accountDebitLabel</td>
+                                <td>$!lines.accountCreditLabel</td>
                                 <td>$!lines.userID</td>
                             </tr>
                             #end

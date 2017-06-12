@@ -46,7 +46,7 @@
                     </tr>
                     <tr>
                         <td><strong>Type</strong></td>
-                        <td>$!contact.contactType</td>
+                        <td>$!contact.contactTypeLabel</td>
                     </tr>
                     <tr>
                         <td><strong>Releated customer</strong></td>
@@ -64,11 +64,11 @@
                     </tr>
                     <tr>
                         <td><strong>Date of creation</strong></td>
-                        <td>$!dateTool.format("dd.MM.yyyy", $!contact.dateCreated)</td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!contact.getConvertedDate($!contact.dateCreated))</td>
                     </tr>
                     <tr>
                         <td><strong>Last edited date</strong></td>
-                        <td>$!dateTool.format("dd.MM.yyyy", $!contact.dateModified)</td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!contact.getConvertedDate($!contact.dateModified))</td>
                     </tr>
                     </tbody>
                 </table>

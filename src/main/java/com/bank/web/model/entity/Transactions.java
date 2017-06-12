@@ -1,39 +1,72 @@
 package com.bank.web.model.entity;
 
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperClass;
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
+import javax.persistence.*;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Date;
 
-@RowMapperClass(tableName = "bank.transactions")
-public class Transactions {
+@Entity
+@Table(name = "bank.transactions")
+public class Transactions implements Serializable {
 
-    @RowMapperField(columnName = "transaction_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "transaction_id")
     private Integer transactionID;
 
-    @RowMapperField(columnName = "operation_type")
-    private String operationType;
+    @Column(name = "operation_type")
+    private Integer operationType;
 
-    @RowMapperField(columnName = "is_reversed")
+    @Column(name = "is_reversed")
     private Integer isReversed;
 
-    @RowMapperField(columnName = "transaction_sum")
+    @Column(name = "transaction_sum")
     private Double transactionSum;
 
-    @RowMapperField(columnName = "transaction_date")
-    private Date transactionDate;
+    @Column(name = "transaction_date")
+    private LocalDate transactionDate;
 
-    @RowMapperField(columnName = "transaction_time")
-    private String transactionTime;
+    @Column(name = "transaction_time")
+    private LocalTime transactionTime;
 
-    @RowMapperField(columnName = "user_id")
+    @Column(name = "user_id")
     private String userID;
 
-    @RowMapperField(columnName = "account_debit")
-    private String accountDebit;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_debit")
+    private Accounts accountDebit;
 
-    @RowMapperField(columnName = "account_credit")
-    private String accountCredit;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_credit")
+    private Accounts accountCredit;
+
+    @Transient
+    private String operationTypeLabel;
+
+    @Transient
+    private String accountDebitLabel;
+
+    @Transient
+    private String accountCreditLabel;
+
+    public Transactions() {}
+
+    public Transactions(Integer operationType, Integer isReversed, Double transactionSum, LocalDate transactionDate, LocalTime transactionTime, String userID, Accounts accountDebit, Accounts accountCredit, String operationTypeLabel, String accountDebitLabel, String accountCreditLabel) {
+        this.operationType = operationType;
+        this.isReversed = isReversed;
+        this.transactionSum = transactionSum;
+        this.transactionDate = transactionDate;
+        this.transactionTime = transactionTime;
+        this.userID = userID;
+        this.accountDebit = accountDebit;
+        this.accountCredit = accountCredit;
+        this.operationTypeLabel = operationTypeLabel;
+        this.accountDebitLabel = accountDebitLabel;
+        this.accountCreditLabel = accountCreditLabel;
+    }
 
     public Integer getTransactionID() {
         return transactionID;
@@ -43,11 +76,11 @@ public class Transactions {
         this.transactionID = transactionID;
     }
 
-    public String getOperationType() {
+    public Integer getOperationType() {
         return operationType;
     }
 
-    public void setOperationType(String operationType) {
+    public void setOperationType(Integer operationType) {
         this.operationType = operationType;
     }
 
@@ -67,19 +100,19 @@ public class Transactions {
         this.transactionSum = transactionSum;
     }
 
-    public Date getTransactionDate() {
+    public LocalDate getTransactionDate() {
         return transactionDate;
     }
 
-    public void setTransactionDate(Date transactionDate) {
+    public void setTransactionDate(LocalDate transactionDate) {
         this.transactionDate = transactionDate;
     }
 
-    public String getTransactionTime() {
+    public LocalTime getTransactionTime() {
         return transactionTime;
     }
 
-    public void setTransactionTime(String transactionTime) {
+    public void setTransactionTime(LocalTime transactionTime) {
         this.transactionTime = transactionTime;
     }
 
@@ -91,34 +124,69 @@ public class Transactions {
         this.userID = userID;
     }
 
-    public String getAccountDebit() {
+    public Accounts getAccountDebit() {
         return accountDebit;
     }
 
-    public void setAccountDebit(String accountDebit) {
+    public void setAccountDebit(Accounts accountDebit) {
         this.accountDebit = accountDebit;
     }
 
-    public String getAccountCredit() {
+    public Accounts getAccountCredit() {
         return accountCredit;
     }
 
-    public void setAccountCredit(String accountCredit) {
+    public void setAccountCredit(Accounts accountCredit) {
         this.accountCredit = accountCredit;
+    }
+
+    public String getOperationTypeLabel() {
+        return operationTypeLabel;
+    }
+
+    public void setOperationTypeLabel(String operationTypeLabel) {
+        this.operationTypeLabel = operationTypeLabel;
+    }
+
+    public String getAccountDebitLabel() {
+        return accountDebitLabel;
+    }
+
+    public void setAccountDebitLabel(String accountDebitLabel) {
+        this.accountDebitLabel = accountDebitLabel;
+    }
+
+    public String getAccountCreditLabel() {
+        return accountCreditLabel;
+    }
+
+    public void setAccountCreditLabel(String accountCreditLabel) {
+        this.accountCreditLabel = accountCreditLabel;
+    }
+
+    public Date getConvertedDate(LocalDate localDate) {
+
+        if (localDate != null)
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        return null;
     }
 
     @Override
     public String toString() {
         return "Transactions{" +
                 "transactionID=" + transactionID +
-                ", operationType='" + operationType + '\'' +
+                ", operationType=" + operationType +
                 ", isReversed=" + isReversed +
                 ", transactionSum=" + transactionSum +
                 ", transactionDate=" + transactionDate +
-                ", transactionTime='" + transactionTime + '\'' +
+                ", transactionTime=" + transactionTime +
                 ", userID='" + userID + '\'' +
-                ", accountDebit='" + accountDebit + '\'' +
-                ", accountCredit='" + accountCredit + '\'' +
+                ", accountDebit=" + accountDebit +
+                ", accountCredit=" + accountCredit +
+                ", operationTypeLabel='" + operationTypeLabel + '\'' +
+                ", accountDebitLabel='" + accountDebitLabel + '\'' +
+                ", accountCreditLabel='" + accountCreditLabel + '\'' +
                 '}';
     }
 }

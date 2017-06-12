@@ -39,7 +39,7 @@ public class CustomUserService implements UserDetailsService {
 
     private Collection<GrantedAuthority> getAuthorities(Users user) {
         Collection<GrantedAuthority> result = new ArrayList<>();
-        List<UserRoles> permissions = userRolesRepository.findByRole(user.getUserName());
+        List<UserRoles> permissions = userRolesRepository.findByRole(user);
         for (UserRoles permission : permissions) {
             GrantedAuthority perm = new SimpleGrantedAuthority(permission.getUserRole());
             result.add(perm);

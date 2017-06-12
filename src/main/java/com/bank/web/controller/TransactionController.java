@@ -42,7 +42,7 @@ public class TransactionController {
     @RequestMapping(path = "/transactions", method = RequestMethod.GET)
     @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView getTransactions(ModelMap map) {
-        List<Transactions> transactions = transactionRepository.transactionsList();
+        List<Transactions> transactions = transactionRepository.getAlltransactions();
 
         if (transactions != null) {
             map.put("transactions", transactions);

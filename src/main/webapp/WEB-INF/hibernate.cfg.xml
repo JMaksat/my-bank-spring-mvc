@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.ProgressDialect</property>
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+        <mapping class="com.bank.web.model.entity.Accounts"/>
+        <mapping class="com.bank.web.model.entity.AccountRest"/>
+        <mapping class="com.bank.web.model.entity.Transactions"/>
+        <mapping class="com.bank.web.model.entity.CustomerInfo"/>
+        <mapping class="com.bank.web.model.entity.CustomerAddress"/>
+        <mapping class="com.bank.web.model.entity.CustomerContacts"/>
+        <mapping class="com.bank.web.model.entity.CustomerPapers"/>
+        <mapping class="com.bank.web.model.entity.BankParameters"/>
+        <mapping class="com.bank.web.model.entity.Directory"/>
+        <mapping class="com.bank.web.model.entity.UserRoles"/>
+        <mapping class="com.bank.web.model.entity.Users"/>
+    </session-factory>
+</hibernate-configuration>

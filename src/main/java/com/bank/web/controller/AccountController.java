@@ -20,6 +20,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +67,7 @@ public class AccountController {
         Accounts account = accountRepository.getAccountById(accountID);
 
         if (account != null) {
-            CustomerInfo customer = customerRepository.customerDetails(account.getAccountOwner());
+            CustomerInfo customer = customerRepository.customerDetails(account.getAccountOwner().getCustomerID());
 
             map.put("account", account);
             map.put("customer", customer);
@@ -115,12 +116,12 @@ public class AccountController {
                 params.get("id") != null) {
 
             account.setAccountNumber(params.get("account"));
-            account.setAccountOwner(Integer.valueOf(params.get("customerID")));
-            account.setDateOpened(new java.util.Date());
-            account.setDateCreated(new java.util.Date());
-            account.setDateModified(new java.util.Date());
+            account.setAccountOwner(customerRepository.customerDetails(Integer.valueOf(params.get("customerID"))));
+            account.setDateOpened(LocalDate.now());
+            account.setDateCreated(LocalDate.now());
+            account.setDateModified(LocalDate.now());
             account.setUserID(authentication.getName());
-            account.setAccountType(params.get("type"));
+            account.setAccountType(Integer.valueOf(params.get("type")));
             account.setIsSuspended(0);
             account.setComment(params.get("comment"));
 
@@ -128,7 +129,6 @@ public class AccountController {
                 account.setAccountID(Integer.valueOf(params.get("id")));
                 accountRepository.updateAccount(account);
             } else {
-                account.setAccountID(accountRepository.getNewAccountSeq());
                 transactionManageService.createNewAccount(account);
             }
 
@@ -170,8 +170,8 @@ public class AccountController {
     @RequestMapping(value = "/transactions/{accountID}/{invoker}", method = RequestMethod.GET)
     @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView getTransactions(@PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
-        List<Transactions> transactions = transactionRepository.getTransactions(accountID);
         Accounts account = accountRepository.getAccountById(accountID);
+        List<Transactions> transactions = transactionRepository.getTransactions(account);
 
         if (transactions != null) {
             map.put("accountID", accountID);

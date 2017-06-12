@@ -1,73 +1,53 @@
 package com.bank.web.model.repository;
 
 import com.bank.web.model.entity.BankParameters;
-import com.bank.web.model.entity.Directory;
 import org.apache.log4j.Logger;
+import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @Repository("parametersRepository")
+@Transactional
 public class ParametersRepositoryImpl implements ParametersRepository {
 
     @Autowired
-    private RowMapperService rowMapperService;
+    private SessionFactory sessionFactory;
 
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private SimpleJdbcInsert simpleJdbcInsert;
     private static final Logger logger = Logger.getLogger(ParametersRepositoryImpl.class);
 
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.bank_parameters");
+    public ParametersRepositoryImpl() {}
+
+    public ParametersRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public List<BankParameters> getParameters() {
+        List<BankParameters> result;
 
-        String sql = " select parameter_id " +
-                " , parent_id " +
-                " , parameter_name " +
-                " , value " +
-                " , date_created " +
-                " , date_modified " +
-                " , active_from " +
-                " , active_to " +
-                " , user_id " +
-                " from bank.bank_parameters " +
-                " where now() between active_from and active_to ";
-        List<BankParameters> result = namedParameterJdbcTemplate.query(sql, rowMapperService.getRowMapper(BankParameters.class));
-        logger.info(" Obtain all active parameters");
+        result = sessionFactory.getCurrentSession()
+                .createQuery(" from BankParameters where :now between activeFrom and activeTo ")
+                .setParameter("now", LocalDate.now()).list();
+
+        logger.info("getParameters() records found = " + result.size());
 
         return result;
     }
 
     @Override
     public BankParameters getParamTransAccount() {
-        Map<String, Object> param = new HashMap<>();
+        BankParameters result;
 
-        String sql = " select parameter_id " +
-                " , parent_id " +
-                " , parameter_name " +
-                " , value " +
-                " , date_created " +
-                " , date_modified " +
-                " , active_from " +
-                " , active_to " +
-                " , user_id " +
-                " from bank.bank_parameters " +
-                " where parameter_name = :parameter_name ";
-        param.put("parameter_name", "TRANSFER_ACCOUNT");
-        BankParameters result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(BankParameters.class));
-        logger.info(" Obtain value for parameter TRANSFER_ACCOUNT");
+        List<BankParameters> param = sessionFactory.getCurrentSession()
+                .createQuery(" from BankParameters where parameterName = :parameter_name ")
+                .setParameter("parameter_name", "TRANSFER_ACCOUNT").list();
+
+        result = param.get(0);
+        logger.info("getParamTransAccount() records found = " + param.size());
 
         return result;
     }

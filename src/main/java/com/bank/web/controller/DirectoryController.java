@@ -37,4 +37,6 @@ public class DirectoryController {
 
         return new ModelAndView("directory");
     }
+
+    //Use checkUnique(Integer dirID) when add or update Directory object.
 }

@@ -3,111 +3,115 @@ package com.bank.web.model.repository;
 import com.bank.web.model.entity.CustomerPapers;
 import com.bank.web.model.entity.Directory;
 import org.apache.log4j.Logger;
+import org.hibernate.*;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository("paperRepository")
 @Transactional
 public class PaperRepositoryImpl implements PaperRepository {
 
     @Autowired
-    private RowMapperService rowMapperService;
+    private SessionFactory sessionFactory;
 
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private SimpleJdbcInsert simpleJdbcInsert;
     private static final Logger logger = Logger.getLogger(PaperRepositoryImpl.class);
 
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.customer_papers");
+    public PaperRepositoryImpl(){}
+
+    public PaperRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public CustomerPapers getPaper(Integer paperID) {
-        Map<String, Object> param = new HashMap<>();
+        CustomerPapers result;
+        String hql;
 
-        String sql = " select paper_id" +
-                "     , value " +
-                "     , date_created " +
-                "     , date_modified " +
-                "     , is_active " +
-                "     , user_id " +
-                "     , (select dir_type from bank.directory " +
-                "         where dir_id = paper_type and dir_group = :dir_group and is_active = 1) paper_type " +
-                "     , customer_id " +
-                " from bank.customer_papers where paper_id = :paper_id ";
-        param.put("paper_id", paperID);
-        param.put("dir_group", Directory.PAPERS);
-        CustomerPapers result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(CustomerPapers.class));
-        logger.info(" Obtain paper details using paperID = " + paperID);
+        hql = " from CustomerPapers where paperID = :paper_id ";
+        List<CustomerPapers> pprList = sessionFactory.getCurrentSession().createQuery(hql)
+                .setParameter("paper_id", paperID).list();
+        result = pprList.get(0);
+
+        hql = " from Directory where dirID = :paper_type and dirGroup = :dir_group and isActive = 1 ";
+        Query qry = sessionFactory.getCurrentSession().createQuery(hql);
+        qry.setParameter("paper_type", result.getPaperType());
+        qry.setParameter("dir_group", Directory.PAPERS);
+        List<Directory> dirList = qry.list();
+        Directory dir = dirList.get(0);
+
+        result.setPaperTypeLabel(dir.getDirType());
+        logger.info("getPaper(" + paperID + ") records found = " + pprList.size());
 
         return result;
     }
 
     @Override
     public void addPaper(CustomerPapers paper) {
-        Map<String, Object> fields = new HashMap<>();
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
+        Integer paperID = null;
 
-        String sql = " insert into bank.customer_papers (value, date_created, is_active, user_id, paper_type, customer_id) " +
-                " values (:value, :date_created, :is_active, :user_id, :paper_type, :customer_id) ";
+        try {
+            transaction.begin();
 
-        fields.put("value", paper.getValue());
-        fields.put("date_created", paper.getDateCreated());
-        fields.put("is_active", paper.getIsActive());
-        fields.put("user_id", paper.getUserID());
-        fields.put("paper_type", Integer.valueOf(paper.getPaperType()));
-        fields.put("customer_id", paper.getCustomerID());
+            paperID = (Integer) session.save(paper);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_papers was inserted " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("addPaper(CustomerPaper) successfully added paper_id=" + paperID);
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void updatePaper(CustomerPapers paper) {
-        Map<String, Object> fields = new HashMap<>();
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
 
-        String sql = " update bank.customer_papers set value = :value, paper_type = :paper_type, date_modified = :date_modified, user_id = :user_id where paper_id = :paper_id ";
+        try {
+            transaction.begin();
 
-        fields.put("paper_id", paper.getPaperID());
-        fields.put("value", paper.getValue());
-        fields.put("paper_type", Integer.valueOf(paper.getPaperType()));
-        fields.put("date_modified", paper.getDateModified());
-        fields.put("user_id", paper.getUserID());
+            CustomerPapers cp = session.get(CustomerPapers.class, paper.getPaperID());
+            cp.setValue(paper.getValue());
+            cp.setDateModified(paper.getDateModified());
+            cp.setUserID(paper.getUserID());
+            cp.setPaperType(paper.getPaperType());
+            session.update(cp);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_papers " + paper.getPaperID() + " was update " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("updatePaper(CustomerPaper) successfully updated paper_id=" + paper.getPaperID());
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void changeStatus(Integer paperID, Boolean status) {
-        Map<String, Object> fields = new HashMap<>();
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
         Integer state = status?0:1;
 
-        String sql = " update bank.customer_papers set is_active = :state where paper_id = :paper_id ";
+        try {
+            transaction.begin();
 
-        fields.put("paper_id", paperID);
-        fields.put("state", state);
+            CustomerPapers cp = session.get(CustomerPapers.class, paperID);
+            cp.setIsActive(state);
+            session.update(cp);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_papers " + paperID + " was update is_active " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("changeStatus(" + paperID + ", " + status + " ) successfully updated paper_id=" + paperID);
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
         }
     }
 }

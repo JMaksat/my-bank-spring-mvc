@@ -17,6 +17,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class ContactController {
         CustomerContacts contact = contactRepository.getContact(contactID);
 
         if (contact != null) {
-            CustomerInfo customer = customerRepository.customerDetails(contact.getCustomerID());
+            CustomerInfo customer = customerRepository.customerDetails(contact.getCustomer().getCustomerID());
 
             map.put("contact", contact);
             map.put("customer", customer);
@@ -90,12 +91,12 @@ public class ContactController {
 
             contact.setContactID(Integer.valueOf(params.get("id")));
             contact.setValue(params.get("value"));
-            contact.setDateCreated(new java.util.Date());
-            contact.setDateModified(new java.util.Date());
+            contact.setDateCreated(LocalDate.now());
+            contact.setDateModified(LocalDate.now());
             contact.setIsActive(1);
             contact.setUserID(authentication.getName());
-            contact.setContactType(params.get("type"));
-            contact.setCustomerID(Integer.valueOf(params.get("customerID")));
+            contact.setContactType(Integer.valueOf(params.get("type")));
+            contact.setCustomer(customerRepository.customerDetails(Integer.valueOf(params.get("customerID"))));
 
             if (Integer.valueOf(params.get("id")) >= 0) {
                 contactRepository.updateContact(contact);

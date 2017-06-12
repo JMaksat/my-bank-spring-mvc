@@ -38,7 +38,7 @@
                 <div class="form-group row">
                     <label class="col-2 col-form-label">Date of birth</label>
                     <div class="col-10" style="width: 200px;">
-                        <input class="form-control" type="date" id="fieldBirthDate" value="$!dateTool.format("yyyy-MM-dd", $!customer.birthDate)">
+                        <input class="form-control" type="date" id="fieldBirthDate" value="$!dateTool.format("yyyy-MM-dd", $!lines.getConvertedDate($!customer.birthDate))">
                     </div>
                 </div>
 

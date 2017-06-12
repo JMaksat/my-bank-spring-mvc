@@ -1,36 +1,58 @@
 package com.bank.web.model.entity;
 
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperClass;
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
+import javax.persistence.*;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
-@RowMapperClass(tableName = "bank.customer_contacts")
-public class CustomerContacts {
+@Entity
+@Table(name = "bank.customer_contacts")
+public class CustomerContacts implements Serializable {
 
-    @RowMapperField(columnName = "contact_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "contact_id")
     private Integer contactID;
 
-    @RowMapperField(columnName = "value")
+    @Column(name = "value")
     private String value;
 
-    @RowMapperField(columnName = "date_created")
-    private java.util.Date dateCreated;
+    @Column(name = "date_created")
+    private LocalDate dateCreated;
 
-    @RowMapperField(columnName = "date_modified")
-    private java.util.Date dateModified;
+    @Column(name = "date_modified")
+    private LocalDate dateModified;
 
-    @RowMapperField(columnName = "is_active")
+    @Column(name = "is_active")
     private Integer isActive;
 
-    @RowMapperField(columnName = "user_id")
+    @Column(name = "user_id")
     private String userID;
 
-    @RowMapperField(columnName = "contact_type")
-    private String contactType;
+    @Column(name = "contact_type")
+    private Integer contactType;
 
-    @RowMapperField(columnName = "customer_id")
-    private Integer customerID;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id")
+    private CustomerInfo customer;
+
+    @Transient
+    private String contactTypeLabel;
+
+    public CustomerContacts() {}
+
+    public CustomerContacts(String value, LocalDate dateCreated, LocalDate dateModified, Integer isActive, String userID, Integer contactType, CustomerInfo customer, String contactTypeLabel) {
+        this.value = value;
+        this.dateCreated = dateCreated;
+        this.dateModified = dateModified;
+        this.isActive = isActive;
+        this.userID = userID;
+        this.contactType = contactType;
+        this.customer = customer;
+        this.contactTypeLabel = contactTypeLabel;
+    }
 
     public Integer getContactID() {
         return contactID;
@@ -48,19 +70,19 @@ public class CustomerContacts {
         this.value = value;
     }
 
-    public Date getDateCreated() {
+    public LocalDate getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(LocalDate dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public Date getDateModified() {
+    public LocalDate getDateModified() {
         return dateModified;
     }
 
-    public void setDateModified(Date dateModified) {
+    public void setDateModified(LocalDate dateModified) {
         this.dateModified = dateModified;
     }
 
@@ -80,20 +102,36 @@ public class CustomerContacts {
         this.userID = userID;
     }
 
-    public String getContactType() {
+    public Integer getContactType() {
         return contactType;
     }
 
-    public void setContactType(String contactType) {
+    public void setContactType(Integer contactType) {
         this.contactType = contactType;
     }
 
-    public Integer getCustomerID() {
-        return customerID;
+    public CustomerInfo getCustomer() {
+        return customer;
     }
 
-    public void setCustomerID(Integer customerID) {
-        this.customerID = customerID;
+    public void setCustomer(CustomerInfo customer) {
+        this.customer = customer;
+    }
+
+    public String getContactTypeLabel() {
+        return contactTypeLabel;
+    }
+
+    public void setContactTypeLabel(String contactTypeLabel) {
+        this.contactTypeLabel = contactTypeLabel;
+    }
+
+    public Date getConvertedDate(LocalDate localDate) {
+
+        if (localDate != null)
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        return null;
     }
 
     @Override
@@ -105,8 +143,9 @@ public class CustomerContacts {
                 ", dateModified=" + dateModified +
                 ", isActive=" + isActive +
                 ", userID='" + userID + '\'' +
-                ", contactType='" + contactType + '\'' +
-                ", customerID=" + customerID +
+                ", contactType=" + contactType +
+                ", customer=" + customer +
+                ", contactTypeLabel='" + contactTypeLabel + '\'' +
                 '}';
     }
 }

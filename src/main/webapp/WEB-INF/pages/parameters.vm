@@ -53,10 +53,10 @@
                             <td>$!lines.parentId</td>
                             <td>$!lines.parameterName</td>
                             <td>$!lines.value</td>
-                            <td>$!dateTool.format("dd.MM.yyyy", $!lines.activeFrom)</td>
-                            <td>$!dateTool.format("dd.MM.yyyy", $!lines.activeTo)</td>
-                            <td>$!dateTool.format("dd.MM.yyyy", $!lines.dateCreated)</td>
-                            <td>$!dateTool.format("dd.MM.yyyy", $!lines.dateModified)</td>
+                            <td>$!dateTool.format("dd.MM.yyyy", $!lines.getConvertedDate($!lines.activeFrom))</td>
+                            <td>$!dateTool.format("dd.MM.yyyy", $!lines.getConvertedDate($!lines.activeTo))</td>
+                            <td>$!dateTool.format("dd.MM.yyyy", $!lines.getConvertedDate($!lines.dateCreated))</td>
+                            <td>$!dateTool.format("dd.MM.yyyy", $!lines.getConvertedDate($!lines.dateModified))</td>
                             <td>$!lines.userID</td>
                         </tr>
                         #end

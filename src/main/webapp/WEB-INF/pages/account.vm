@@ -63,19 +63,19 @@
                     </tr>
                     <tr>
                         <td><strong>Opening date</strong></td>
-                        <td>$!dateTool.format("dd.MM.yyyy", $!account.dateOpened)</td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!account.getConvertedDate($!account.dateOpened))</td>
                     </tr>
                     <tr>
                         <td><strong>Closing date</strong></td>
-                        <td>$!dateTool.format("dd.MM.yyyy", $!account.dateClosed)</td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!account.getConvertedDate($!account.dateClosed))</td>
                     </tr>
                     <tr>
                         <td><strong>Date of creation</strong></td>
-                        <td>$!dateTool.format("dd.MM.yyyy", $!account.dateCreated)</td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!account.getConvertedDate($!account.dateCreated))</td>
                     </tr>
                     <tr>
                         <td><strong>Last edited date</strong></td>
-                        <td>$!dateTool.format("dd.MM.yyyy", $!account.dateModified)</td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!account.getConvertedDate($!account.dateModified))</td>
                     </tr>
                     <tr>
                         <td><strong>Last edited by</strong></td>

@@ -51,8 +51,8 @@
                                 <td>$!lines.dirGroup</td>
                                 <td>$!lines.dirType</td>
                                 <td>$!lines.description</td>
-                                <td>$!dateTool.format("dd.MM.yyyy", $!lines.dateCreated)</td>
-                                <td>$!dateTool.format("dd.MM.yyyy", $!lines.dateModified)</td>
+                                <td>$!dateTool.format("dd.MM.yyyy", $!lines.getConvertedDate($!lines.dateCreated))</td>
+                                <td>$!dateTool.format("dd.MM.yyyy", $!lines.getConvertedDate($!lines.dateModified))</td>
                                 <td>#if ($!lines.isActive==1) Active
                                 #elseif ($!lines.isActive==0) Inactive
                                 #else Undefined #end</td>

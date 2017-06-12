@@ -3,6 +3,7 @@ package com.bank.web.model.repository;
 import com.bank.web.model.entity.Directory;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 public interface DirectoryRepository {
 
@@ -18,9 +19,11 @@ public interface DirectoryRepository {
 
     List<Directory> getPaperTypes();
 
-    void addEntry(Directory directory);
+    Boolean checkUnique(Integer dirID);
 
-    void updateEntry(Directory directory);
+    Boolean addEntry(Directory directory);
 
-    void changeStatus(Integer dirID, Boolean status);
+    Boolean updateEntry(Directory directory);
+
+    Boolean changeStatus(Integer dirID, Boolean status);
 }

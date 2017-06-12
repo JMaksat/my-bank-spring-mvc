@@ -2,60 +2,70 @@ package com.bank.web.model.repository;
 
 import org.apache.log4j.Logger;
 import com.bank.web.model.entity.Users;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.util.*;
 
 @Repository("usersRepository")
+@Transactional
 public class UsersRepositoryImpl implements UsersRepository {
 
     @Autowired
-    private RowMapperService rowMapperService;
+    private SessionFactory sessionFactory;
 
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private SimpleJdbcInsert simpleJdbcInsert;
     private static final Logger logger = Logger.getLogger(UsersRepositoryImpl.class);
 
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.users");
+    public UsersRepositoryImpl() {}
+
+    public UsersRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public List<Users> getUsers() {
+        String hql = " from Users where isActive = 1 ";
 
-        String sql = " select us.username " +
-                "     , us.password " +
-                "     , us.is_active " +
-                "     , (select string_agg(ur.user_role, ',') from bank.user_roles ur where ur.username = us.username) as roles " +
-                "  from bank.users us " +
-                " where us.is_active = 1 ";
-        List<Users> result = namedParameterJdbcTemplate.query(sql, rowMapperService.getRowMapper(Users.class));
-        logger.info(" Obtain all active users");
+        List<Users> result = sessionFactory.getCurrentSession()
+                .createQuery(hql)
+                .list();
+
+        for (Users user : result) {
+            String sql = " select string_agg(ur.user_role, ',') from bank.user_roles ur where ur.username = :username ";
+            List<Object[]> roleList = sessionFactory.getCurrentSession()
+                    .createNativeQuery(sql)
+                    .setParameter("username", user.getUserName())
+                    .list();
+
+            for (Object[] roles : roleList) {
+                user.setRoles((String) roles[0]);
+            }
+        }
+
+        logger.info("getUsers() records found = " + result.size());
 
         return result;
     }
 
     @Override
     public Users findByLogin(String login) {
-        String sql = " select username, password, is_active, null as roles from bank.users where is_active = 1 and username = :login ";
-        Map<String, Object> params = Collections.<String, Object>singletonMap("login", login);
-        Users user = null;
-        try {
-            user = namedParameterJdbcTemplate.queryForObject(sql, params, rowMapperService.getRowMapper(Users.class));
-            logger.debug("Found Users entity with login '" + login + "'");
-        } catch (EmptyResultDataAccessException e) {
-            logger.debug("Users entity with login '" + login + "' not found");
+        Users result = null;
+
+        List<Users> userList = sessionFactory.getCurrentSession()
+                .createQuery(" from Users  where userName = :login and isActive = 1 ")
+                .setParameter("login", login).list();
+
+        if (userList.size() > 0) {
+            result = userList.get(0);
+            logger.info("findByLogin(" + login + ") users found = " + userList.size());
+        } else {
+            logger.info("findByLogin(" + login + ") user not found");
         }
 
-        return user;
+        return result;
     }
 
     /*

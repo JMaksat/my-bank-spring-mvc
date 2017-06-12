@@ -87,7 +87,7 @@ insert into bank.accounts values (13, '0010403201700003016',  2, '2017-03-04', n
 insert into bank.accounts values (14, '0010403201700004016',  3, '2017-03-04', null, '2017-03-04', null, 'scott', 16, 0, null);
 insert into bank.accounts values (15, '0010403201700005016',  4, '2017-03-04', null, '2017-03-04', null, 'scott', 16, 0, null);
 insert into bank.accounts values (16, '0010403201700006016',  4, '2017-03-04', null, '2017-03-04', null, 'scott', 16, 0, null);
-alter sequence bank.accounts_seq restart with 17;
+alter sequence bank.accounts_account_id_seq restart with 17;
 
 insert into bank.transactions values (0, 14, 0, 0,  '2017-03-04', '19:10:41.554173', 'scott', 2, 3);
 insert into bank.transactions values (1, 12, 0, 2000, '2017-03-04', '18:42:14.941146', 'scott', 2, 1);
@@ -105,7 +105,7 @@ insert into bank.transactions values (12, 13, 0, 10000,  '2017-03-04', '17:55:45
 
 insert into bank.transactions values (13, 11, 0, 5000,  '2017-03-04', '17:56:45.573993', 'scott', 12, 14);
 insert into bank.transactions values (14, 11, 1, 5000,  '2017-03-04', '17:57:45.573993', 'scott', 12, 14);
-alter sequence bank.transactions_seq restart with 15;
+alter sequence bank.transactions_transaction_id_seq restart with 15;
 
 insert into bank.account_rest values (1, 1, 2000,  1, '2017-03-04', '18:46:51.652568');
 insert into bank.account_rest values (2, 2, 1000000, 0, '2017-03-04', '18:47:29.324624');
@@ -130,7 +130,7 @@ insert into bank.account_rest values (21, 12, 0, 13, '2017-03-04', '17:58:45.573
 insert into bank.account_rest values (22, 14, 5000, 13, '2017-03-04', '17:58:45.573993');
 insert into bank.account_rest values (23, 14, 0, 14, '2017-03-04', '17:59:45.573993');
 insert into bank.account_rest values (24, 12, 5000, 14, '2017-03-04', '17:59:45.573993');
-alter sequence bank.account_rest_seq restart with 25;
+alter sequence bank.account_rest_rest_id_seq restart with 25;
 
 INSERT INTO bank.users(username, password, is_active)
 VALUES ('john', '$2a$10$oLYgFhseqsx8c/YttTFB2uFc6J79po8FukVMf8KST.Y8L1mXSLNli', 1);

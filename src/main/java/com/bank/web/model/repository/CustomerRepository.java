@@ -2,7 +2,6 @@ package com.bank.web.model.repository;
 
 import com.bank.web.model.entity.*;
 import java.util.List;
-import java.util.Map;
 
 public interface CustomerRepository {
 
@@ -12,13 +11,13 @@ public interface CustomerRepository {
 
     void changeStatus (Integer customerID, Boolean status);
 
-    List<Accounts> getAccounts(Integer customerID);
+    List<Accounts> getAccounts(CustomerInfo customer);
 
-    List<CustomerAddress> getAddresses(Integer customerID);
+    List<CustomerAddress> getAddresses(CustomerInfo customerID);
 
-    List<CustomerContacts> getContacts(Integer customerID);
+    List<CustomerContacts> getContacts(CustomerInfo customerID);
 
-    List<CustomerPapers> getPapers(Integer customerID);
+    List<CustomerPapers> getPapers(CustomerInfo customerID);
 
     void addCustomer(CustomerInfo customerInfo);
 

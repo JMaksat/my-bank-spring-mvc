@@ -2,7 +2,6 @@ package com.bank.web.model.repository;
 
 import com.bank.web.model.entity.CustomerContacts;
 
-import java.util.List;
 
 public interface ContactRepository {
 

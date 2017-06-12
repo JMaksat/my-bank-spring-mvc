@@ -49,7 +49,7 @@
                     <td>$lines.firstName</td>
                     <td>$lines.lastName</td>
                     <td>$lines.middleName</td>
-                    <td>$!dateTool.format("dd.MM.yyyy", $lines.birthDate)</td>
+                    <td>$!dateTool.format("dd.MM.yyyy", $!lines.getConvertedDate($!lines.birthDate))</td>
                     <td>
                       #if ($!lines.isActive==1) Active
                       #elseif ($!lines.isActive==0) Inactive

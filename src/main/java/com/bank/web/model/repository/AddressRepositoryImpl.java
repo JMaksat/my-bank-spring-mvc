@@ -3,111 +3,115 @@ package com.bank.web.model.repository;
 import com.bank.web.model.entity.CustomerAddress;
 import com.bank.web.model.entity.Directory;
 import org.apache.log4j.Logger;
+import org.hibernate.*;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository("addressRepository")
 @Transactional
 public class AddressRepositoryImpl implements AddressRepository {
 
     @Autowired
-    private RowMapperService rowMapperService;
+    private SessionFactory sessionFactory;
 
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private SimpleJdbcInsert simpleJdbcInsert;
     private static final Logger logger = Logger.getLogger(AddressRepositoryImpl.class);
 
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.customer_address");
+    public AddressRepositoryImpl(){}
+
+    public AddressRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public CustomerAddress getAddress(Integer addressID) {
-        Map<String, Object> param = new HashMap<>();
+        CustomerAddress result;
+        String hql;
 
-        String sql = " select address_id" +
-                "     , value " +
-                "     , date_created " +
-                "     , date_modified " +
-                "     , is_active " +
-                "     , user_id " +
-                "     , (select dir_type from bank.directory " +
-                "         where dir_id = address_type and dir_group = :dir_group and is_active = 1) address_type " +
-                "     , customer_id " +
-                " from bank.customer_address where address_id = :address_id ";
-        param.put("address_id", addressID);
-        param.put("dir_group", Directory.ADDRESS);
-        CustomerAddress result = namedParameterJdbcTemplate.queryForObject(sql, param, rowMapperService.getRowMapper(CustomerAddress.class));
-        logger.info(" Obtain address details using addressID = " + addressID);
+        hql = " from CustomerAddress where addressID = :address_id ";
+        List<CustomerAddress> adrList = sessionFactory.getCurrentSession().createQuery(hql)
+                .setParameter("address_id", addressID).list();
+        result = adrList.get(0);
+
+        hql = " from Directory where dirID = :address_type and dirGroup = :dir_group and isActive = 1 ";
+        Query qry = sessionFactory.getCurrentSession().createQuery(hql);
+        qry.setParameter("address_type", result.getAddressType());
+        qry.setParameter("dir_group", Directory.ADDRESS);
+        List<Directory> dirList = qry.list();
+        Directory dir = dirList.get(0);
+
+        result.setAddressTypeLabel(dir.getDirType());
+        logger.info("getAddress(" + addressID + ") records found = " + adrList.size());
 
         return result;
-    }
+}
 
     @Override
     public void addAddress(CustomerAddress address) {
-        Map<String, Object> fields = new HashMap<>();
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
+        Integer addressID = null;
 
-        String sql = " insert into bank.customer_address (value, date_created, is_active, user_id, address_type, customer_id) " +
-                " values (:value, :date_created, :is_active, :user_id, :address_type, :customer_id) ";
+        try {
+            transaction.begin();
 
-        fields.put("value", address.getValue());
-        fields.put("date_created", address.getDateCreated());
-        fields.put("is_active", address.getIsActive());
-        fields.put("user_id", address.getUserID());
-        fields.put("address_type", Integer.valueOf(address.getAddressType()));
-        fields.put("customer_id", address.getCustomerID());
+            addressID = (Integer) session.save(address);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_address was inserted " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("addAddress(CustomerAddress) successfully added address_id=" + addressID);
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void updateAddress(CustomerAddress address) {
-        Map<String, Object> fields = new HashMap<>();
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
 
-        String sql = " update bank.customer_address set value = :value, address_type = :address_type, date_modified = :date_modified, user_id = :user_id where address_id = :address_id ";
+        try {
+            transaction.begin();
 
-        fields.put("address_id", address.getAddressID());
-        fields.put("value", address.getValue());
-        fields.put("address_type", Integer.valueOf(address.getAddressType()));
-        fields.put("date_modified", address.getDateModified());
-        fields.put("user_id", address.getUserID());
+            CustomerAddress ca = session.get(CustomerAddress.class, address.getAddressID());
+            ca.setValue(address.getValue());
+            ca.setDateModified(address.getDateModified());
+            ca.setUserID(address.getUserID());
+            ca.setAddressType(address.getAddressType());
+            session.update(ca);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_address " + address.getAddressID() + " was update " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("addAddress(CustomerAddress) successfully updated address_id="+ address.getAddressID());
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void changeStatus(Integer addressID, Boolean status) {
-        Map<String, Object> fields = new HashMap<>();
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = null;
         Integer state = status?0:1;
 
-        String sql = " update bank.customer_address set is_active = :state where address_id = :address_id ";
+        try {
+            transaction.begin();
 
-        fields.put("address_id", addressID);
-        fields.put("state", state);
+            CustomerAddress ca = session.get(CustomerAddress.class, addressID);
+            ca.setIsActive(state);
+            session.update(ca);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.customer_address " + addressID + " was update is_active " + rowNumbers + " rows");
+            transaction.commit();
+            logger.info("changeStatus(" + addressID + ", " + status + " ) successfully updated address_id=" + addressID);
+        } catch (HibernateException e) {
+            if (transaction != null)
+                transaction.rollback();
+            logger.error(e.getMessage(), e);
         }
     }
 }

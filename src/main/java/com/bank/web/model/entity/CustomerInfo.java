@@ -1,39 +1,71 @@
 package com.bank.web.model.entity;
 
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperClass;
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
+import javax.persistence.*;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-@RowMapperClass(tableName = "bank.customer_info")
-public class CustomerInfo {
+@Entity
+@Table(name = "bank.customer_info")
+public class CustomerInfo implements Serializable {
 
-    @RowMapperField(columnName = "customer_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "customer_id")
     private Integer customerID;
 
-    @RowMapperField(columnName = "first_name")
+    @Column(name = "first_name")
     private String firstName;
 
-    @RowMapperField(columnName = "last_name")
+    @Column(name = "last_name")
     private String lastName;
 
-    @RowMapperField(columnName = "middle_name")
+    @Column(name = "middle_name")
     private String middleName;
 
-    @RowMapperField(columnName = "birth_date")
-    private java.util.Date birthDate;
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 
-    @RowMapperField(columnName = "date_modified")
-    private java.util.Date dateModified;
+    @Column(name = "date_modified")
+    private LocalDate dateModified;
 
-    @RowMapperField(columnName = "is_active")
+    @Column(name = "is_active")
     private Integer isActive;
 
-    @RowMapperField(columnName = "user_id")
+    @Column(name = "user_id")
     private String userID;
 
-    @RowMapperField(columnName = "date_created")
-    private java.util.Date dateCreated;
+    @Column(name = "date_created")
+    private LocalDate dateCreated;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "accountOwner")
+    private Set<Accounts> accounts = new HashSet<>(0);
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+    private Set<CustomerAddress> addresses = new HashSet<>(0);
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+    private Set<CustomerContacts> contacts = new HashSet<>(0);
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+    private Set<CustomerPapers> papers = new HashSet<>(0);
+
+    public CustomerInfo() {}
+
+    public CustomerInfo(String firstName, String lastName, String middleName, LocalDate birthDate, LocalDate dateModified, Integer isActive, String userID, LocalDate dateCreated) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.middleName = middleName;
+        this.birthDate = birthDate;
+        this.dateModified = dateModified;
+        this.isActive = isActive;
+        this.userID = userID;
+        this.dateCreated = dateCreated;
+    }
 
     public Integer getCustomerID() {
         return customerID;
@@ -67,19 +99,19 @@ public class CustomerInfo {
         this.middleName = middleName;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
-    public Date getDateModified() {
+    public LocalDate getDateModified() {
         return dateModified;
     }
 
-    public void setDateModified(Date dateModified) {
+    public void setDateModified(LocalDate dateModified) {
         this.dateModified = dateModified;
     }
 
@@ -99,12 +131,52 @@ public class CustomerInfo {
         this.userID = userID;
     }
 
-    public Date getDateCreated() {
+    public LocalDate getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(LocalDate dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public Set<Accounts> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(Set<Accounts> accounts) {
+        this.accounts = accounts;
+    }
+
+    public Set<CustomerAddress> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Set<CustomerAddress> addresses) {
+        this.addresses = addresses;
+    }
+
+    public Set<CustomerContacts> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Set<CustomerContacts> contacts) {
+        this.contacts = contacts;
+    }
+
+    public Set<CustomerPapers> getPapers() {
+        return papers;
+    }
+
+    public void setPapers(Set<CustomerPapers> papers) {
+        this.papers = papers;
+    }
+
+    public Date getConvertedDate(LocalDate localDate) {
+
+        if (localDate != null)
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        return null;
     }
 
     @Override
@@ -119,6 +191,10 @@ public class CustomerInfo {
                 ", isActive=" + isActive +
                 ", userID='" + userID + '\'' +
                 ", dateCreated=" + dateCreated +
+                ", accounts=" + accounts +
+                ", addresses=" + addresses +
+                ", contacts=" + contacts +
+                ", papers=" + papers +
                 '}';
     }
 }

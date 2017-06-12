@@ -1,126 +1,148 @@
 package com.bank.web.model.repository;
 
+import com.bank.web.model.entity.Accounts;
 import com.bank.web.model.entity.Directory;
 import com.bank.web.model.entity.Transactions;
 import org.apache.log4j.Logger;
+import org.hibernate.*;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.roma.impl.service.RowMapperService;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository("transactionRepositoryImpl")
 @Transactional
 public class TransactionRepositoryImpl implements TransactionRepository {
 
     @Autowired
-    private RowMapperService rowMapperService;
+    private SessionFactory sessionFactory;
 
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private SimpleJdbcInsert simpleJdbcInsert;
     private static final Logger logger = Logger.getLogger(TransactionRepositoryImpl.class);
 
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("bank.transactions");
+    public TransactionRepositoryImpl() {}
+
+    public TransactionRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
-
     @Override
-    public List<Transactions> transactionsList() {
-        Map<String, Object> param = new HashMap<>();
+    public List<Transactions> getAlltransactions() {
+        String hql;
 
-        String sql = " select transaction_id " +
-                " , (select dir_type from bank.directory " +
-                "     where dir_id = operation_type and dir_group = :dir_group and is_active = 1) operation_type " +
-                " , is_reversed " +
-                " , transaction_sum " +
-                " , transaction_date " +
-                " , to_char(transaction_time, 'hh24:mi:ss') transaction_time " +
-                " , user_id " +
-                " , (select account_number from bank.accounts where account_id = account_debit) account_debit " +
-                " , (select account_number from bank.accounts where account_id = account_credit) account_credit " +
-                " from bank.transactions " +
-                " order by transaction_id ";
+        hql = " from Transactions order by transactionID ";
 
-        param.put("dir_group", Directory.OPERATIONS);
-        ((JdbcTemplate)(namedParameterJdbcTemplate.getJdbcOperations())).setFetchSize(500);
-        List<Transactions> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Transactions.class));
-        logger.info(" Obtain all data from bank.transactions ");
+        List<Transactions> result = sessionFactory.getCurrentSession()
+                .createQuery(hql).list();
+
+        for (Transactions transaction : result) {
+            hql = " from Directory where dirID = :transaction_type and dirGroup = :dir_group and isActive = 1 ";
+            List<Directory> dirList = sessionFactory.getCurrentSession()
+                    .createQuery(hql)
+                    .setParameter("transaction_type", transaction.getOperationType())
+                    .setParameter("dir_group", Directory.OPERATIONS)
+                    .list();
+            if (dirList.size() > 0)
+                transaction.setOperationTypeLabel(dirList.get(0).getDirType());
+
+            hql = " from Accounts where accountID = :account_id ";
+
+            List<Accounts> debitList = sessionFactory.getCurrentSession()
+                    .createQuery(hql)
+                    .setParameter("account_id", transaction.getAccountDebit().getAccountID())
+                    .list();
+            if (debitList.size() > 0)
+                transaction.setAccountDebitLabel(debitList.get(0).getAccountNumber());
+
+            List<Accounts> creditList = sessionFactory.getCurrentSession()
+                    .createQuery(hql)
+                    .setParameter("account_id", transaction.getAccountCredit().getAccountID())
+                    .list();
+            if (creditList.size() > 0)
+                transaction.setAccountCreditLabel(creditList.get(0).getAccountNumber());
+        }
+
+        logger.info("transactionsList() records found = " + result.size());
 
         return result;
     }
 
     @Override
-    public List<Transactions> getTransactions(Integer accountID) {
-        Map<String, Object> param = new HashMap<>();
+    public List<Transactions> getTransactions(Accounts account) {
+        String hql;
 
-        String sql = " select transaction_id " +
-                " , (select dir_type from bank.directory " +
-                "     where dir_id = operation_type and dir_group = :dir_group and is_active = 1) operation_type " +
-                " , is_reversed " +
-                " , transaction_sum " +
-                " , transaction_date " +
-                " , to_char(transaction_time, 'hh24:mi:ss') transaction_time " +
-                " , user_id " +
-                " , (select account_number from bank.accounts where account_id = account_debit) account_debit " +
-                " , (select account_number from bank.accounts where account_id = account_credit) account_credit " +
-                " from bank.transactions " +
-                " where :account_id in (account_debit, account_credit) " +
-                " order by transaction_id ";
+        hql = " from Transactions where :account in (accountDebit, accountCredit) order by transactionID ";
 
-        param.put("dir_group", Directory.OPERATIONS);
-        param.put("account_id", accountID);
-        List<Transactions> result = namedParameterJdbcTemplate.query(sql, param, rowMapperService.getRowMapper(Transactions.class));
-        logger.info(" Obtain transactions list for accountID = " + accountID);
+        List<Transactions> result = sessionFactory.getCurrentSession()
+                .createQuery(hql)
+                .setParameter("account", account)
+                .list();
+
+        for (Transactions transaction : result) {
+            hql = " from Directory where dirID = :transaction_type and dirGroup = :dir_group and isActive = 1 ";
+            List<Directory> dirList = sessionFactory.getCurrentSession()
+                    .createQuery(hql)
+                    .setParameter("transaction_type", transaction.getOperationType())
+                    .setParameter("dir_group", Directory.OPERATIONS)
+                    .list();
+            if (dirList.size() > 0)
+                transaction.setOperationTypeLabel(dirList.get(0).getDirType());
+
+            hql = " from Accounts where accountID = :account_id ";
+
+            List<Accounts> debitList = sessionFactory.getCurrentSession()
+                    .createQuery(hql)
+                    .setParameter("account_id", transaction.getAccountDebit().getAccountID())
+                    .list();
+            if (debitList.size() > 0)
+                transaction.setAccountDebitLabel(debitList.get(0).getAccountNumber());
+
+            List<Accounts> creditList = sessionFactory.getCurrentSession()
+                    .createQuery(hql)
+                    .setParameter("account_id", transaction.getAccountCredit().getAccountID())
+                    .list();
+            if (creditList.size() > 0)
+                transaction.setAccountCreditLabel(creditList.get(0).getAccountNumber());
+        }
+
+        logger.info("getTransactions(" + account.getAccountID() + ") records found = " + result.size());
 
         return result;
     }
 
     @Override
     public Transactions getTransaction(Integer transactionID) {
-        return null;
-    }
+        Transactions result;
 
-    @Override
-    public Integer getNewTransactionSeq() {
-        Map<String, Object> param = new HashMap<>();
+        List<Transactions> trnList = sessionFactory.getCurrentSession()
+                .createQuery(" from Transactions where transactionID = :transaction_id ")
+                .setParameter("transaction_id", transactionID).list();
 
-        String sql = " select nextval('bank.transactions_seq') ";
-        Integer result = namedParameterJdbcTemplate.queryForObject(sql, param, Integer.class);
-        logger.info(" Next sequence for bank.transactions generated ");
+        result = trnList.get(0);
+
+        logger.info("getTransaction(" + transactionID + ") records found = " + trnList.size());
 
         return result;
     }
 
     @Override
     public void addTransaction(Transactions transaction) {
-        Map<String, Object> fields = new HashMap<>();
+        Session session = sessionFactory.getCurrentSession();
+        Transaction trn = null;
+        Integer transactionID = null;
 
-        String sql = " insert into bank.transactions (transaction_id, operation_type, is_reversed, transaction_sum, transaction_date, transaction_time, user_id, account_debit, account_credit) " +
-                "        values (:transaction_id, :operation_type, :is_reversed, :transaction_sum, :transaction_date, now(), :user_id, :account_debit, :account_credit)  ";
+        try {
+            trn.begin();
 
-        fields.put("transaction_id", transaction.getTransactionID());
-        fields.put("operation_type", Integer.valueOf(transaction.getOperationType()));
-        fields.put("is_reversed", transaction.getIsReversed());
-        fields.put("transaction_sum", transaction.getTransactionSum());
-        fields.put("transaction_date", transaction.getTransactionDate());
-        fields.put("user_id", transaction.getUserID());
-        fields.put("account_debit", Integer.valueOf(transaction.getAccountDebit()));
-        fields.put("account_credit", Integer.valueOf(transaction.getAccountCredit()));
+            transactionID = (Integer) session.save(transaction);
 
-        int rowNumbers = namedParameterJdbcTemplate.update(sql, fields);
-
-        if (rowNumbers != 1) {
-            logger.warn("Warning! For bank.transactions was inserted " + rowNumbers + " rows");
+            trn.commit();
+            logger.info("addTransaction(Transactions) successfully added transaction_id=" + transactionID);
+        } catch (HibernateException e) {
+            if (transaction != null)
+                trn.rollback();
+            logger.error(e.getMessage(), e);
         }
     }
 }

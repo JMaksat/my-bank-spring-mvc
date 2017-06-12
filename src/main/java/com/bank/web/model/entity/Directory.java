@@ -1,12 +1,15 @@
 package com.bank.web.model.entity;
 
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperClass;
-import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
+import javax.persistence.*;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
-@RowMapperClass(tableName = "bank.directory")
-public class Directory {
+@Entity
+@Table(name = "bank.directory")
+public class Directory implements Serializable {
 
     public static final String ACCOUNTS = "ACCOUNTS";
     public static final String OPERATIONS = "OPERATIONS";
@@ -14,29 +17,43 @@ public class Directory {
     public static final String CONTACTS = "CONTACTS";
     public static final String PAPERS = "PAPERS";
 
-    @RowMapperField(columnName = "dir_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dir_id")
     private Integer dirID;
 
-    @RowMapperField(columnName = "dir_group")
+    @Column(name = "dir_group")
     private String dirGroup;
 
-    @RowMapperField(columnName = "dir_type")
+    @Column(name = "dir_type")
     private String dirType;
 
-    @RowMapperField(columnName = "description")
+    @Column(name = "description")
     private String description;
 
-    @RowMapperField(columnName = "date_created")
-    private java.util.Date dateCreated;
+    @Column(name = "date_created")
+    private LocalDate dateCreated;
 
-    @RowMapperField(columnName = "date_modified")
-    private java.util.Date dateModified;
+    @Column(name = "date_modified")
+    private LocalDate dateModified;
 
-    @RowMapperField(columnName = "is_active")
+    @Column(name = "is_active")
     private Integer isActive;
 
-    @RowMapperField(columnName = "user_id")
+    @Column(name = "user_id")
     private String userID;
+
+    public Directory() {}
+
+    public Directory(String dirGroup, String dirType, String description, LocalDate dateCreated, LocalDate dateModified, Integer isActive, String userID) {
+        this.dirGroup = dirGroup;
+        this.dirType = dirType;
+        this.description = description;
+        this.dateCreated = dateCreated;
+        this.dateModified = dateModified;
+        this.isActive = isActive;
+        this.userID = userID;
+    }
 
     public Integer getDirID() {
         return dirID;
@@ -70,19 +87,19 @@ public class Directory {
         this.description = description;
     }
 
-    public Date getDateCreated() {
+    public LocalDate getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(LocalDate dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public Date getDateModified() {
+    public LocalDate getDateModified() {
         return dateModified;
     }
 
-    public void setDateModified(Date dateModified) {
+    public void setDateModified(LocalDate dateModified) {
         this.dateModified = dateModified;
     }
 
@@ -100,6 +117,14 @@ public class Directory {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public Date getConvertedDate(LocalDate localDate) {
+
+        if (localDate != null)
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        return null;
     }
 
     @Override

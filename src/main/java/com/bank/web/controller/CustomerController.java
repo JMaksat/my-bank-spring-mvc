@@ -13,7 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -21,8 +21,6 @@ public class CustomerController {
     public static final Logger logger = Logger.getLogger(CustomerController.class);
 
     private CustomerRepository customerRepository;
-
-    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     public CustomerController(CustomerRepository customerRepository) {
@@ -46,12 +44,11 @@ public class CustomerController {
     @RequestMapping(path = "/customerDetails/{customerID}", method = RequestMethod.GET)
     @Secured({"ROLE_ACCOUNTANT", "ROLE_OPERATOR"})
     public ModelAndView getCustomerDetails(@PathVariable Integer customerID, ModelMap map) {
-        List<Accounts> accounts = customerRepository.getAccounts(customerID);
-        List<CustomerAddress> addresses = customerRepository.getAddresses(customerID);
-        List<CustomerContacts> contacts = customerRepository.getContacts(customerID);
-        List<CustomerPapers> papers = customerRepository.getPapers(customerID);
-
         CustomerInfo customer = customerRepository.customerDetails(customerID);
+        List<Accounts> accounts = customerRepository.getAccounts(customer);
+        List<CustomerAddress> addresses = customerRepository.getAddresses(customer);
+        List<CustomerContacts> contacts = customerRepository.getContacts(customer);
+        List<CustomerPapers> papers = customerRepository.getPapers(customer);
 
         map.put("customer", customer);
         map.put("accounts", accounts);
@@ -94,19 +91,16 @@ public class CustomerController {
                 params.get("firstName") != null &&
                 params.get("firstName") != null &&
                 params.get("birthDate") != null) {
-            try {
+
                 customer.setCustomerID(Integer.valueOf(params.get("customerID")));
                 customer.setFirstName(params.get("firstName"));
                 customer.setLastName(params.get("lastName"));
                 customer.setMiddleName(params.get("middleName"));
-                customer.setBirthDate(formatter.parse(params.get("birthDate")));
-                customer.setDateModified(new java.util.Date());
+                customer.setBirthDate(LocalDate.parse(params.get("birthDate")));
+                customer.setDateModified(LocalDate.now());
                 customer.setIsActive(1);
                 customer.setUserID(authentication.getName());
-                customer.setDateCreated(new java.util.Date());
-            } catch (Exception e) {
-                logger.error("Exception: ", e);
-            }
+                customer.setDateCreated(LocalDate.now());
 
             if (Integer.valueOf(params.get("customerID")) >= 0) {
                 customerRepository.updateCustomer(customer);

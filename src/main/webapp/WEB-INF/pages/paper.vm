@@ -46,7 +46,7 @@
                     </tr>
                     <tr>
                         <td><strong>Type</strong></td>
-                        <td>$!paper.paperType</td>
+                        <td>$!paper.paperTypeLabel</td>
                     </tr>
                     <tr>
                         <td><strong>Releated customer</strong></td>
@@ -64,11 +64,11 @@
                     </tr>
                     <tr>
                         <td><strong>Date of creation</strong></td>
-                        <td>$!dateTool.format("dd.MM.yyyy", $!paper.dateCreated)</td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!paper.getConvertedDate($!paper.dateCreated))</td>
                     </tr>
                     <tr>
                         <td><strong>Last edited date</strong></td>
-                        <td>$!dateTool.format("dd.MM.yyyy", $!paper.dateModified)</td>
+                        <td>$!dateTool.format("dd.MM.yyyy", $!paper.getConvertedDate($!paper.dateModified))</td>
                     </tr>
                     </tbody>
                 </table>

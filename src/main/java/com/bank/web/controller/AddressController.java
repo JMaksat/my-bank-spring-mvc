@@ -17,6 +17,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class AddressController {
         CustomerAddress address = addressRepository.getAddress(addressID);
 
         if (address != null) {
-            CustomerInfo customer = customerRepository.customerDetails(address.getCustomerID());
+            CustomerInfo customer = customerRepository.customerDetails(address.getCustomer().getCustomerID());
 
             map.put("address", address);
             map.put("customer", customer);
@@ -90,12 +91,12 @@ public class AddressController {
 
             address.setAddressID(Integer.valueOf(params.get("id")));
             address.setValue(params.get("value"));
-            address.setDateCreated(new java.util.Date());
-            address.setDateModified(new java.util.Date());
+            address.setDateCreated(LocalDate.now());
+            address.setDateModified(LocalDate.now());
             address.setIsActive(1);
             address.setUserID(authentication.getName());
-            address.setAddressType(params.get("type"));
-            address.setCustomerID(Integer.valueOf(params.get("customerID")));
+            address.setAddressType(Integer.valueOf(params.get("type")));
+            address.setCustomer(customerRepository.customerDetails(Integer.valueOf(params.get("customerID"))));
 
             if (Integer.valueOf(params.get("id")) >= 0) {
                 addressRepository.updateAddress(address);
