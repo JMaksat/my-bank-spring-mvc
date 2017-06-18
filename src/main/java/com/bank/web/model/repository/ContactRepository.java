@@ -7,9 +7,9 @@ public interface ContactRepository {
 
     CustomerContacts getContact(Integer contactID);
 
-    void addContact(CustomerContacts contact);
+    Boolean addContact(CustomerContacts contact);
 
-    void updateContact(CustomerContacts contact);
+    Boolean updateContact(CustomerContacts contact);
 
-    void changeStatus(Integer contactID, Boolean status);
+    Boolean changeStatus(Integer contactID, Boolean status);
 }

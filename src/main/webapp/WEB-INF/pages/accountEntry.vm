@@ -14,7 +14,7 @@
 
             <h1 class="page-header">$pageName</h1>
 
-            <div class="form-group row">
+            <div class="form-group row" id="fieldAccountGroup">
                 <label class="col-2 col-form-label">Account</label>
                 <div class="col-10" style="width: 300px;">
                     <input class="form-control" type="text" id="fieldAccount" #if($!accountID!=-1)disabled#end value="$!account.accountNumber" maxlength="32">
@@ -36,7 +36,7 @@
                 </div>
             </div>
 
-            <div class="form-group row">
+            <div class="form-group row" id="fieldCommentGroup">
                 <label class="col-2 col-form-label">Comment</label>
                 <div class="col-10" style="width: 300px;">
                     <textarea class="form-control" rows="3" id="fieldComment" maxlength="4000">$!account.comment</textarea>
@@ -71,8 +71,13 @@
         var customerID = $!customerID;
         state.customerID = customerID;
 
-        if(!type || !comment) {
-            alert("You must fill out all fields!");
+        if(!account) {
+            $("#fieldAccountGroup").addClass("has-error");
+            return;
+        }
+
+        if(!comment) {
+            $("#fieldCommentGroup").addClass("has-error");
             return;
         }
 

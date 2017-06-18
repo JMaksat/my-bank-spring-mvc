@@ -15,13 +15,13 @@ public interface AccountRepository {
 
     Double getAccountRest (Accounts accountID);
 
-    void newRest (AccountRest accountRest);
+    Boolean newRest (AccountRest accountRest);
 
-    void addAccount (Accounts account);
+    Boolean addAccount (Accounts account);
 
-    void updateAccount (Accounts account);
+    Boolean updateAccount (Accounts account);
 
-    void changeStatus (Integer accountID, Boolean status);
+    Boolean changeStatus (Integer accountID, Boolean status);
 
-    void closeAccount(Integer accountID);
+    Boolean closeAccount(Integer accountID);
 }

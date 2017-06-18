@@ -35,11 +35,11 @@ public class Transactions implements Serializable {
     @Column(name = "user_id")
     private String userID;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_debit")
     private Accounts accountDebit;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_credit")
     private Accounts accountCredit;
 
@@ -170,23 +170,5 @@ public class Transactions implements Serializable {
             return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         return null;
-    }
-
-    @Override
-    public String toString() {
-        return "Transactions{" +
-                "transactionID=" + transactionID +
-                ", operationType=" + operationType +
-                ", isReversed=" + isReversed +
-                ", transactionSum=" + transactionSum +
-                ", transactionDate=" + transactionDate +
-                ", transactionTime=" + transactionTime +
-                ", userID='" + userID + '\'' +
-                ", accountDebit=" + accountDebit +
-                ", accountCredit=" + accountCredit +
-                ", operationTypeLabel='" + operationTypeLabel + '\'' +
-                ", accountDebitLabel='" + accountDebitLabel + '\'' +
-                ", accountCreditLabel='" + accountCreditLabel + '\'' +
-                '}';
     }
 }

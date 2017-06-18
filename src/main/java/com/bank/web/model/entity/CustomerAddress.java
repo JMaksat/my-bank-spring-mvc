@@ -133,19 +133,4 @@ public class CustomerAddress implements Serializable {
 
         return null;
     }
-
-    @Override
-    public String toString() {
-        return "CustomerAddress{" +
-                "addressID=" + addressID +
-                ", value='" + value + '\'' +
-                ", dateCreated=" + dateCreated +
-                ", dateModified=" + dateModified +
-                ", isActive=" + isActive +
-                ", userID='" + userID + '\'' +
-                ", addressType=" + addressType +
-                ", customer=" + customer +
-                ", addressTypeLabel='" + addressTypeLabel + '\'' +
-                '}';
-    }
 }

@@ -15,10 +15,10 @@
             <h1 class="page-header">$pageName</h1>
 
             <h3 class="sub-header">
-                <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!address.customerID" role="button">
+                <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!address.customer.getCustomerID()" role="button">
                     <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
                 #if ($!address.isActive==1 && $!customer.isActive==1)
-                    <a class="btn btn-warning" href="$request.contextPath/address/edit/$!address.customerID/$!address.addressID" role="button">Edit</a>
+                    <a class="btn btn-warning" href="$request.contextPath/address/edit/$!address.customer.getCustomerID()/$!address.addressID" role="button">Edit</a>
                 #end
                 <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
                     #if ($!address.isActive==1) Block
@@ -50,7 +50,7 @@
                         </tr>
                         <tr>
                             <td><strong>Releated customer</strong></td>
-                            <td>$!address.customerID</td>
+                            <td>$!address.customer.getFirstName()&nbsp;$!address.customer.getLastName()</td>
                         </tr>
                         <tr>
                             <td><strong>State</strong></td>

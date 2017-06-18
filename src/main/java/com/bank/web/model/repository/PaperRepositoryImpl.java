@@ -2,12 +2,14 @@ package com.bank.web.model.repository;
 
 import com.bank.web.model.entity.CustomerPapers;
 import com.bank.web.model.entity.Directory;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -50,33 +52,27 @@ public class PaperRepositoryImpl implements PaperRepository {
     }
 
     @Override
-    public void addPaper(CustomerPapers paper) {
+    public Boolean addPaper(CustomerPapers paper) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
-        Integer paperID = null;
+        Integer paperID;
 
         try {
-            transaction.begin();
-
             paperID = (Integer) session.save(paper);
-
-            transaction.commit();
             logger.info("addPaper(CustomerPaper) successfully added paper_id=" + paperID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void updatePaper(CustomerPapers paper) {
+    public Boolean updatePaper(CustomerPapers paper) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
 
         try {
-            transaction.begin();
-
             CustomerPapers cp = session.get(CustomerPapers.class, paper.getPaperID());
             cp.setValue(paper.getValue());
             cp.setDateModified(paper.getDateModified());
@@ -84,34 +80,32 @@ public class PaperRepositoryImpl implements PaperRepository {
             cp.setPaperType(paper.getPaperType());
             session.update(cp);
 
-            transaction.commit();
             logger.info("updatePaper(CustomerPaper) successfully updated paper_id=" + paper.getPaperID());
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void changeStatus(Integer paperID, Boolean status) {
+    public Boolean changeStatus(Integer paperID, Boolean status) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
         Integer state = status?0:1;
 
         try {
-            transaction.begin();
-
             CustomerPapers cp = session.get(CustomerPapers.class, paperID);
             cp.setIsActive(state);
             session.update(cp);
 
-            transaction.commit();
             logger.info("changeStatus(" + paperID + ", " + status + " ) successfully updated paper_id=" + paperID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+        return true;
     }
 }

@@ -33,19 +33,6 @@
                         <th>Last edited by</th>
                     </tr>
                     </thead>
-                    <tfoot>
-                    <tr>
-                        <th>ID</th>
-                        <th>Parent ID</th>
-                        <th>Name</th>
-                        <th>Value</th>
-                        <th>Active from</th>
-                        <th>Active to</th>
-                        <th>Date of creation</th>
-                        <th>Last edited date</th>
-                        <th>Last edited by</th>
-                    </tr>
-                    </tfoot>
                     <tbody>
                         #foreach($lines in $params)
                         <tr>

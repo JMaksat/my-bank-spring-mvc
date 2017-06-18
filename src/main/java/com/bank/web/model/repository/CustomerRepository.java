@@ -9,7 +9,7 @@ public interface CustomerRepository {
 
     CustomerInfo customerDetails(Integer customerID);
 
-    void changeStatus (Integer customerID, Boolean status);
+    Boolean changeStatus (Integer customerID, Boolean status);
 
     List<Accounts> getAccounts(CustomerInfo customer);
 
@@ -19,7 +19,7 @@ public interface CustomerRepository {
 
     List<CustomerPapers> getPapers(CustomerInfo customerID);
 
-    void addCustomer(CustomerInfo customerInfo);
+    Boolean addCustomer(CustomerInfo customerInfo);
 
-    void updateCustomer(CustomerInfo customerInfo);
+    Boolean updateCustomer(CustomerInfo customerInfo);
 }

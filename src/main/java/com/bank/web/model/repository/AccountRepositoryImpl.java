@@ -11,6 +11,7 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -184,53 +185,44 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public void newRest(AccountRest accountRest) {
+    public Boolean newRest(AccountRest accountRest) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
-        Integer restID = null;
+        Integer restID;
 
         try {
-            transaction.begin();
-
             restID = (Integer) session.save(accountRest);
-
-            transaction.commit();
             logger.info("newRest(AccountRest) successfully added rest_id=" + restID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void addAccount(Accounts account) {
+    public Boolean addAccount(Accounts account) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
-        Integer accountID = null;
+        Integer accountID;
 
         try {
-            transaction.begin();
-
-           accountID = (Integer) session.save(account);
-
-            transaction.commit();
+            accountID = (Integer) session.save(account);
             logger.info("addAccount(Accounts) successfully added account_id=" + accountID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void updateAccount(Accounts account) {
+    public Boolean updateAccount(Accounts account) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
 
         try {
-            transaction.begin();
-
             Accounts acc = session.get(Accounts.class, account.getAccountID());
             acc.setDateModified(account.getDateModified());
             acc.setUserID(account.getUserID());
@@ -238,55 +230,51 @@ public class AccountRepositoryImpl implements AccountRepository {
             acc.setComment(account.getComment());
             session.update(acc);
 
-            transaction.commit();
             logger.info("updateAccount(Accounts) successfully updated account_id=" + account.getAccountID());
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void changeStatus(Integer accountID, Boolean status) {
+    public Boolean changeStatus(Integer accountID, Boolean status) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
         Integer state = status?0:1;
 
         try {
-            transaction.begin();
-
             Accounts acc = session.get(Accounts.class, accountID);
             acc.setIsSuspended(state);
             session.update(acc);
 
-            transaction.commit();
             logger.info("changeStatus(" + accountID + ", " + status + ") successfully updated account_id=" + accountID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void closeAccount(Integer accountID) {
+    public Boolean closeAccount(Integer accountID) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
 
         try {
-            transaction.begin();
-
             Accounts acc = session.get(Accounts.class, accountID);
             acc.setDateClosed(LocalDate.now());
-            session.update(acc);
 
-            transaction.commit();
             logger.info("closeAccount(" + accountID + ") successfully updated account_id=" + accountID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 }

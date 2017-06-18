@@ -14,31 +14,31 @@
 
                 <h1 class="page-header">$pageName</h1>
 
-                <div class="form-group row">
+                <div class="form-group row" id="fieldFirstNameGroup">
                     <label class="col-2 col-form-label">First name</label>
                     <div class="col-10" style="width: 300px;">
                         <input class="form-control" type="text" id="fieldFirstName" value="$!customer.firstName" maxlength="64">
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="form-group row" id="fieldLastNameGroup">
                     <label class="col-2 col-form-label">Last name</label>
                     <div class="col-10" style="width: 300px;">
                         <input class="form-control" type="text" id="fieldLastName" value="$!customer.lastName" maxlength="64">
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="form-group row" id="fieldMiddleNameGroup">
                     <label class="col-2 col-form-label">Middle name</label>
                     <div class="col-10" style="width: 300px;">
                         <input class="form-control" type="text" id="fieldMiddleName" value="$!customer.middleName" maxlength="64">
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="form-group row" id="fieldBirthDateGroup">
                     <label class="col-2 col-form-label">Date of birth</label>
                     <div class="col-10" style="width: 200px;">
-                        <input class="form-control" type="date" id="fieldBirthDate" value="$!dateTool.format("yyyy-MM-dd", $!lines.getConvertedDate($!customer.birthDate))">
+                        <input class="form-control" type="date" id="fieldBirthDate" value="$!dateTool.format("yyyy-MM-dd", $!customer.getConvertedDate($!customer.birthDate))">
                     </div>
                 </div>
 
@@ -69,8 +69,23 @@
             var birthDate = $("#fieldBirthDate").val();
             state.birthDate = birthDate;
 
-            if(!firstName || !lastName || !middleName || !birthDate) {
-                alert("You must fill out all fields!");
+            if(!firstName) {
+                $("#fieldFirstNameGroup").addClass("has-error");
+                return;
+            }
+
+            if(!lastName) {
+                $("#fieldLastNameGroup").addClass("has-error");
+                return;
+            }
+
+            if(!middleName) {
+                $("#fieldMiddleNameGroup").addClass("has-error");
+                return;
+            }
+
+            if(!birthDate) {
+                $("#fieldBirthDateGroup").addClass("has-error");
                 return;
             }
 

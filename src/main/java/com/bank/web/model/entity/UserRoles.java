@@ -12,7 +12,7 @@ public class UserRoles implements Serializable {
     @Column(name = "user_role_id")
     private Integer userRoleId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "username")
     private Users userName;
 
@@ -48,14 +48,5 @@ public class UserRoles implements Serializable {
 
     public void setUserRole(String userRole) {
         this.userRole = userRole;
-    }
-
-    @Override
-    public String toString() {
-        return "UserRoles{" +
-                "userRoleId=" + userRoleId +
-                ", userName=" + userName +
-                ", userRole='" + userRole + '\'' +
-                '}';
     }
 }

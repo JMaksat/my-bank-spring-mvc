@@ -3,6 +3,7 @@ package com.bank.web.model.entity;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "bank.account_rest")
@@ -13,7 +14,7 @@ public class AccountRest implements Serializable {
     @Column(name = "rest_id")
     private Integer restID;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
     private Accounts account;
 
@@ -27,11 +28,11 @@ public class AccountRest implements Serializable {
     private LocalDate restDate;
 
     @Column(name = "rest_time")
-    private LocalDate restTime;
+    private LocalTime restTime;
 
     public AccountRest() {}
 
-    public AccountRest(Accounts account, Double restSum, Integer transactionID, LocalDate restDate, LocalDate restTime) {
+    public AccountRest(Accounts account, Double restSum, Integer transactionID, LocalDate restDate, LocalTime restTime) {
         this.account = account;
         this.restSum = restSum;
         this.transactionID = transactionID;
@@ -79,23 +80,11 @@ public class AccountRest implements Serializable {
         this.restDate = restDate;
     }
 
-    public LocalDate getRestTime() {
+    public LocalTime getRestTime() {
         return restTime;
     }
 
-    public void setRestTime(LocalDate restTime) {
+    public void setRestTime(LocalTime restTime) {
         this.restTime = restTime;
-    }
-
-    @Override
-    public String toString() {
-        return "AccountRest{" +
-                "restID=" + restID +
-                ", account=" + account +
-                ", restSum=" + restSum +
-                ", transactionID=" + transactionID +
-                ", restDate=" + restDate +
-                ", restTime=" + restTime +
-                '}';
     }
 }

@@ -35,14 +35,12 @@ public class UsersRepositoryImpl implements UsersRepository {
 
         for (Users user : result) {
             String sql = " select string_agg(ur.user_role, ',') from bank.user_roles ur where ur.username = :username ";
-            List<Object[]> roleList = sessionFactory.getCurrentSession()
+            List<String> roleList = sessionFactory.getCurrentSession()
                     .createNativeQuery(sql)
                     .setParameter("username", user.getUserName())
                     .list();
 
-            for (Object[] roles : roleList) {
-                user.setRoles((String) roles[0]);
-            }
+            user.setRoles(roleList.get(0));
         }
 
         logger.info("getUsers() records found = " + result.size());

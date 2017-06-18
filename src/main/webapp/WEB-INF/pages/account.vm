@@ -16,7 +16,7 @@
 
             <h3 class="sub-header">
                 #if ($invoker=="customer")
-                    <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!account.accountOwner" role="button">
+                    <a class="btn btn-primary" href="$request.contextPath/customerDetails/$!account.accountOwner.getCustomerID()" role="button">
                         <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>&nbsp;Back</a>
                 #elseif ($invoker=="accounts")
                     <a class="btn btn-primary" href="$request.contextPath/accounts" role="button">
@@ -25,7 +25,7 @@
                 #if (!$!account.dateClosed)
                     #if ($!account.isSuspended==0  && $!customer.isActive==1)
                         <a class="btn btn-success" href="$request.contextPath/transactions/$!account.accountID/$invoker" role="button">Transactions</a>
-                        <a class="btn btn-warning" href="$request.contextPath/account/edit/$!account.accountOwner/$!account.accountID/$invoker" role="button">Edit</a>
+                        <a class="btn btn-warning" href="$request.contextPath/account/edit/$!account.accountOwner.getCustomerID()/$!account.accountID/$invoker" role="button">Edit</a>
                         <button class="btn btn-warning" onclick="closeAccount()" type="button" id="buttonClose">Close</button>
                     #end
                     <button class="btn btn-danger" onclick="changeState()" type="button" id="buttonUnblock">
@@ -59,7 +59,7 @@
                     </tr>
                     <tr>
                         <td><strong>Owner</strong></td>
-                        <td>$!account.accountOwner</td>
+                        <td>$!account.accountOwner.getFirstName()&nbsp;$!account.accountOwner.getLastName()</td>
                     </tr>
                     <tr>
                         <td><strong>Opening date</strong></td>
@@ -83,7 +83,7 @@
                     </tr>
                     <tr>
                         <td><strong>Type</strong></td>
-                        <td>$!account.accountType</td>
+                        <td>$!account.accountTypeLabel</td>
                     </tr>
                     <tr>
                         <td><strong>State</strong></td>

@@ -8,6 +8,7 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -50,33 +51,27 @@ public class AddressRepositoryImpl implements AddressRepository {
 }
 
     @Override
-    public void addAddress(CustomerAddress address) {
+    public Boolean addAddress(CustomerAddress address) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
-        Integer addressID = null;
+        Integer addressID;
 
         try {
-            transaction.begin();
-
             addressID = (Integer) session.save(address);
-
-            transaction.commit();
             logger.info("addAddress(CustomerAddress) successfully added address_id=" + addressID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void updateAddress(CustomerAddress address) {
+    public Boolean updateAddress(CustomerAddress address) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
 
         try {
-            transaction.begin();
-
             CustomerAddress ca = session.get(CustomerAddress.class, address.getAddressID());
             ca.setValue(address.getValue());
             ca.setDateModified(address.getDateModified());
@@ -84,34 +79,33 @@ public class AddressRepositoryImpl implements AddressRepository {
             ca.setAddressType(address.getAddressType());
             session.update(ca);
 
-            transaction.commit();
             logger.info("addAddress(CustomerAddress) successfully updated address_id="+ address.getAddressID());
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void changeStatus(Integer addressID, Boolean status) {
+    public Boolean changeStatus(Integer addressID, Boolean status) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
         Integer state = status?0:1;
 
         try {
-            transaction.begin();
-
             CustomerAddress ca = session.get(CustomerAddress.class, addressID);
             ca.setIsActive(state);
             session.update(ca);
 
-            transaction.commit();
             logger.info("changeStatus(" + addressID + ", " + status + " ) successfully updated address_id=" + addressID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 }

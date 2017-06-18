@@ -133,19 +133,4 @@ public class CustomerPapers implements Serializable {
 
         return null;
     }
-
-    @Override
-    public String toString() {
-        return "CustomerPapers{" +
-                "paperID=" + paperID +
-                ", value='" + value + '\'' +
-                ", dateCreated=" + dateCreated +
-                ", dateModified=" + dateModified +
-                ", isActive=" + isActive +
-                ", userID='" + userID + '\'' +
-                ", paperType=" + paperType +
-                ", customer=" + customer +
-                ", paperTypeLabel='" + paperTypeLabel + '\'' +
-                '}';
-    }
 }

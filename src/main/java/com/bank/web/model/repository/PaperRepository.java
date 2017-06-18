@@ -7,9 +7,9 @@ public interface PaperRepository {
 
     CustomerPapers getPaper(Integer paperID);
 
-    void addPaper(CustomerPapers paper);
+    Boolean addPaper(CustomerPapers paper);
 
-    void updatePaper(CustomerPapers paper);
+    Boolean updatePaper(CustomerPapers paper);
 
-    void changeStatus(Integer paperID, Boolean status);
+    Boolean changeStatus(Integer paperID, Boolean status);
 }

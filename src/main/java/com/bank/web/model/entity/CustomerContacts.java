@@ -133,19 +133,4 @@ public class CustomerContacts implements Serializable {
 
         return null;
     }
-
-    @Override
-    public String toString() {
-        return "CustomerContacts{" +
-                "contactID=" + contactID +
-                ", value='" + value + '\'' +
-                ", dateCreated=" + dateCreated +
-                ", dateModified=" + dateModified +
-                ", isActive=" + isActive +
-                ", userID='" + userID + '\'' +
-                ", contactType=" + contactType +
-                ", customer=" + customer +
-                ", contactTypeLabel='" + contactTypeLabel + '\'' +
-                '}';
-    }
 }

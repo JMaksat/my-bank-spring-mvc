@@ -35,19 +35,6 @@
                                 <th>Last edited date</th>
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
-                                <th>ID</th>
-                                <th>Type</th>
-                                <th>Reversed</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Debit account</th>
-                                <th>Credit account</th>
-                                <th>Last edited date</th>
-                            </tr>
-                        </tfoot>
                         <tbody>
                             #foreach($lines in $transactions)
                             <tr>

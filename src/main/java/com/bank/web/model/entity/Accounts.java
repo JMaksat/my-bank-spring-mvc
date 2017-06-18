@@ -21,7 +21,7 @@ public class Accounts implements Serializable {
     @Column(name = "account_number")
     private String accountNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_owner")
     private CustomerInfo accountOwner;
 
@@ -55,13 +55,13 @@ public class Accounts implements Serializable {
     @Transient
     private String accountTypeLabel;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "accountDebit")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "accountDebit")
     private Set<Transactions> transactionsByDebit = new HashSet<>(0);
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "accountCredit")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "accountCredit")
     private Set<Transactions> transactionsByCredit = new HashSet<>(0);
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "account")
     private Set<AccountRest> accountRests = new HashSet<>(0);
 
     public Accounts(){}
@@ -218,27 +218,5 @@ public class Accounts implements Serializable {
             return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         return null;
-    }
-
-    @Override
-    public String toString() {
-        return "Accounts{" +
-                "accountID=" + accountID +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", accountOwner=" + accountOwner +
-                ", dateOpened=" + dateOpened +
-                ", dateClosed=" + dateClosed +
-                ", dateCreated=" + dateCreated +
-                ", dateModified=" + dateModified +
-                ", userID='" + userID + '\'' +
-                ", accountType=" + accountType +
-                ", isSuspended=" + isSuspended +
-                ", comment='" + comment + '\'' +
-                ", restSum=" + restSum +
-                ", accountTypeLabel='" + accountTypeLabel + '\'' +
-                ", transactionsByDebit=" + transactionsByDebit +
-                ", transactionsByCredit=" + transactionsByCredit +
-                ", accountRests=" + accountRests +
-                '}';
     }
 }

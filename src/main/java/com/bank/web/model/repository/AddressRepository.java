@@ -7,9 +7,9 @@ public interface AddressRepository {
 
     CustomerAddress getAddress(Integer addressID);
 
-    void addAddress(CustomerAddress address);
+    Boolean addAddress(CustomerAddress address);
 
-    void updateAddress(CustomerAddress address);
+    Boolean updateAddress(CustomerAddress address);
 
-    void changeStatus(Integer addressID, Boolean status);
+    Boolean changeStatus(Integer addressID, Boolean status);
 }

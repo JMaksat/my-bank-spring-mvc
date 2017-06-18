@@ -9,6 +9,7 @@ import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -127,22 +128,19 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     }
 
     @Override
-    public void addTransaction(Transactions transaction) {
+    public Boolean addTransaction(Transactions transaction) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction trn = null;
-        Integer transactionID = null;
+        Integer transactionID;
 
         try {
-            trn.begin();
-
             transactionID = (Integer) session.save(transaction);
-
-            trn.commit();
             logger.info("addTransaction(Transactions) successfully added transaction_id=" + transactionID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                trn.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 }

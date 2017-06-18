@@ -32,18 +32,6 @@
                                 <th>Last edited by</th>
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
-                                <th>ID</th>
-                                <th>Group</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Date of creation</th>
-                                <th>Last edited date</th>
-                                <th>State</th>
-                                <th>Last edited by</th>
-                            </tr>
-                        </tfoot>
                         <tbody>
                             #foreach($lines in $dictionary)
                             <tr>

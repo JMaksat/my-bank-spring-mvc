@@ -126,18 +126,4 @@ public class Directory implements Serializable {
 
         return null;
     }
-
-    @Override
-    public String toString() {
-        return "Directory{" +
-                "dirID=" + dirID +
-                ", dirGroup='" + dirGroup + '\'' +
-                ", dirType='" + dirType + '\'' +
-                ", description='" + description + '\'' +
-                ", dateCreated=" + dateCreated +
-                ", dateModified=" + dateModified +
-                ", isActive=" + isActive +
-                ", userID='" + userID + '\'' +
-                '}';
-    }
 }

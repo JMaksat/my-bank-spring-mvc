@@ -7,6 +7,7 @@ import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -60,25 +61,23 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public void changeStatus(Integer customerID, Boolean status) {
+    public Boolean changeStatus(Integer customerID, Boolean status) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
         Integer state = status?0:1;
 
         try {
-            transaction.begin();
-
             CustomerInfo ci = session.get(CustomerInfo.class, customerID);
             ci.setIsActive(state);
             session.update(ci);
 
-            transaction.commit();
             logger.info("changeStatus(" + customerID + ", " + status + " ) successfully updated customer_id" + customerID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
@@ -195,33 +194,27 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public void addCustomer(CustomerInfo customerInfo) {
+    public Boolean addCustomer(CustomerInfo customerInfo) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
-        Integer customerID = null;
+        Integer customerID;
 
         try {
-            transaction.begin();
-
             customerID = (Integer) session.save(customerInfo);
-
-            transaction.commit();
             logger.info("addCustomer(CustomerInfo) successfully added customer_id=" + customerID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void updateCustomer(CustomerInfo customerInfo) {
+    public Boolean updateCustomer(CustomerInfo customerInfo) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
 
         try {
-            transaction.begin();
-
             CustomerInfo ci = session.get(CustomerInfo.class, customerInfo.getCustomerID());
             ci.setFirstName(customerInfo.getFirstName());
             ci.setLastName(customerInfo.getLastName());
@@ -231,12 +224,13 @@ public class CustomerRepositoryImpl implements CustomerRepository {
             ci.setUserID(customerInfo.getUserID());
             session.update(ci);
 
-            transaction.commit();
             logger.info("updateCustomer(CustomerInfo) successfully updated customer_id=" + customerInfo.getCustomerID());
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 }

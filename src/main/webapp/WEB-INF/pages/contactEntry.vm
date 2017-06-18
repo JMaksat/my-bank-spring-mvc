@@ -14,7 +14,7 @@
 
             <h1 class="page-header">$pageName</h1>
 
-            <div class="form-group row">
+            <div class="form-group row" id="fieldValueGroup">
                 <label class="col-2 col-form-label">Contact</label>
                 <div class="col-10" style="width: 300px;">
                     <input class="form-control" type="text" id="fieldValue" value="$!contact.value" maxlength="1024">
@@ -61,8 +61,8 @@
         var customerID = $!customerID;
         state.customerID = customerID;
 
-        if(!value || !type) {
-            alert("You must fill out all fields!");
+        if(!value) {
+            $("#fieldValueGroup").addClass("has-error");
             return;
         }
 

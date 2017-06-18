@@ -178,23 +178,4 @@ public class CustomerInfo implements Serializable {
 
         return null;
     }
-
-    @Override
-    public String toString() {
-        return "CustomerInfo{" +
-                "customerID=" + customerID +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                ", birthDate=" + birthDate +
-                ", dateModified=" + dateModified +
-                ", isActive=" + isActive +
-                ", userID='" + userID + '\'' +
-                ", dateCreated=" + dateCreated +
-                ", accounts=" + accounts +
-                ", addresses=" + addresses +
-                ", contacts=" + contacts +
-                ", papers=" + papers +
-                '}';
-    }
 }

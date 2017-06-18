@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service("transactionManageService")
@@ -49,6 +50,7 @@ public class TransactionManageServiceImpl implements TransactionManageService {
             transaction.setIsReversed(0);
             transaction.setTransactionSum(0.0);
             transaction.setTransactionDate(LocalDate.now());
+            transaction.setTransactionTime(LocalTime.now());
             transaction.setUserID(authentication.getName());
             transaction.setAccountDebit(accountRepository.getAccountByNumber(
                     parametersRepository.getParamTransAccount().getValue()));
@@ -59,6 +61,7 @@ public class TransactionManageServiceImpl implements TransactionManageService {
             rest.setRestSum(0.0);
             rest.setTransactionID(transaction.getTransactionID());
             rest.setRestDate(LocalDate.now());
+            rest.setRestTime(LocalTime.now());
             accountRepository.newRest(rest);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -120,6 +123,7 @@ public class TransactionManageServiceImpl implements TransactionManageService {
             transaction.setIsReversed(isReversed ? 1 : 0);
             transaction.setTransactionSum(amount);
             transaction.setTransactionDate(LocalDate.now());
+            transaction.setTransactionTime(LocalTime.now());
             transaction.setUserID(authentication.getName());
             transaction.setAccountDebit(debit);
             transaction.setAccountCredit(credit);

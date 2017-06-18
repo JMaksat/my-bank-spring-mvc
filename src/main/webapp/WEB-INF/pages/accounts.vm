@@ -27,17 +27,6 @@
                                 <th>Closing date</th>
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
-                                <th>ID</th>
-                                <th>Account number</th>
-                                <th>Rest</th>
-                                <th>Type</th>
-                                <th>Suspended</th>
-                                <th>Opening date</th>
-                                <th>Closing date</th>
-                            </tr>
-                        </tfoot>
                         <tbody>
                             #foreach($lines in $accounts)
                             <tr class="sortable" onclick="window.location.href='$request.contextPath/account/$lines.accountID/accounts'">

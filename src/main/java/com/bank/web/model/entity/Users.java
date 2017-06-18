@@ -23,7 +23,7 @@ public class Users implements Serializable {
     @Transient
     private String roles;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userName")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userName")
     private Set<UserRoles> userRoles = new HashSet<>(0);
 
     public Users() {}
@@ -74,16 +74,5 @@ public class Users implements Serializable {
 
     public void setUserRoles(Set<UserRoles> userRoles) {
         this.userRoles = userRoles;
-    }
-
-    @Override
-    public String toString() {
-        return "Users{" +
-                "userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", isActive=" + isActive +
-                ", roles='" + roles + '\'' +
-                ", userRoles=" + userRoles +
-                '}';
     }
 }

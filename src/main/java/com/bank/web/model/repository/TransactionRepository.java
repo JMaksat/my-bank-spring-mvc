@@ -13,5 +13,5 @@ public interface TransactionRepository {
 
     Transactions getTransaction (Integer transactionID);
 
-    void addTransaction (Transactions transaction);
+    Boolean addTransaction (Transactions transaction);
 }

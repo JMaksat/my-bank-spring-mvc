@@ -8,6 +8,7 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -50,33 +51,26 @@ public class ContactRepositoryImpl implements ContactRepository {
     }
 
     @Override
-    public void addContact(CustomerContacts contact) {
+    public Boolean addContact(CustomerContacts contact) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
-        Integer contactID = null;
+        Integer contactID;
 
         try {
-            transaction.begin();
-
             contactID = (Integer) session.save(contact);
-
-            transaction.commit();
             logger.info("addContact(CustomerContact) successfully added contact_id=" + contactID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void updateContact(CustomerContacts contact) {
+    public Boolean updateContact(CustomerContacts contact) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
 
         try {
-            transaction.begin();
-
             CustomerContacts cc = session.get(CustomerContacts.class, contact.getContactID());
             cc.setValue(contact.getValue());
             cc.setDateModified(contact.getDateModified());
@@ -84,34 +78,33 @@ public class ContactRepositoryImpl implements ContactRepository {
             cc.setContactType(contact.getContactType());
             session.update(cc);
 
-            transaction.commit();
             logger.info("updateContact(CustomerContact) successfully updated contact_id=" + contact.getContactID());
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void changeStatus(Integer contactID, Boolean status) {
+    public Boolean changeStatus(Integer contactID, Boolean status) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
         Integer state = status?0:1;
 
         try {
-            transaction.begin();
-
             CustomerContacts cc = session.get(CustomerContacts.class, contactID);
             cc.setIsActive(state);
             session.update(cc);
 
-            transaction.commit();
             logger.info("changeStatus(" + contactID + ", " + status + " ) successfully updated contact_id=" + contactID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 }

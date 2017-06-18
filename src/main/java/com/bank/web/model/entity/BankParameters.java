@@ -132,19 +132,4 @@ public class BankParameters implements Serializable {
 
         return null;
     }
-
-    @Override
-    public String toString() {
-        return "BankParameters{" +
-                "parameterId=" + parameterId +
-                ", parentId=" + parentId +
-                ", parameterName='" + parameterName + '\'' +
-                ", value='" + value + '\'' +
-                ", dateCreated=" + dateCreated +
-                ", dateModified=" + dateModified +
-                ", activeFrom=" + activeFrom +
-                ", activeTo=" + activeTo +
-                ", userId='" + userId + '\'' +
-                '}';
-    }
 }

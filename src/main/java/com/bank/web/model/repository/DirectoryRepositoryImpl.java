@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -127,37 +128,26 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
     @CacheEvict(value = {"account", "address", "operation", "contact", "paper"}, allEntries = true)
     public Boolean addEntry(Directory directory) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
-        Boolean result = true;
-        Integer dirID = null;
+        Integer dirID;
 
         try {
-            transaction.begin();
-
             dirID = (Integer) session.save(directory);
-
-            transaction.commit();
             logger.info("addEntry(Directory) successfully added dir_id=" + dirID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
-            result = false;
+            return false;
         }
 
-        return result;
+        return true;
     }
 
     @Override
     @CacheEvict(value = {"account", "address", "operation", "contact", "paper"}, allEntries = true)
     public Boolean updateEntry(Directory directory) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
-        Boolean result = true;
 
         try {
-            transaction.begin();
-
             Directory dir = session.get(Directory.class, directory.getDirID());
             dir.setDirGroup(directory.getDirGroup());
             dir.setDirType(directory.getDirType());
@@ -166,42 +156,34 @@ public class DirectoryRepositoryImpl implements DirectoryRepository {
             dir.setUserID(directory.getUserID());
             session.update(dir);
 
-            transaction.commit();
             logger.info("updateEntry(Directory) successfully updated dir_id=" + directory.getDirID());
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
-            result = false;
+            return false;
         }
 
-        return result;
+        return true;
     }
 
     @Override
     @CacheEvict(value = {"account", "address", "operation", "contact", "paper"}, allEntries = true)
     public Boolean changeStatus(Integer dirID, Boolean status) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = null;
-        Boolean result = true;
         Integer state = status?0:1;
 
         try {
-            transaction.begin();
-
             Directory dir = session.get(Directory.class, dirID);
             dir.setIsActive(state);
             session.update(dir);
 
-            transaction.commit();
             logger.info("changeStatus(" + dirID + ", " + status + ") successfully updated dir_id=" + dirID);
         } catch (HibernateException e) {
-            if (transaction != null)
-                transaction.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             logger.error(e.getMessage(), e);
-            result = false;
+            return false;
         }
 
-        return result;
+        return true;
     }
 }
