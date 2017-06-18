@@ -9,7 +9,7 @@ The goal of this application is to demonstrate knowledge and skills of making co
 -	Spring Framework 4.2.2.RELEASE
 -	Spring MVC 4.2.2.RELEASE
 -	Spring Security 4.0.3.RELEASE
--	Spring-JDBC-ROMA 2.0.0.RELEASE
+-	Hibernate 5.2.10.Final
 -	Velocity Template 1.7
 -	Bootstrap 3.3.7
 -	DataTables 1.10.13
