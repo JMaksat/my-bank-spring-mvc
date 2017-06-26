@@ -69,23 +69,24 @@
             var birthDate = $("#fieldBirthDate").val();
             state.birthDate = birthDate;
 
-            if(!firstName) {
-                $("#fieldFirstNameGroup").addClass("has-error");
-                return;
-            }
+            if(!firstName || !lastName || !middleName || !birthDate) {
 
-            if(!lastName) {
-                $("#fieldLastNameGroup").addClass("has-error");
-                return;
-            }
+                if(!firstName) {
+                    $("#fieldFirstNameGroup").addClass("has-error");
+                }
 
-            if(!middleName) {
-                $("#fieldMiddleNameGroup").addClass("has-error");
-                return;
-            }
+                if(!lastName) {
+                    $("#fieldLastNameGroup").addClass("has-error");
+                }
 
-            if(!birthDate) {
-                $("#fieldBirthDateGroup").addClass("has-error");
+                if(!middleName) {
+                    $("#fieldMiddleNameGroup").addClass("has-error");
+                }
+
+                if(!birthDate) {
+                    $("#fieldBirthDateGroup").addClass("has-error");
+                }
+
                 return;
             }
 

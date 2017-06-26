@@ -85,18 +85,20 @@
         }
         state.reversed = reversed;
 
-        if(!accountCredit) {
-            $("#fieldCreditGroup").addClass("has-error");
-            return;
-        }
+        if(!accountCredit || !type || !amount || amount==0 || amount<0) {
 
-        if(!type) {
-            $("#fieldTypeGroup").addClass("has-error");
-            return;
-        }
+            if(!accountCredit) {
+                $("#fieldCreditGroup").addClass("has-error");
+            }
 
-        if(!amount || amount==0 || amount<0) {
-            $("#fieldAmountGroup").addClass("has-error");
+            if(!type) {
+                $("#fieldTypeGroup").addClass("has-error");
+            }
+
+            if(!amount || amount==0 || amount<0) {
+                $("#fieldAmountGroup").addClass("has-error");
+            }
+
             return;
         }
 

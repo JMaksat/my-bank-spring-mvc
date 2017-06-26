@@ -1,5 +1,5 @@
-#MyBank Retail Bank System v 0.1 (Release date 4 March 2017.)
-The goal of this application is to demonstrate knowledge and skills of making complex Spring MVC applications.
+#MyBank Retail Bank System v 0.2
+MyBank is example of Core banking, which includes customers information and transaction accounts, except loans and deposits. It is Spring based MVC application, which allows to manage customers information, accounts and transaction management. Also, there is user management including user roles to distribute responsibilities.
 
 
 #Technology used:
@@ -27,9 +27,9 @@ The goal of this application is to demonstrate knowledge and skills of making co
 #Customer information
 Customer is the main entity of MyBank retail bank system. Every customer must have its major information (first and last name, date of birth) and related optional entities like papers, addresses, contacts and accounts (more information about accounts in the next section). Every of those entities can be made only in customer details page. In order to open customer details one should click on "Customers" menu item and then click on appropriate record in the list to get more information about selected customer. Also, there is "New customer" button on the top of the list to make new customer in the MyBank.
 
-Once you are on the customer details page, you can click on the button "Contacts" and see all his or her existing contact information. Here, you also can add new contact information through button "Add contact". You can jump to contact details page by clicking on desirable record in the contacts list. Besides, you can see list or add a new (account, address or paper) in the same manner as with contacts.
+Once you are on the customer details page, you can click on the button "Contacts" and see all his or her existing contact information. Here, you also can add new contact information through button "Add contact". You can jump to contact details page by clicking on desirable record in the contacts list. Besides, you can see list or add a new account, address or paper in the same manner as with contacts.
 
-Either "details" page (Customer details, contacts details and so on) has extra two buttons: edit and block. If you need to change some details you can click on "Edit", make your corrections and click "Save" (or "Cancel" if you change your mind).
+Every "details" page (Customer details, contacts details and so on) has extra two buttons: edit and block. If you need to change some details you can click on "Edit", make your corrections and click "Save" (or "Cancel" if you change your mind).
 Blocking customer prevents from changing any related data, including prevention of making transactions on customer's accounts. Moreover, you can block addresses, contacts and papers locally (accounts can be only suspended, but it takes same effect). However, you can unblock customer (or other blocked entities) whenever you want.
 
 #Accounts
@@ -50,7 +50,7 @@ Directory contains various grouped typed values which used in almost every entit
 Bank parameters has global values identified by meaningful name. It could be, for example, name of bank or version of retail bank system which will be used somewhere in the program.
 
 #Security
-System has three roles: ROLE_OPERATOR, ROLE_ACCOUNTANT, ROLE_ADMIN. Each of which responsible for specific are of the retail bank system. ROLE_OPERATOR allowed to operate with customer, address, contacts, papers and reports. On the other hand ROLE_ACCOUNTANT responsible for accounts, transactions and reports too. Finally, ROLE_ADMIN rule following sections: directory, bank parameters, users.
+System has three roles: ROLE_OPERATOR, ROLE_ACCOUNTANT, ROLE_ADMIN. Each of which responsible for specific area of the retail bank system. ROLE_OPERATOR allowed to operate with customer, address, contacts, papers and reports. On the other hand ROLE_ACCOUNTANT responsible for accounts, transactions and reports too. Finally, ROLE_ADMIN rule following sections: directory, bank parameters, users.
 >Every role (if it's active) can be referenced to specific user. System already has four users:
 >- harry (has role ROLE_OPERATOR)
 >- simon (has role ROLE_ACCOUNTANT)

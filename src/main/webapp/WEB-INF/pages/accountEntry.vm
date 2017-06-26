@@ -71,13 +71,16 @@
         var customerID = $!customerID;
         state.customerID = customerID;
 
-        if(!account) {
-            $("#fieldAccountGroup").addClass("has-error");
-            return;
-        }
+        if(!account || !comment) {
 
-        if(!comment) {
-            $("#fieldCommentGroup").addClass("has-error");
+            if(!account) {
+                $("#fieldAccountGroup").addClass("has-error");
+            }
+
+            if(!comment) {
+                $("#fieldCommentGroup").addClass("has-error");
+            }
+
             return;
         }
 
