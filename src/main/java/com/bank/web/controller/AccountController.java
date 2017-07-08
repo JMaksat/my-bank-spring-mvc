@@ -8,6 +8,7 @@ import com.bank.web.model.repository.AccountRepository;
 import com.bank.web.model.repository.CustomerRepository;
 import com.bank.web.model.repository.DirectoryRepository;
 import com.bank.web.model.repository.TransactionRepository;
+import com.bank.web.model.service.AccountService;
 import com.bank.web.model.service.TransactionManageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class AccountController {
     public static final Logger logger = Logger.getLogger(AccountController.class);
 
     private AccountRepository accountRepository;
+    private AccountService accountService;
     private DirectoryRepository directoryRepository;
     private TransactionRepository transactionRepository;
     private TransactionManageService transactionManageService;
@@ -36,11 +38,13 @@ public class AccountController {
 
     @Autowired
     public AccountController(AccountRepository accountRepository,
+                             AccountService accountService,
                              DirectoryRepository directoryRepository,
                              TransactionRepository transactionRepository,
                              TransactionManageService transactionManageService,
                              CustomerRepository customerRepository) {
         this.accountRepository = accountRepository;
+        this.accountService = accountService;
         this.directoryRepository = directoryRepository;
         this.transactionRepository = transactionRepository;
         this.transactionManageService = transactionManageService;
@@ -64,13 +68,11 @@ public class AccountController {
     @RequestMapping(value = "/account/{accountID}/{invoker}", method = RequestMethod.GET)
     @Secured({"ROLE_ACCOUNTANT"})
     public ModelAndView getAccount(@PathVariable("accountID") Integer accountID, @PathVariable("invoker") String invoker, ModelMap map) {
-        Accounts account = accountRepository.getAccountById(accountID);
+        Map<String, Object> objMap = accountService.getAccount(accountID);
 
-        if (account != null) {
-            CustomerInfo customer = customerRepository.customerDetails(account.getAccountOwner().getCustomerID());
-
-            map.put("account", account);
-            map.put("customer", customer);
+        if (objMap.get("customer") != null) {
+            map.put("account", objMap.get("account"));
+            map.put("customer", objMap.get("customer"));
             map.put("invoker", invoker);
             map.put("pageName", "Account");
             map.put("leftMenu", "accounts");

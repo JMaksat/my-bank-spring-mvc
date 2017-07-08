@@ -6,6 +6,7 @@ import com.bank.web.model.entity.Directory;
 import com.bank.web.model.repository.ContactRepository;
 import com.bank.web.model.repository.CustomerRepository;
 import com.bank.web.model.repository.DirectoryRepository;
+import com.bank.web.model.service.ContactService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,14 +27,17 @@ public class ContactController {
     public static final Logger logger = Logger.getLogger(ContactController.class);
 
     private ContactRepository contactRepository;
+    private ContactService contactService;
     private DirectoryRepository directoryRepository;
     private CustomerRepository customerRepository;
 
     @Autowired
     public ContactController(ContactRepository contactRepository,
+                             ContactService contactService,
                              DirectoryRepository directoryRepository,
                              CustomerRepository customerRepository) {
         this.contactRepository = contactRepository;
+        this.contactService = contactService;
         this.directoryRepository = directoryRepository;
         this.customerRepository = customerRepository;
     }
@@ -41,13 +45,11 @@ public class ContactController {
     @RequestMapping(path = "/contact/{contactID}", method = RequestMethod.GET)
     @Secured({"ROLE_OPERATOR"})
     public ModelAndView getContactData(@PathVariable Integer contactID, ModelMap map) {
-        CustomerContacts contact = contactRepository.getContact(contactID);
+        Map<String, Object> objMap = contactService.getContactData(contactID);
 
-        if (contact != null) {
-            CustomerInfo customer = customerRepository.customerDetails(contact.getCustomer().getCustomerID());
-
-            map.put("contact", contact);
-            map.put("customer", customer);
+        if (objMap.get("customer") != null) {
+            map.put("contact", objMap.get("contact"));
+            map.put("customer", objMap.get("customer"));
             map.put("pageName", "Contact");
             map.put("leftMenu", "customers");
         }

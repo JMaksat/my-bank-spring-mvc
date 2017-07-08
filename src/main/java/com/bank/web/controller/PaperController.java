@@ -6,6 +6,7 @@ import com.bank.web.model.entity.Directory;
 import com.bank.web.model.repository.CustomerRepository;
 import com.bank.web.model.repository.DirectoryRepository;
 import com.bank.web.model.repository.PaperRepository;
+import com.bank.web.model.service.PaperService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,14 +27,17 @@ public class PaperController {
     public static final Logger logger = Logger.getLogger(PaperController.class);
 
     private PaperRepository paperRepository;
+    private PaperService paperService;
     private DirectoryRepository directoryRepository;
     private CustomerRepository customerRepository;
 
     @Autowired
     public PaperController(PaperRepository paperRepository,
+                           PaperService paperService,
                            DirectoryRepository directoryRepository,
                            CustomerRepository customerRepository) {
         this.paperRepository = paperRepository;
+        this.paperService = paperService;
         this.directoryRepository = directoryRepository;
         this.customerRepository = customerRepository;
     }
@@ -41,13 +45,11 @@ public class PaperController {
     @RequestMapping(path = "/paper/{paperID}", method = RequestMethod.GET)
     @Secured({"ROLE_OPERATOR"})
     public ModelAndView getPaperData(@PathVariable Integer paperID, ModelMap map) {
-        CustomerPapers paper = paperRepository.getPaper(paperID);
+        Map<String, Object> objMap = paperService.getPaperData(paperID);
 
-        if (paper != null) {
-            CustomerInfo customer = customerRepository.customerDetails(paper.getCustomer().getCustomerID());
-
-            map.put("paper", paper);
-            map.put("customer", customer);
+        if (objMap.get("customer") != null) {
+            map.put("paper", objMap.get("paper"));
+            map.put("customer", objMap.get("customer"));
             map.put("pageName", "Paper");
             map.put("leftMenu", "customers");
         }
