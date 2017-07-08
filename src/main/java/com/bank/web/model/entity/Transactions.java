@@ -35,11 +35,11 @@ public class Transactions implements Serializable {
     @Column(name = "user_id")
     private String userID;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_debit")
     private Accounts accountDebit;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_credit")
     private Accounts accountCredit;
 

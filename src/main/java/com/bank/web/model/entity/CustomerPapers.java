@@ -34,7 +34,7 @@ public class CustomerPapers implements Serializable {
     @Column(name = "paper_type")
     private Integer paperType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private CustomerInfo customer;
 

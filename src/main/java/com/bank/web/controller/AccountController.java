@@ -8,7 +8,7 @@ import com.bank.web.model.repository.AccountRepository;
 import com.bank.web.model.repository.CustomerRepository;
 import com.bank.web.model.repository.DirectoryRepository;
 import com.bank.web.model.repository.TransactionRepository;
-import com.bank.web.service.TransactionManageService;
+import com.bank.web.model.service.TransactionManageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

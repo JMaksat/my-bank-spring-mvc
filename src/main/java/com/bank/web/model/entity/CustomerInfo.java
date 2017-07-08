@@ -42,16 +42,16 @@ public class CustomerInfo implements Serializable {
     @Column(name = "date_created")
     private LocalDate dateCreated;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "accountOwner")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "accountOwner")
     private Set<Accounts> accounts = new HashSet<>(0);
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     private Set<CustomerAddress> addresses = new HashSet<>(0);
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     private Set<CustomerContacts> contacts = new HashSet<>(0);
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     private Set<CustomerPapers> papers = new HashSet<>(0);
 
     public CustomerInfo() {}

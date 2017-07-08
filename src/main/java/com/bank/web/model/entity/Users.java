@@ -23,7 +23,7 @@ public class Users implements Serializable {
     @Transient
     private String roles;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userName")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userName")
     private Set<UserRoles> userRoles = new HashSet<>(0);
 
     public Users() {}

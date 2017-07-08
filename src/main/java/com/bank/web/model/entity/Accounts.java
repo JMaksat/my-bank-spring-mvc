@@ -21,7 +21,7 @@ public class Accounts implements Serializable {
     @Column(name = "account_number")
     private String accountNumber;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_owner")
     private CustomerInfo accountOwner;
 
@@ -55,13 +55,13 @@ public class Accounts implements Serializable {
     @Transient
     private String accountTypeLabel;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "accountDebit")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "accountDebit")
     private Set<Transactions> transactionsByDebit = new HashSet<>(0);
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "accountCredit")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "accountCredit")
     private Set<Transactions> transactionsByCredit = new HashSet<>(0);
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "account")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
     private Set<AccountRest> accountRests = new HashSet<>(0);
 
     public Accounts(){}

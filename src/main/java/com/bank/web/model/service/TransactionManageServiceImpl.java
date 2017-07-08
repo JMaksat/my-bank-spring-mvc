@@ -1,4 +1,4 @@
-package com.bank.web.service;
+package com.bank.web.model.service;
 
 import com.bank.web.model.entity.AccountRest;
 import com.bank.web.model.entity.Accounts;

@@ -34,7 +34,7 @@ public class CustomerAddress implements Serializable {
     @Column(name = "address_type")
     private Integer addressType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private CustomerInfo customer;
 
