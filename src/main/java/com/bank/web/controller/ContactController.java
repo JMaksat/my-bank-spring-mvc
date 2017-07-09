@@ -1,7 +1,6 @@
 package com.bank.web.controller;
 
 import com.bank.web.model.entity.CustomerContacts;
-import com.bank.web.model.entity.CustomerInfo;
 import com.bank.web.model.entity.Directory;
 import com.bank.web.model.repository.ContactRepository;
 import com.bank.web.model.repository.CustomerRepository;
@@ -85,6 +84,7 @@ public class ContactController {
     public String newContact(@RequestParam Map<String, String> params) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerContacts contact = new CustomerContacts();
+        String retVal = "0";
 
         if (params.get("id") != null &&
                 params.get("value") != null &&
@@ -101,29 +101,26 @@ public class ContactController {
             contact.setCustomer(customerRepository.customerDetails(Integer.valueOf(params.get("customerID"))));
 
             if (Integer.valueOf(params.get("id")) >= 0) {
-                contactRepository.updateContact(contact);
+                retVal = contactRepository.updateContact(contact) ? "1" : "0";
             } else {
-                contactRepository.addContact(contact);
+                retVal = contactRepository.addContact(contact) ? "1" : "0";
             }
-
-            return "1";
         }
 
-        return "0";
+        return retVal;
     }
 
     @RequestMapping(path = "/contact/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured({"ROLE_OPERATOR"})
     public String changeContactState(@RequestParam Map<String, String> params) {
+        String retVal = "0";
 
         if (params.get("contactID") != null) {
-            contactRepository.changeStatus(Integer.valueOf(params.get("contactID")),
-                    params.get("status").equals("1"));
-
-            return "1";
+            retVal = contactRepository.changeStatus(Integer.valueOf(params.get("contactID")),
+                    params.get("status").equals("1")) ? "1" : "0";
         }
 
-        return "0";
+        return retVal;
     }
 }

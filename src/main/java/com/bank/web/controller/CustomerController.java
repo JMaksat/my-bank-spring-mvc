@@ -86,6 +86,7 @@ public class CustomerController {
     public String newCustomer(@RequestParam Map<String, String> params) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerInfo customer = new CustomerInfo();
+        String retVal = "0";
 
         if (params.get("customerID") != null &&
                 params.get("firstName") != null &&
@@ -103,29 +104,27 @@ public class CustomerController {
                 customer.setDateCreated(LocalDate.now());
 
             if (Integer.valueOf(params.get("customerID")) >= 0) {
-                customerRepository.updateCustomer(customer);
+                retVal = customerRepository.updateCustomer(customer) ? "1" : "0";
             } else {
-                customerRepository.addCustomer(customer);
+                retVal = customerRepository.addCustomer(customer) ? "1" : "0";
             }
-
-            return "1";
         }
 
-        return "0";
+        return retVal;
     }
 
     @RequestMapping(path = "/customers/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured({"ROLE_ACCOUNTANT", "ROLE_OPERATOR"})
     public String changeCustomerState(@RequestParam Map<String, String> params) {
+        String retVal = "0";
 
         if (params.get("customerID") != null) {
-            customerRepository.changeStatus(Integer.valueOf(params.get("customerID")),
-                    params.get("status").equals("1"));
-            return "1";
+            retVal = customerRepository.changeStatus(Integer.valueOf(params.get("customerID")),
+                    params.get("status").equals("1")) ? "1" : "0";
         }
 
-        return "0";
+        return retVal;
     }
 
 }

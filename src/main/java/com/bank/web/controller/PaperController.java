@@ -1,6 +1,5 @@
 package com.bank.web.controller;
 
-import com.bank.web.model.entity.CustomerInfo;
 import com.bank.web.model.entity.CustomerPapers;
 import com.bank.web.model.entity.Directory;
 import com.bank.web.model.repository.CustomerRepository;
@@ -50,7 +49,7 @@ public class PaperController {
         if (objMap.get("customer") != null) {
             map.put("paper", objMap.get("paper"));
             map.put("customer", objMap.get("customer"));
-            map.put("pageName", "Paper");
+            map.put("pageName", "Papers");
             map.put("leftMenu", "customers");
         }
 
@@ -66,9 +65,9 @@ public class PaperController {
             CustomerPapers paper = paperRepository.getPaper(paperID);
 
             map.put("paper", paper);
-            map.put("pageName", "Update paper entry");
+            map.put("pageName", "Update papers entry");
         } else {
-            map.put("pageName", "New paper");
+            map.put("pageName", "New papers");
         }
 
         map.put("types", types);
@@ -85,6 +84,7 @@ public class PaperController {
     public String newPaper(@RequestParam Map<String, String> params) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerPapers paper = new CustomerPapers();
+        String retVal = "0";
 
         if (params.get("id") != null &&
                 params.get("value") != null &&
@@ -101,28 +101,26 @@ public class PaperController {
             paper.setCustomer(customerRepository.customerDetails(Integer.valueOf(params.get("customerID"))));
 
             if (Integer.valueOf(params.get("id")) >= 0) {
-                paperRepository.updatePaper(paper);
+                retVal = paperRepository.updatePaper(paper) ? "1" : "0";
             } else {
-                paperRepository.addPaper(paper);
+                retVal = paperRepository.addPaper(paper) ? "1" : "0";
             }
-
-            return "1";
         }
 
-        return "0";
+        return retVal;
     }
 
     @RequestMapping(path = "/paper/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured({"ROLE_OPERATOR"})
     public String changePaperState(@RequestParam Map<String, String> params) {
+        String retVal = "0";
 
         if (params.get("paperID") != null) {
-            paperRepository.changeStatus(Integer.valueOf(params.get("paperID")),
-                    params.get("status").equals("1"));
-            return "1";
+            retVal = paperRepository.changeStatus(Integer.valueOf(params.get("paperID")),
+                    params.get("status").equals("1")) ? "1" : "0";
         }
 
-        return "1";
+        return retVal;
     }
 }

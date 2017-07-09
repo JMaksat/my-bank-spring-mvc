@@ -88,7 +88,7 @@
         state.status = status;
 
 
-        var r = confirm("Are you sure you want to change status of paper (ID=$!paper.paperID) ?");
+        var r = confirm("Are you sure you want to change status of papers (ID=$!paper.paperID) ?");
 
         if (r == true) {
             $.ajax({
@@ -99,11 +99,15 @@
                 data: state,
                 error: function (xhr, status, error) {
                     console.log("ResponseText:" + xhr.responseText);
-                    alert("Failure during change status of paper!");
+                    alert("Failure during change status of papers!");
                 },
                 success: function (data) {
-                    window.location.href = '$request.contextPath/paper/$!paper.paperID'
-                    alert("Status of paper (ID=$!paper.paperID) changed!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/paper/$!paper.paperID'
+                        alert("Status of papers (ID=$!paper.paperID) changed!");
+                    } else {
+                        alert("Failed to change papers' status!");
+                    }
                 }
             });
         }

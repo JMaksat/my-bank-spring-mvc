@@ -102,11 +102,19 @@
                 },
                 success : function(data) {
                     #if ($!customerID == -1)
-                        window.location.href='$request.contextPath/customers';
-                        alert("Customer successfully added!");
+                        if (data == "1") {
+                            window.location.href = '$request.contextPath/customers';
+                            alert("Customer successfully added!");
+                        } else {
+                            alert("Failed to add a customer!");
+                        }
                     #else
-                        window.location.href='$request.contextPath/customerDetails/$!customerID';
-                        alert("Customer successfully updated!");
+                        if (data == "1") {
+                            window.location.href = '$request.contextPath/customerDetails/$!customerID';
+                            alert("Customer successfully updated!");
+                        } else {
+                            alert("Failed to update a customer!");
+                        }
                     #end
                 }
             });

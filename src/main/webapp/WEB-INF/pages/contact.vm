@@ -101,8 +101,12 @@
                     alert("Failure during change status of contact!");
                 },
                 success: function (data) {
-                    window.location.href = '$request.contextPath/contact/$!contact.contactID'
-                    alert("Status of contact (ID=$!contact.contactID) changed!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/contact/$!contact.contactID'
+                        alert("Status of contact (ID=$!contact.contactID) changed!");
+                    } else {
+                        alert("Failed to change contact's status!");
+                    }
                 }
             });
         }

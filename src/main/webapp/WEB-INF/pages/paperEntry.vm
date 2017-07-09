@@ -15,14 +15,14 @@
             <h1 class="page-header">$pageName</h1>
 
             <div class="form-group row" id="fieldValueGroup">
-                <label class="col-2 col-form-label">Paper</label>
+                <label class="col-2 col-form-label">Papers</label>
                 <div class="col-10" style="width: 300px;">
                     <input class="form-control" type="text" id="fieldValue" value="$!paper.value" maxlength="1024">
                 </div>
             </div>
 
             <div class="form-group row">
-                <label class="col-2 col-form-label">Choose paper type</label>
+                <label class="col-2 col-form-label">Choose papers type</label>
                 <div class="col-10" style="width: 300px;">
                     <select class="form-control" id="fieldType">
                         #foreach($line in $types)
@@ -78,11 +78,19 @@
             },
             success : function(data) {
                 #if ($!paperID == -1)
-                    window.location.href='$request.contextPath/customerDetails/$!customerID';
-                    alert("Paper successfully added!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/customerDetails/$!customerID';
+                        alert("Papers successfully added!");
+                    } else {
+                        alert("Failed to add papers!");
+                    }
                 #else
-                    window.location.href='$request.contextPath/paper/$!paperID';
-                    alert("Paper successfully updated!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/paper/$!paperID';
+                        alert("Papers successfully updated!");
+                    } else {
+                        alert("Failed to update papers!");
+                    }
                 #end
             }
         });

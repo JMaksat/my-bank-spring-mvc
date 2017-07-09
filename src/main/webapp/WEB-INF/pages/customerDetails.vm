@@ -303,8 +303,12 @@
                     alert("Failure during change status of customer!");
                 },
                 success : function(data) {
-                    window.location.href='$request.contextPath/customerDetails/$!customer.customerID'
-                    alert("Status of customer (customerID=$!customer.customerID) changed!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/customerDetails/$!customer.customerID'
+                        alert("Status of customer (customerID=$!customer.customerID) changed!");
+                    } else {
+                        alert("Failed to change customer's status!");
+                    }
                 }
             });
         }

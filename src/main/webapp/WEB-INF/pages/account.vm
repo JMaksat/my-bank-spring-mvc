@@ -126,8 +126,12 @@
                     alert("Failure during change status of account!");
                 },
                 success: function (data) {
-                    window.location.href = '$request.contextPath/account/$!account.accountID/$invoker'
-                    alert("Status of account $!account.accountNumber changed!");
+                    if (data=="1") {
+                        window.location.href = '$request.contextPath/account/$!account.accountID/$invoker'
+                        alert("Status of account $!account.accountNumber changed!");
+                    } else {
+                        alert("Failed to change account's status!");
+                    }
                 }
             });
         }
@@ -152,8 +156,12 @@
                     alert("Failure during closing the account!");
                 },
                 success: function (data) {
-                    window.location.href = '$request.contextPath/account/$!account.accountID/$invoker'
-                    alert("Account $!account.accountNumber is closed now!");
+                    if (data=="1") {
+                        window.location.href = '$request.contextPath/account/$!account.accountID/$invoker'
+                        alert("Account $!account.accountNumber is closed now!");
+                    } else {
+                        alert("Failed to close account!");
+                    }
                 }
             });
         }

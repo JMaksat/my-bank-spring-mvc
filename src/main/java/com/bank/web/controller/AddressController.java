@@ -1,7 +1,6 @@
 package com.bank.web.controller;
 
 import com.bank.web.model.entity.CustomerAddress;
-import com.bank.web.model.entity.CustomerInfo;
 import com.bank.web.model.entity.Directory;
 import com.bank.web.model.repository.AddressRepository;
 import com.bank.web.model.repository.CustomerRepository;
@@ -85,6 +84,7 @@ public class AddressController {
     public String newAddress(@RequestParam Map<String, String> params) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomerAddress address = new CustomerAddress();
+        String retVal = "0";
 
         if (params.get("id") != null &&
                 params.get("value") != null &&
@@ -101,29 +101,27 @@ public class AddressController {
             address.setCustomer(customerRepository.customerDetails(Integer.valueOf(params.get("customerID"))));
 
             if (Integer.valueOf(params.get("id")) >= 0) {
-                addressRepository.updateAddress(address);
+                retVal = addressRepository.updateAddress(address) ? "1" : "0";
             } else {
-                addressRepository.addAddress(address);
+                retVal = addressRepository.addAddress(address) ? "1" : "0";
             }
-
-            return "1";
         }
 
-        return "0";
+        return retVal;
     }
 
     @RequestMapping(path = "/address/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured({"ROLE_OPERATOR"})
     public String changeAddressState(@RequestParam Map<String, String> params) {
+        String retVal = "0";
 
         if (params.get("addressID") != null) {
-            addressRepository.changeStatus(Integer.valueOf(params.get("addressID")),
-                    params.get("status").equals("1"));
-            return "1";
+            retVal = addressRepository.changeStatus(Integer.valueOf(params.get("addressID")),
+                    params.get("status").equals("1")) ? "1" : "0";
         }
 
-        return "0";
+        return retVal;
     }
 
 }

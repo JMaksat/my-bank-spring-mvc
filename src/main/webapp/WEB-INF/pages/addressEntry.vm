@@ -78,11 +78,19 @@ r<!DOCTYPE html>
             },
             success : function(data) {
                 #if ($!addressID == -1)
-                    window.location.href='$request.contextPath/customerDetails/$!customerID';
-                    alert("Address successfully added!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/customerDetails/$!customerID';
+                        alert("Address successfully added!");
+                    } else {
+                        alert("Failed to add address!");
+                    }
                 #else
-                    window.location.href='$request.contextPath/address/$!addressID';
-                    alert("Address successfully updated!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/address/$!addressID';
+                        alert("Address successfully updated!");
+                    } else {
+                        alert("Failed to update address!");
+                    }
                 #end
             }
         });

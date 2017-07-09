@@ -1,8 +1,0 @@
-Application has:
-- make application multilingual
-- make report system using Jasper reports
-- consider to use JPA Persistence instead of native sql
-- consider to use Spring boot
-
-
-

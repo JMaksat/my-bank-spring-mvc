@@ -26,7 +26,7 @@
                 <div class="col-10" style="width: 300px;">
                     <select class="form-control" id="fieldType">
                         #foreach($line in $types)
-                            #if ($line.dirType==$account.accountType)
+                            #if ($line.dirType==$account.accountTypeLabel)
                                 <option value="$line.dirID" selected>$line.dirType</option>
                             #else
                                 <option value="$line.dirID">$line.dirType</option>
@@ -96,11 +96,19 @@
             },
             success : function(data) {
                 #if ($!accountID == -1)
-                    window.location.href='$request.contextPath/customerDetails/$!customerID';
-                    alert("Account successfully added!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/customerDetails/$!customerID';
+                        alert("Account successfully added!");
+                    } else {
+                        alert("Failed to add account!");
+                    }
                 #else
-                    window.location.href='$request.contextPath/account/$!accountID/$!invoker';
-                    alert("Account successfully updated!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/account/$!accountID/$!invoker';
+                        alert("Account successfully updated!");
+                    } else {
+                        alert("Failed to update account!");
+                    }
                 #end
             }
         });

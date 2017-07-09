@@ -78,11 +78,19 @@
             },
             success : function(data) {
                 #if ($!contactID == -1)
-                    window.location.href='$request.contextPath/customerDetails/$!customerID';
-                    alert("Contact successfully added!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/customerDetails/$!customerID';
+                        alert("Contact successfully added!");
+                    } else {
+                        alert("Failed to add contact!");
+                    }
                 #else
-                    window.location.href='$request.contextPath/contact/$!contactID';
-                    alert("Contact successfully updated!");
+                    if (data == "1") {
+                        window.location.href = '$request.contextPath/contact/$!contactID';
+                        alert("Contact successfully updated!");
+                    } else {
+                        alert("Failed to update contact!");
+                    }
                 #end
             }
         });

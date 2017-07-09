@@ -1,7 +1,6 @@
 package com.bank.web.controller;
 
 import com.bank.web.model.entity.Accounts;
-import com.bank.web.model.entity.CustomerInfo;
 import com.bank.web.model.entity.Directory;
 import com.bank.web.model.entity.Transactions;
 import com.bank.web.model.repository.AccountRepository;
@@ -129,12 +128,10 @@ public class AccountController {
 
             if (Integer.valueOf(params.get("id")) >= 0) {
                 account.setAccountID(Integer.valueOf(params.get("id")));
-                accountRepository.updateAccount(account);
+                retVal = accountRepository.updateAccount(account) ? "1" : "0";
             } else {
-                transactionManageService.createNewAccount(account);
+                retVal = transactionManageService.createNewAccount(account) ? "1" : "0";
             }
-
-            retVal = "1";
         }
 
         return retVal;
@@ -147,9 +144,8 @@ public class AccountController {
         String retVal = "0";
 
         if (params.get("accountID") != null) {
-            accountRepository.changeStatus(Integer.valueOf(params.get("accountID")),
-                    params.get("status").equals("1"));
-            retVal = "1";
+            retVal = accountRepository.changeStatus(Integer.valueOf(params.get("accountID")),
+                    params.get("status").equals("1")) ? "1" : "0";
         }
 
         return retVal;
@@ -162,8 +158,7 @@ public class AccountController {
         String retVal = "0";
 
         if (params.get("accountID") != null) {
-            accountRepository.closeAccount(Integer.valueOf(params.get("accountID")));
-            retVal = "1";
+            retVal = accountRepository.closeAccount(Integer.valueOf(params.get("accountID"))) ? "1" : "0";
         }
 
         return retVal;
