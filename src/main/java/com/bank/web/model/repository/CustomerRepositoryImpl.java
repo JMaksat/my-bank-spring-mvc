@@ -29,17 +29,17 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public List<CustomerInfo> customersList(Boolean isActive) {
         List<CustomerInfo> result;
-        String hql = " from CustomerInfo where ";
+        StringBuilder hql = new StringBuilder(" from CustomerInfo where ");
 
         if (isActive == null) {
-            hql += " 1=1 ";
+            hql.append(" 1=1 ");
         } else if (isActive) {
-            hql += " is_active = 1 ";
+            hql.append(" is_active = 1 ");
         } else {
-            hql += " is_active = 0 ";
+            hql.append(" is_active = 0 ");
         }
 
-        hql += " order by customerID ";
+        hql.append(" order by customerID ");
         result = sessionFactory.getCurrentSession().createQuery(hql.toString()).list();
 
         logger.info("customersList(" + isActive + ") records found = " + result.size());

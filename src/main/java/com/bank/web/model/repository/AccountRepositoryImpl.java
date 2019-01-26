@@ -33,37 +33,37 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public List<Accounts> accountsList(Boolean suspended, Boolean closed, Integer accountID, Boolean isOwnerBlocked) {
-        String hql;
+        StringBuilder hql = new StringBuilder();
 
-        hql = " from Accounts where 1=1 ";
+        hql.append(" from Accounts where 1=1 ");
 
         if (suspended != null) {
             if (suspended) {
-                hql += " and isSuspended = 1 ";
+                hql.append(" and isSuspended = 1 ");
             } else {
-                hql += " and isSuspended = 0 ";
+                hql.append(" and isSuspended = 0 ");
             }
         }
 
         if (closed != null) {
             if (closed) {
-                hql += " and dateClosed is not null ";
+                hql.append(" and dateClosed is not null ");
             } else {
-                hql += " and dateClosed is null ";
+                hql.append(" and dateClosed is null ");
             }
         }
 
         if (accountID != null) {
-            hql += " and accountID not in (:account_id) ";
+            hql.append(" and accountID not in (:account_id) ");
         }
 
         if (isOwnerBlocked != null && isOwnerBlocked) {
-            hql += " and accountOwner not in (select customerID from CustomerInfo where isActive = 0) ";
+            hql.append(" and accountOwner not in (select customerID from CustomerInfo where isActive = 0) ");
         }
 
-        hql += " order by accountID ";
+        hql.append(" order by accountID ");
 
-        Query<Accounts> qry = sessionFactory.getCurrentSession().createQuery(hql);
+        Query<Accounts> qry = sessionFactory.getCurrentSession().createQuery(hql.toString());
 
         if (accountID != null)
             qry.setParameter("account_id", accountID);
@@ -71,18 +71,20 @@ public class AccountRepositoryImpl implements AccountRepository {
         List<Accounts> result = qry.list();
 
         for (Accounts account : result) {
-            hql = " from AccountRest ar where ar.account = :account "
-                    + " and ar.restID = (select max(z.restID) from AccountRest z where z.account = ar.account) ";
+            hql.setLength(0);
+            hql.append(" from AccountRest ar where ar.account = :account "
+                    + " and ar.restID = (select max(z.restID) from AccountRest z where z.account = ar.account) ");
             List<AccountRest> restList = sessionFactory.getCurrentSession()
-                    .createQuery(hql)
+                    .createQuery(hql.toString())
                     .setParameter("account", account)
                     .list();
             if (restList.size() > 0)
                 account.setRestSum(restList.get(0).getRestSum());
 
-            hql = " from Directory where dirID = :account_type and dirGroup = :dir_group and isActive = 1 ";
+            hql.setLength(0);
+            hql.append(" from Directory where dirID = :account_type and dirGroup = :dir_group and isActive = 1 ");
             List<Directory> dirList = sessionFactory.getCurrentSession()
-                    .createQuery(hql)
+                    .createQuery(hql.toString())
                     .setParameter("account_type", account.getAccountType())
                     .setParameter("dir_group", Directory.ACCOUNTS)
                     .list();
